@@ -46,26 +46,21 @@ $(document).ready(function() {
     (function() {
         // Find all Let's Talk buttons
         const talkButtons = document.querySelectorAll('.btn-talk');
-        console.log('Found ' + talkButtons.length + ' Let\'s Talk buttons');
         
         // Add click handler to each button
         talkButtons.forEach(function(button) {
             button.addEventListener('click', function(event) {
                 const href = this.getAttribute('href');
-                console.log('Button clicked with href: ' + href);
                 
                 // Check for both /#contact and #contact formats
                 if (href === '#contact' || href.endsWith('/#contact')) {
                     event.preventDefault();
-                    console.log('Let\'s Talk button clicked!');
                     
                     const contactSection = document.getElementById('contact');
                     if (contactSection) {
                         // Calculate position to show more of the form
                         const contactBottom = contactSection.offsetTop + contactSection.offsetHeight;
                         const adjustedPosition = contactBottom - 600; // Show more of the form
-                        
-                        console.log('Scrolling to position: ' + adjustedPosition);
                         
                         // Use both scrollTo for immediate effect and animate for smooth scrolling
                         window.scrollTo({
@@ -77,9 +72,7 @@ $(document).ready(function() {
                         if (typeof jQuery !== 'undefined') {
                             jQuery('html, body').animate({
                                 scrollTop: adjustedPosition
-                            }, 800, function() {
-                                console.log('Scroll animation completed');
-                            });
+                            }, 800);
                         }
                     }
                 }

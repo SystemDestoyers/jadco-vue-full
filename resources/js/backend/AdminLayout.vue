@@ -68,7 +68,7 @@ const logout = async () => {
     await axios.post('/admin-auth/logout');
     router.push('/admin/login');
   } catch (error) {
-    console.error('Logout failed', error);
+    // Replace console.error('Logout failed', error); with nothing
   }
 };
 </script>

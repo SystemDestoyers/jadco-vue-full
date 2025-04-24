@@ -14,16 +14,13 @@ window.HeaderImageManager = {
     // Initialize header image animation - this should be called only once
     init() {
         if (this.initialized || this.initializing) {
-            console.log('[HEADER-IMAGE-MANAGER] Already initialized or initializing, skipping');
             return;
         }
         
         this.initializing = true;
-        console.log('[HEADER-IMAGE-MANAGER] Starting initialization');
         
         const headerImage = document.querySelector('.header-image');
         if (!headerImage) {
-            console.log('[HEADER-IMAGE-MANAGER] No header-image found');
             this.initializing = false;
             return;
         }
@@ -32,8 +29,6 @@ window.HeaderImageManager = {
         const hasAnimationClass = headerImage.classList.contains('animate');
         
         if (hasAnimationClass) {
-            console.log('[HEADER-IMAGE-MANAGER] Animation class already present, ensuring it completes properly');
-            
             // Apply final state directly to ensure animation completes
             setTimeout(() => {
                 headerImage.style.opacity = '1';
@@ -41,14 +36,12 @@ window.HeaderImageManager = {
                 
                 this.initialized = true;
                 this.initializing = false;
-                console.log('[HEADER-IMAGE-MANAGER] Finalized existing animation');
             }, 1000);
             
             return;
         }
         
         // Fresh animation
-        console.log('[HEADER-IMAGE-MANAGER] Starting fresh animation');
         
         // Set a flag to prevent double animations
         this.animationInProgress = true;
@@ -76,14 +69,12 @@ window.HeaderImageManager = {
                 headerImage.style.transform = 'translateX(0)';
                 
                 this.animationInProgress = false;
-                console.log('[HEADER-IMAGE-MANAGER] Animation completed');
             }, { once: true });
             
             // Mark as initialized after animation duration
             setTimeout(() => {
                 this.initialized = true;
                 this.initializing = false;
-                console.log('[HEADER-IMAGE-MANAGER] Initialization complete');
             }, 1000);
         }, 50);
     },
@@ -93,7 +84,6 @@ window.HeaderImageManager = {
         this.initialized = false;
         this.initializing = false;
         this.animationInProgress = false;
-        console.log('[HEADER-IMAGE-MANAGER] Reset complete');
     }
 };
 

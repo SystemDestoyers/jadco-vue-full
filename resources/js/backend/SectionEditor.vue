@@ -137,7 +137,6 @@ export default defineComponent({
         // Initialize the content with current content
         contentData.value = { ...section.value.content };
       } catch (err) {
-        console.error('Error fetching section:', err);
         error.value = 'Failed to load section. Please try again.';
       } finally {
         isLoading.value = false;
@@ -159,7 +158,6 @@ export default defineComponent({
         // Show success message
         showSavedMessage();
       } catch (err) {
-        console.error('Error saving content:', err);
         error.value = 'Failed to save content. Please try again.';
       } finally {
         isSaving.value = false;

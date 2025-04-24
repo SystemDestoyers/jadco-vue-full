@@ -222,7 +222,6 @@ const fetchPage = async () => {
     const response = await axios.get(`/api/admin/pages/${pageId}`);
     page.value = response.data;
   } catch (err) {
-    console.error('Error fetching page:', err);
     error.value = 'Failed to load page. Please try again.';
   } finally {
     isLoadingPage.value = false;
@@ -237,7 +236,6 @@ const fetchSections = async () => {
     const response = await axios.get(`/api/admin/pages/${pageId}/sections`);
     sections.value = response.data;
   } catch (err) {
-    console.error('Error fetching sections:', err);
     error.value = 'Failed to load sections. Please try again.';
   } finally {
     isLoadingSections.value = false;
@@ -357,7 +355,6 @@ const saveSection = async () => {
     // Close the modal after successful save
     closeModal();
   } catch (err) {
-    console.error('Error saving section:', err);
     error.value = 'Failed to save section. Please try again.';
   } finally {
     isSubmitting.value = false;
@@ -373,7 +370,6 @@ const moveSection = async (section, direction) => {
     // Refresh the sections list after reordering
     await fetchSections();
   } catch (err) {
-    console.error('Error reordering section:', err);
     error.value = 'Failed to reorder section. Please try again.';
   }
 };
@@ -403,7 +399,6 @@ const deleteSection = async () => {
     // Close the modal after successful delete
     closeDeleteModal();
   } catch (err) {
-    console.error('Error deleting section:', err);
     error.value = 'Failed to delete section. Please try again.';
   } finally {
     isDeleting.value = false;

@@ -69,7 +69,6 @@ const login = async () => {
   try {
     // Get CSRF token from cookie
     const csrfCookieResponse = await axios.get('/sanctum/csrf-cookie');
-    console.log('CSRF cookie set:', csrfCookieResponse);
     
     // Attempt login
     const loginResponse = await axios.post('/admin-auth/login', { 
@@ -77,18 +76,12 @@ const login = async () => {
       password: password.value 
     });
     
-    console.log('Login success:', loginResponse);
-    
     // Redirect to admin dashboard or to the requested page
     const redirectPath = route.query.redirect || '/admin'
     router.push(redirectPath)
   } catch (error) {
-    console.error('Login failed details:', error);
-    
     // Show detailed error message when available
     if (error.response) {
-      console.log('Error response:', error.response);
-      
       // Show validation errors if available
       if (error.response.data && error.response.data.errors) {
         const errors = error.response.data.errors;

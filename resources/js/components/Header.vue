@@ -70,7 +70,7 @@
                                     @click="setSlide(index - 1)">
                                     {{ index.toString().padStart(2, '0') }}
                                 </div>
-                                <div v-if="index < carouselSlides.length" class="nav-line" v-for="index in (carouselSlides.length - 1)" :key="`line-${index}`">
+                                <div class="nav-line" v-for="i in (carouselSlides.length - 1)" :key="`line-${i}`">
                                     <div class="nav-line-fill"></div>
                                 </div>
                             </div>
@@ -175,7 +175,6 @@ export default {
                     }
                 }
             } catch (error) {
-                console.error('Error fetching header data:', error);
                 // Use default content on error
             } finally {
                 this.loading = false;

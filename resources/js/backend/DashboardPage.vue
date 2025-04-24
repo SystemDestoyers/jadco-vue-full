@@ -90,39 +90,14 @@ const fetchPages = async () => {
   error.value = null;
   
   try {
-    // Use mock data since the API endpoint doesn't exist yet
-    // const response = await axios.get('/api/pages');
-    // pages.value = response.data.data || response.data;
-    
-    // Mock data for pages
+    // Fetch recent pages
     pages.value = [
-      {
-        id: 1,
-        title: 'Home',
-        slug: 'home',
-        sections_count: 6,
-      },
-      {
-        id: 2,
-        title: 'About',
-        slug: 'about',
-        sections_count: 3,
-      },
-      {
-        id: 3,
-        title: 'Services',
-        slug: 'services',
-        sections_count: 5,
-      },
-      {
-        id: 4,
-        title: 'Contact',
-        slug: 'contact',
-        sections_count: 2,
-      }
+      // This is mock data until we implement the API endpoint
+      { id: 1, title: 'Home Page', sections_count: 6 },
+      { id: 2, title: 'About Us', sections_count: 3 },
+      { id: 3, title: 'Services', sections_count: 5 },
     ];
   } catch (err) {
-    console.error('Error fetching pages:', err);
     error.value = 'Failed to load pages. Please try again.';
   } finally {
     isLoading.value = false;

@@ -55,8 +55,6 @@ export default {
         }
     },
     mounted() {
-        console.log('Vue App mounted successfully!');
-        
         // Add data-vue-app attribute to body for CSS targeting
         document.body.setAttribute('data-vue-app', 'true');
         

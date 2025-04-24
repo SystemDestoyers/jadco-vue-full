@@ -202,10 +202,8 @@ const fetchPages = async () => {
   
   try {
     const response = await axios.get('/api/admin/pages');
-    console.log(response);
     pages.value = response.data;
   } catch (err) {
-    console.error('Error fetching pages:', err);
     error.value = 'Failed to load pages. Please try again.';
   } finally {
     isLoading.value = false;
@@ -272,7 +270,6 @@ const savePage = async () => {
     // Close the modal after successful save
     closeModal();
   } catch (err) {
-    console.error('Error saving page:', err);
     error.value = 'Failed to save page. Please try again.';
   } finally {
     isSubmitting.value = false;
@@ -304,7 +301,6 @@ const deletePage = async () => {
     // Close the modal after successful delete
     closeDeleteModal();
   } catch (err) {
-    console.error('Error deleting page:', err);
     error.value = 'Failed to delete page. Please try again.';
   } finally {
     isDeleting.value = false;
