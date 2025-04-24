@@ -31,9 +31,9 @@
               </router-link>
             </li>
             <li>
-              <a href="#" class="nav-link">
-                <i class="fas fa-image"></i> Media
-              </a>
+              <router-link to="/admin/media" class="nav-link">
+                <i class="fas fa-photo-video"></i> Media Library
+              </router-link>
             </li>
             <li>
               <a href="#" class="nav-link">

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Media Library Management:
+  - Created media database table with migration for storing media metadata
+  - Implemented Media model with file handling and URL generation
+  - Added MediaController for handling API endpoints
+  - Created MediaLibrary Vue component with grid and list views
+  - Added file upload, preview, and management capabilities
+  - Implemented filtering by collection and file type
+  - Added support for editing metadata like alt text and captions
+  - Created MediaSeeder to import existing images from the public directory
+  - Added route and navigation link in admin sidebar
 - Enhanced Section Editor with JSON visualization and editing:
   - Added tree view for JSON structure visualization with inline editing capabilities
   - Implemented ability to edit both keys and values by clicking on them

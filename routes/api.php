@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\SectionController as AdminSectionController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Api\MediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,4 +82,13 @@ Route::prefix('admin')->group(function () {
     Route::put('/sections/{id}/content', [AdminSectionController::class, 'updateContent']);
     Route::put('/sections/{id}/order', [AdminSectionController::class, 'updateOrder']);
     Route::delete('/sections/{id}', [AdminSectionController::class, 'destroy']);
+    
+    // Media Library management
+    Route::get('/media', [MediaController::class, 'index']);
+    Route::post('/media', [MediaController::class, 'store']);
+    Route::get('/media/{id}', [MediaController::class, 'show']);
+    Route::put('/media/{id}', [MediaController::class, 'update']);
+    Route::delete('/media/{id}', [MediaController::class, 'destroy']);
+    Route::post('/media/folders', [MediaController::class, 'createFolder']);
+    Route::get('/media/folders/list', [MediaController::class, 'listFolders']);
 });

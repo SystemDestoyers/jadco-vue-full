@@ -12,6 +12,7 @@ import DashboardPage from './backend/DashboardPage.vue';
 import PagesPage from './backend/PagesPage.vue';
 import SectionsPage from './backend/SectionsPage.vue';
 import SectionEditor from './backend/SectionEditor.vue';
+import MediaLibrary from './backend/MediaLibrary.vue';
 
 const routes = [
     // Home route removed - handled by Laravel Blade template
@@ -74,6 +75,12 @@ const routes = [
         path: '/admin/sections/:id/edit',
         name: 'admin.section-editor',
         component: SectionEditor,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/media',
+        name: 'admin.media',
+        component: MediaLibrary,
         meta: { requiresAuth: true }
     }
 ];
