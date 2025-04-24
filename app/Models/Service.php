@@ -14,13 +14,14 @@ class Service extends Model
         'slug',
         'description',
         'image',
-        'hero_image',
+        'content',
         'is_featured',
-        'order',
+        'order'
     ];
 
     protected $casts = [
-        'is_featured' => 'boolean',
+        'content' => 'array',
+        'is_featured' => 'boolean'
     ];
 
     public function sections()

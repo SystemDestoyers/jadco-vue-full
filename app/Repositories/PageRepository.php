@@ -54,4 +54,9 @@ class PageRepository
     {
         return Section::where('name', $name)->first();
     }
+
+    public function getServiceBySlug($slug)
+    {
+        return \App\Models\Service::where('slug', $slug)->first();
+    }
 } 

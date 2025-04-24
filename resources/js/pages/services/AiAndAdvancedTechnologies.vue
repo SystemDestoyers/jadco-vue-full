@@ -66,23 +66,17 @@ export default {
                 // Try to get data from the API
                 const response = await axios.get('/api/ai/sections');
                 
-                if (response.data && response.data.success) {
-                    // If there's sections data in the response, process it
-                    const serviceData = response.data.data || response.data.service;
+                if (response.data && response.data.content) {
+                    // If there's content data in the response, process it
+                    let content = response.data.content;
                     
-                    if (serviceData && serviceData.content) {
-                        // If the content is a string, parse it
-                        let content = serviceData.content;
-                        if (typeof content === 'string') {
-                            content = JSON.parse(content);
-                        }
-                        
-                        // Merge the fetched content with default content
-                        this.content = {
-                            ...this.content,
-                            ...content
-                        };
+                    // If the content is a string, parse it
+                    if (typeof content === 'string') {
+                        content = JSON.parse(content);
                     }
+                    
+                    // Replace the content with data from API
+                    this.content = content;
                 }
             } catch (error) {
                 console.error('Error fetching AI technologies service data:', error);

@@ -8,7 +8,7 @@
 
         <div v-else>
             <!-- Service Detail Hero Section -->
-            <section class="service-hero-section py-10">
+            <section v-if="content.scholarship" class="service-hero-section py-10">
                 <div class="container">
                     <div class="row">
                         <div class="educational-services sub-section">
@@ -48,7 +48,7 @@
             </section>
 
             <!-- STEM Education Section -->
-            <section class="service-hero-section py-10">
+            <section v-if="content.stem" class="service-hero-section py-10">
                 <div class="container">
                     <div class="row">
                         <div class="educational-services sub-section">
@@ -90,7 +90,7 @@
             </section>
 
             <!-- K-12 International Schools Section -->
-            <section class="service-hero-section py-10">
+            <section v-if="content.k12" class="service-hero-section py-10">
                 <div class="container">
                     <div class="row">
                         <div class="educational-services sub-section">
@@ -141,6 +141,11 @@ export default {
         return {
             loading: true,
             content: {
+                scholarship: null,
+                stem: null,
+                k12: null
+            },
+            defaultContent: {
                 scholarship: {
                     title: 'Scholarship Programs Management',
                     description: 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets. Services include but not limited to:',
@@ -203,29 +208,53 @@ export default {
         async fetchData() {
             try {
                 // Try to get data from the API
-                const response = await axios.get('/api/education/sections');
+                const response = await axios.get('/api/education-and-scholarship/sections');
+                console.log('API Response:', response.data);
                 
-                if (response.data && response.data.success) {
-                    // If there's sections data in the response, process it
-                    const serviceData = response.data.data || response.data.service;
+                if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data)) {
+                    const sections = response.data.data;
                     
-                    if (serviceData && serviceData.content) {
-                        // If the content is a string, parse it
-                        let content = serviceData.content;
-                        if (typeof content === 'string') {
-                            content = JSON.parse(content);
+                    // Process each section and update content accordingly
+                    sections.forEach(section => {
+                        let sectionContent = section.content;
+                        
+                        // Parse content if it's a string
+                        if (typeof sectionContent === 'string') {
+                            try {
+                                sectionContent = JSON.parse(sectionContent);
+                            } catch (error) {
+                                console.error('Error parsing section content:', error);
+                            }
                         }
                         
-                        // Merge the fetched content with default content
-                        this.content = {
-                            ...this.content,
-                            ...content
-                        };
+                        // Map each section to the appropriate content property
+                        if (section.name === 'scholarship') {
+                            this.content.scholarship = sectionContent;
+                        } else if (section.name === 'stem') {
+                            this.content.stem = sectionContent;
+                        } else if (section.name === 'k12') {
+                            this.content.k12 = sectionContent;
+                        }
+                    });
+                    
+                    // Fill in any missing sections with defaults
+                    if (!this.content.scholarship) {
+                        this.content.scholarship = this.defaultContent.scholarship;
                     }
+                    if (!this.content.stem) {
+                        this.content.stem = this.defaultContent.stem;
+                    }
+                    if (!this.content.k12) {
+                        this.content.k12 = this.defaultContent.k12;
+                    }
+                } else {
+                    // Use default content if API fails to return proper data
+                    this.content = JSON.parse(JSON.stringify(this.defaultContent));
                 }
             } catch (error) {
                 console.error('Error fetching education service data:', error);
                 // Fallback to default content defined in data()
+                this.content = JSON.parse(JSON.stringify(this.defaultContent));
             } finally {
                 this.loading = false;
             }

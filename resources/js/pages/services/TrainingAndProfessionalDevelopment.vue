@@ -192,23 +192,38 @@ export default {
             try {
                 // Try to get data from the API
                 const response = await axios.get('/api/training/sections');
+                console.log('API Response:', response);
                 
-                if (response.data && response.data.success) {
-                    // If there's sections data in the response, process it
-                    const serviceData = response.data.data || response.data.service;
+                // Check if we have a response with data
+                if (response && response.data && response.data.success) {
+                    console.log('Response data:', response.data);
                     
-                    if (serviceData && serviceData.content) {
-                        // If the content is a string, parse it
-                        let content = serviceData.content;
-                        if (typeof content === 'string') {
-                            content = JSON.parse(content);
+                    // Get sections data
+                    const sections = response.data.data;
+                    
+                    if (sections && sections.length > 0) {
+                        // Process each section
+                        for (const section of sections) {
+                            if (section.name === 'training-and-professional-development') {
+                                let sectionContent = section.content;
+                                
+                                // Parse content if it's a string
+                                if (typeof sectionContent === 'string') {
+                                    try {
+                                        sectionContent = JSON.parse(sectionContent);
+                                        console.log('Parsed section content:', sectionContent);
+                                    } catch (parseError) {
+                                        console.error('Error parsing section content:', parseError);
+                                    }
+                                }
+                                
+                                // Replace the content with data from API
+                                if (sectionContent) {
+                                    this.content = sectionContent;
+                                    break;
+                                }
+                            }
                         }
-                        
-                        // Merge the fetched content with default content
-                        this.content = {
-                            ...this.content,
-                            ...content
-                        };
                     }
                 }
             } catch (error) {

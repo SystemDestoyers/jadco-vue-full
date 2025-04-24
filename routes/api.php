@@ -55,27 +55,8 @@ Route::get('/services/{slug}', [ServiceController::class, 'getServiceBySlug']);
 Route::get('/services/{slug}/sections', [ServiceController::class, 'getServiceWithSections']);
 
 // Specific service pages
-Route::get('/education/sections', function () {
-    return (new ServiceController(app(App\Services\ServiceService::class)))
-        ->getServiceWithSections('education-and-scholarship');
-});
-
-Route::get('/training/sections', function () {
-    return (new ServiceController(app(App\Services\ServiceService::class)))
-        ->getServiceWithSections('training-and-professional-development');
-});
-
-Route::get('/ai/sections', function () {
-    return (new ServiceController(app(App\Services\ServiceService::class)))
-        ->getServiceWithSections('ai-and-advanced-technologies');
-});
-
-Route::get('/egaming/sections', function () {
-    return (new ServiceController(app(App\Services\ServiceService::class)))
-        ->getServiceWithSections('egaming-and-esport');
-});
-
-Route::get('/arts/sections', function () {
-    return (new ServiceController(app(App\Services\ServiceService::class)))
-        ->getServiceWithSections('arts-and-entertainment');
-});
+Route::get('/education-and-scholarship/sections', [PageController::class, 'getEducationSections']);
+Route::get('/training-and-professional-development/sections', [PageController::class, 'getTrainingSections']);
+Route::get('/ai-and-advanced-technologies/sections', [PageController::class, 'getAiSections']);
+Route::get('/egaming/sections', [PageController::class, 'getEgamingSections']);
+Route::get('/arts-and-entertainment/sections', [PageController::class, 'getArtsSections']);

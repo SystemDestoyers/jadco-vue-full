@@ -63,4 +63,58 @@ class PageController extends Controller
             'content' => $content
         ]);
     }
+
+    public function getEducationSections()
+    {
+        $sections = $this->pageService->getEducationContent('education-and-scholarship');
+        // dd($sections);
+        return response()->json([
+            'success' => true,
+            'data' => $sections
+        ]);
+    }
+    
+    public function getTrainingSections()
+    {
+        $page = $this->pageService->getPageBySlug('training-and-professional-development');
+        $sections = $this->pageService->getPageSections($page->id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $sections
+        ]);
+    }
+    
+    public function getAiSections()
+    {
+        $page = $this->pageService->getPageBySlug('ai-and-advanced-technologies');
+        $sections = $this->pageService->getPageSections($page->id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $sections
+        ]);
+    }
+    
+    public function getEgamingSections()
+    {
+        $page = $this->pageService->getPageBySlug('egaming-and-esport');
+        $sections = $this->pageService->getPageSections($page->id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $sections
+        ]);
+    }
+    
+    public function getArtsSections()
+    {
+        $page = $this->pageService->getPageBySlug('arts-and-entertainment');
+        $sections = $this->pageService->getPageSections($page->id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $sections
+        ]);
+    }
 } 
