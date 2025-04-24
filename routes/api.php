@@ -58,5 +58,5 @@ Route::get('/services/{slug}/sections', [ServiceController::class, 'getServiceWi
 Route::get('/education-and-scholarship/sections', [PageController::class, 'getEducationSections']);
 Route::get('/training-and-professional-development/sections', [PageController::class, 'getTrainingSections']);
 Route::get('/ai-and-advanced-technologies/sections', [PageController::class, 'getAiSections']);
-Route::get('/egaming/sections', [PageController::class, 'getEgamingSections']);
+Route::get('/egaming-and-esport/sections', [PageController::class, 'getEgamingSections']);
 Route::get('/arts-and-entertainment/sections', [PageController::class, 'getArtsSections']);
