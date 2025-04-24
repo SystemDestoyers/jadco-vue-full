@@ -64,19 +64,32 @@ export default {
         async fetchData() {
             try {
                 // Try to get data from the API
-                const response = await axios.get('/api/ai/sections');
+                const response = await axios.get('/api/ai-and-advanced-technologies/sections');
+                console.log('API Response:', response.data);
                 
-                if (response.data && response.data.content) {
-                    // If there's content data in the response, process it
-                    let content = response.data.content;
+                if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data)) {
+                    const sections = response.data.data;
                     
-                    // If the content is a string, parse it
-                    if (typeof content === 'string') {
-                        content = JSON.parse(content);
-                    }
-                    
-                    // Replace the content with data from API
-                    this.content = content;
+                    // Process each section
+                    sections.forEach(section => {
+                        if (section.name === 'ai' || section.name === 'ai-tech') {
+                            let sectionContent = section.content;
+                            
+                            // Parse content if it's a string
+                            if (typeof sectionContent === 'string') {
+                                try {
+                                    sectionContent = JSON.parse(sectionContent);
+                                } catch (error) {
+                                    console.error('Error parsing section content:', error);
+                                }
+                            }
+                            
+                            // Update content with section data
+                            if (sectionContent) {
+                                this.content = sectionContent;
+                            }
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching AI technologies service data:', error);

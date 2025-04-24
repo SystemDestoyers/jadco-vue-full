@@ -147,52 +147,25 @@ export default {
             },
             defaultContent: {
                 scholarship: {
-                    title: 'Scholarship Programs Management',
-                    description: 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets. Services include but not limited to:',
-                    image: '/images/02_Education/01.jpg',
+                    title: '',
+                    description: '',
+                    image: '',
                     services: [
-                        'Candidate Selection Criteria',
-                        'Universities Selection Criteria',
-                        'Program bylaws and regulations',
-                        'Student Journey plan',
-                        'Counseling & students development plans',
-                        'Pre-Departure preparatory programs',
-                        'Enroll students into international universities',
-                        'Workshops, awareness sessions and summits',
-                        'Pre travel and post travel logistics',
-                        'Overseas continual support',
-                        'And more'
                     ]
                 },
                 stem: {
-                    title: 'STEM Education and Innovation Centers',
-                    description: 'Education is changing, STEM (Since, Technology, Engineering and Math), is the pathway to reshaping the ecosystem to rethinking and broadly reimagining. STEM is the future workforce skills, steps toward a new generation of innovators, creative leaders for now and the future. This approach of learning help to unlock the inherent potential of all students and equipping them with skills for the challenging work environment.',
-                    image: '/images/03_EDU.jpg',
-                    listTitle: 'Our services including:',
+                    title: '',
+                    description: '',
+                    image: '',
+                    listTitle: '',
                     services: [
-                        'STEM Teacher Training.',
-                        'STEM Students Training.',
-                        'STEM Labs.',
-                        'Summer STEM Camps.',
-                        'Students Workshops.',
-                        'Research and development.',
-                        'Innovation Parks.',
-                        'K-12 after school programs (Coding, Robotics, Drones, AI, Cybersecurity, AR & VR, 3D Printing & more).',
-                        'Establishing new STEM Schools or Shift to STEM.',
-                        'STEM Innovation and Technology Centers: <p>Together with our STEM partners, we design, build and provide full turnkey solutions, training, programs and activities that support the STEM & Technology parks and Centers for students, teachers and community.</p>'
                     ]
                 },
                 k12: {
-                    title: 'K-12 International Schools',
-                    description: 'JADCO in partnership with the 1st international School Services Worldwide with more than 60 years of experience with track records, is supporting the global education community, promotes innovative best practice for global education through a long list of services including but not limited to:',
-                    image: '/images/04_EDU.jpg',
+                    title: '',
+                    description: '',
+                    image: '',
                     services: [
-                        'School Operation and Management.',
-                        'Teacher Recruitment.',
-                        'Leadership Search.',
-                        'Professional Development.',
-                        'School Supply Services.',
-                        'Accounting and Finance.'
                     ]
                 }
             }

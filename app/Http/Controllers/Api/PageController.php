@@ -76,9 +76,7 @@ class PageController extends Controller
     
     public function getTrainingSections()
     {
-        $page = $this->pageService->getPageBySlug('training-and-professional-development');
-        $sections = $this->pageService->getPageSections($page->id);
-        
+        $sections = $this->pageService->getTrainingContent('training-and-professional-development');
         return response()->json([
             'success' => true,
             'data' => $sections
@@ -87,9 +85,7 @@ class PageController extends Controller
     
     public function getAiSections()
     {
-        $page = $this->pageService->getPageBySlug('ai-and-advanced-technologies');
-        $sections = $this->pageService->getPageSections($page->id);
-        
+        $sections = $this->pageService->getAiContent('ai-and-advanced-technologies');
         return response()->json([
             'success' => true,
             'data' => $sections
@@ -98,9 +94,7 @@ class PageController extends Controller
     
     public function getEgamingSections()
     {
-        $page = $this->pageService->getPageBySlug('egaming-and-esport');
-        $sections = $this->pageService->getPageSections($page->id);
-        
+        $sections = $this->pageService->getEgamingContent('egaming-and-esport');
         return response()->json([
             'success' => true,
             'data' => $sections
@@ -109,8 +103,7 @@ class PageController extends Controller
     
     public function getArtsSections()
     {
-        $page = $this->pageService->getPageBySlug('arts-and-entertainment');
-        $sections = $this->pageService->getPageSections($page->id);
+        $sections = $this->pageService->getArtsContent('arts-and-entertainment');
         
         return response()->json([
             'success' => true,

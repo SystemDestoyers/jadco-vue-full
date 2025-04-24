@@ -92,7 +92,7 @@ class PageService
         $sections = $this->pageRepository->getPageSections($page->id);
         
         if ($sections->isNotEmpty()) {
-            return $sections->first()->content;
+            return $sections;
         }
         
         return [];
@@ -104,7 +104,7 @@ class PageService
         $sections = $this->pageRepository->getPageSections($page->id);
         
         if ($sections->isNotEmpty()) {
-            return $sections->first()->content;
+            return $sections;
         }
         
         return [];
@@ -116,7 +116,7 @@ class PageService
         $sections = $this->pageRepository->getPageSections($page->id);
         
         if ($sections->isNotEmpty()) {
-            return $sections->first()->content;
+            return $sections;
         }
         
         return [];
@@ -128,7 +128,7 @@ class PageService
         $sections = $this->pageRepository->getPageSections($page->id);
         
         if ($sections->isNotEmpty()) {
-            return $sections->first()->content;
+            return $sections;
         }
         
         return [];

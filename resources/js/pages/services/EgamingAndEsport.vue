@@ -48,20 +48,11 @@ export default {
         return {
             loading: true,
             content: {
-                title: 'eGaming and eSport',
-                description: 'JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of Commerce (International Trade Administration), are together forming a consortium to propose a broad-based support package and plans for e-gaming and eSport to help and greatly accelerate the Kingdom\'s positioning as a leader in this industry worldwide by leveraging international relevant partners, SMEs, and other resources to support developing the sector\'s entire value chain and achieve the objectives of the Saudi Arabia\'s newly gaming, eSport and AI strategy.',
-                image: '/images/05_eGame/01.jpg',
-                listTitle: 'What we do:',
+                title: '',
+                description: '',
+                image: '',
+                listTitle: '',
                 services: [
-                    'Industry Analysis',
-                    'Policy and Regulatory Infrastructure',
-                    'Economic Impact',
-                    'Infrastructure and Facilities planning',
-                    'Education and Talent Development Strategy',
-                    'AI Engagement in e-gaming and esport',
-                    'Community engagement and outreach',
-                    'Event Management and Marketing Support',
-                    'Evaluation and Monitoring Framework'
                 ]
             }
         };
@@ -76,19 +67,32 @@ export default {
         async fetchData() {
             try {
                 // Try to get data from the API
-                const response = await axios.get('/api/egaming/sections');
+                const response = await axios.get('/api/egaming-and-esport/sections');
+                console.log('API Response:', response.data);
                 
-                if (response.data && response.data.content) {
-                    // If there's content data in the response, process it
-                    let content = response.data.content;
+                if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data)) {
+                    const sections = response.data.data;
                     
-                    // If the content is a string, parse it
-                    if (typeof content === 'string') {
-                        content = JSON.parse(content);
-                    }
-                    
-                    // Replace the content with data from API
-                    this.content = content;
+                    // Process each section
+                    sections.forEach(section => {
+                        if (section.name === 'egaming' || section.name === 'esport') {
+                            let sectionContent = section.content;
+                            
+                            // Parse content if it's a string
+                            if (typeof sectionContent === 'string') {
+                                try {
+                                    sectionContent = JSON.parse(sectionContent);
+                                } catch (error) {
+                                    console.error('Error parsing section content:', error);
+                                }
+                            }
+                            
+                            // Update content with section data
+                            if (sectionContent) {
+                                this.content = sectionContent;
+                            }
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching egaming service data:', error);

@@ -48,10 +48,10 @@ export default {
         return {
             loading: true,
             content: {
-                title: 'Arts and Entertainment',
-                description: 'Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.',
-                image: '/images/06_Arts/01.jpg',
-                subtitle: 'From Training and education in Arts & Entertainment subjects, to customizing projects and live events in association with our local and international partners.',
+                title: '',
+                description: '',
+                image: '',
+                subtitle: '',
                 services: []
             }
         };
@@ -66,19 +66,32 @@ export default {
         async fetchData() {
             try {
                 // Try to get data from the API
-                const response = await axios.get('/api/arts/sections');
+                const response = await axios.get('/api/arts-and-entertainment/sections');
+                console.log('API Response:', response.data);
                 
-                if (response.data && response.data.content) {
-                    // If there's content data in the response, process it
-                    let content = response.data.content;
+                if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data)) {
+                    const sections = response.data.data;
                     
-                    // If the content is a string, parse it
-                    if (typeof content === 'string') {
-                        content = JSON.parse(content);
-                    }
-                    
-                    // Replace the content with data from API
-                    this.content = content;
+                    // Process each section
+                    sections.forEach(section => {
+                        if (section.name === 'arts' || section.name === 'entertainment') {
+                            let sectionContent = section.content;
+                            
+                            // Parse content if it's a string
+                            if (typeof sectionContent === 'string') {
+                                try {
+                                    sectionContent = JSON.parse(sectionContent);
+                                } catch (error) {
+                                    console.error('Error parsing section content:', error);
+                                }
+                            }
+                            
+                            // Update content with section data
+                            if (sectionContent) {
+                                this.content = sectionContent;
+                            }
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching arts and entertainment service data:', error);

@@ -8,7 +8,7 @@
 
         <div v-else>
             <!-- Service Detail Hero Section -->
-            <section class="service-hero-section py-10">
+            <section v-if="content.fellowship" class="service-hero-section py-10">
                 <div class="container">
                     <div class="row">
                         <div class="educational-services sub-section">                
@@ -47,7 +47,7 @@
             </section>
 
             <!-- Technical and Vocational Training Section -->
-            <section class="service-hero-section py-10">
+            <section v-if="content.technical" class="service-hero-section py-10">
                 <div class="container">
                     <div class="row">
                         <div class="educational-services sub-section">                
@@ -90,7 +90,7 @@
             </section>
 
             <!-- Online Professional Programs Section -->
-            <section class="service-hero-section py-10">
+            <section v-if="content.online" class="service-hero-section py-10">
                 <div class="container">
                     <div class="row">
                         <div class="educational-services sub-section">                
@@ -140,43 +140,27 @@ export default {
             loading: true,
             content: {
                 fellowship: {
-                    title: 'Fellowship, Internship and Work Experience',
-                    description: 'For a new talented and future skilled generation, we draw the map and open the door for understanding the contemporary workplace and environment that promote ready to innovate employees.',
-                    image: '/images/03_Trining/01.jpg',
-                    mainContent: 'JADCO, in association with prestigious organizations from all sizes, take your personal and professional development in an international company in a global city to learn new skills, reskill or upskill yourself and accelerate your career advancement.<br><br>Gain experience, new skills, network, knowledge, culture, friends and prepare yourself for a new workplace challenge:',
+                    title: '',
+                    description: '',
+                    image: '',
+                    mainContent: '',
                     services: [
-                        'In-person internship.',
-                        'Any career field.',
-                        'Central Cities around the world.',
-                        'Boost your employability.'
                     ]
                 },
                 technical: {
-                    title: 'Technical and Vocational Training and Education (TVTE)',
-                    description: 'Studying overseas at leading colleges that provide students with academic, technical skills, Knowledge, career training necessary to succeed in future jobs, make them ready to go for labor market.',
-                    image: '/images/03_Trining/03_Training.jpg',
-                    mainContent: 'In collaboration with our best TVTE providers in the U.S, UK and other countries. These programs are hands-on diploma or associate degrees of 2 years study and training of majors from all fields and sectors, that make students equipped by all skills needed for the career job market.',
-                    listTitle: 'Example majors including:',
+                    title: '',
+                    description: '',
+                    image: '',
+                    mainContent: '',
+                    listTitle: '',
                     services: [
-                        'Advanced Transportation Technologies',
-                        'Automotive Technology',
-                        'Architecture',
-                        'Baking & Pastry Arts',
-                        'Construction Technology',
-                        'Culinary Arts',
-                        'Cybersecurity',
-                        'Fashion',
-                        'Game Design',
-                        'Horticulture',
-                        'Nursing & Medical Assisting',
-                        'And more.'
                     ]
                 },
                 online: {
-                    title: 'Online Professional Programs',
-                    description: 'Flexible learning for students and busy professionals with high quality teaching, blended learning activities with experts\' instructors, SMEs, professional and leaders from the industry.',
-                    image: '/images/03_Trining/04_Training.jpg',
-                    mainContent: 'JADCO in partnership with top ranked universities in the world will serve to provide your organization the best online learning experience and quality of knowledge in all sectors, delivering programs that develop the skills necessary to success in a changing and challenging work environment.'
+                    title: '',
+                    description: '',
+                    image: '',
+                    mainContent: '',
                 }
             }
         };
