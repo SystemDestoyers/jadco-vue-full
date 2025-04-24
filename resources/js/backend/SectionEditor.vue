@@ -69,29 +69,67 @@
           </div>
           
           <div class="editor-main">
-            <div v-if="currentSchema">
-              <JsonEditor 
-                ref="jsonEditor"
-                :schema="currentSchema"
-                v-model="contentData"
-                @input="handleEditorInput"
-              >
-                <div class="editor-actions">
-                  <button 
-                    @click="saveContent" 
-                    class="btn btn-primary" 
-                    :disabled="isSaving"
+            <div class="layout-controls">
+              <div class="view-toggle">
+                <button 
+                  :class="['toggle-btn', activeView === 'form' ? 'active' : '']"
+                  @click="activeView = 'form'"
+                >
+                  <i class="fas fa-edit"></i> Form View
+                </button>
+                <button 
+                  :class="['toggle-btn', activeView === 'tree' ? 'active' : '']"
+                  @click="activeView = 'tree'"
+                >
+                  <i class="fas fa-sitemap"></i> Tree View
+                </button>
+                <button 
+                  :class="['toggle-btn', activeView === 'split' ? 'active' : '']"
+                  @click="activeView = 'split'"
+                >
+                  <i class="fas fa-columns"></i> Split View
+                </button>
+              </div>
+            </div>
+
+            <div :class="['editor-panels', `layout-${activeView}`]">
+              <div class="panel form-panel" v-show="activeView === 'form' || activeView === 'split'">
+                <div v-if="currentSchema" class="form-editor">
+                  <JsonEditor 
+                    ref="jsonEditor"
+                    :schema="currentSchema"
+                    v-model="contentData"
+                    @input="handleEditorInput"
                   >
-                    {{ isSaving ? 'Saving...' : 'Save Changes' }}
-                  </button>
-                  <button 
-                    @click="resetContent"
-                    class="btn btn-secondary"
-                  >
-                    Reset Changes
-                  </button>
+                    <div class="editor-actions">
+                      <button 
+                        @click="saveContent" 
+                        class="btn btn-primary" 
+                        :disabled="isSaving"
+                      >
+                        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                      </button>
+                      <button 
+                        @click="resetContent"
+                        class="btn btn-secondary"
+                      >
+                        Reset Changes
+                      </button>
+                    </div>
+                  </JsonEditor>
                 </div>
-              </JsonEditor>
+              </div>
+              
+              <div class="panel tree-panel" v-show="activeView === 'tree' || activeView === 'split'">
+                <div class="tree-header">
+                  <h3>JSON Structure</h3>
+                  <p class="tree-description">
+                    You can edit the JSON directly by clicking on keys or values.
+                    Use the <i class="fas fa-plus"></i> button to add new items and <i class="fas fa-trash"></i> to delete.
+                  </p>
+                </div>
+                <JsonTreeView :json="contentData" @update:json="handleTreeUpdate" />
+              </div>
             </div>
           </div>
         </div>
@@ -106,11 +144,13 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import AdminLayout from './AdminLayout.vue';
 import JsonEditor from './components/JsonEditor.vue';
+import JsonTreeView from './components/JsonTreeView.vue';
 
 export default defineComponent({
   components: {
     AdminLayout,
-    JsonEditor
+    JsonEditor,
+    JsonTreeView
   },
   
   setup() {
@@ -125,6 +165,7 @@ export default defineComponent({
     const isSaving = ref(false);
     const error = ref(null);
     const hasChanges = ref(false);
+    const activeView = ref('form'); // 'form', 'tree', or 'split'
 
     const fetchSection = async () => {
       isLoading.value = true;
@@ -350,6 +391,11 @@ export default defineComponent({
       return schemas[type] || schemas.custom;
     });
 
+    const handleTreeUpdate = (updatedJson) => {
+      contentData.value = updatedJson;
+      hasChanges.value = true;
+    };
+
     // Handle page leave with unsaved changes
     onMounted(() => {
       fetchSection();
@@ -369,6 +415,7 @@ export default defineComponent({
       isSaving,
       error,
       jsonEditor,
+      activeView,
       currentSchema,
       fetchSection,
       saveContent,
@@ -376,7 +423,8 @@ export default defineComponent({
       handleEditorInput,
       formatSectionType,
       formatDate,
-      getSchemaFields
+      getSchemaFields,
+      handleTreeUpdate
     };
   }
 });
@@ -548,8 +596,94 @@ export default defineComponent({
 
 .editor-main {
   flex: 1;
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.layout-controls {
+  padding: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  color: #7f8c8d;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background-color: #e9ecef;
+}
+
+.toggle-btn.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.editor-panels {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.layout-form .form-panel {
+  flex: 1;
+}
+
+.layout-tree .tree-panel {
+  flex: 1;
+}
+
+.layout-split .form-panel,
+.layout-split .tree-panel {
+  flex: 1;
+  width: 50%;
+}
+
+.panel {
   overflow-y: auto;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.tree-panel {
+  border-left: 1px solid #ecf0f1;
+  background-color: #f8fafc;
+}
+
+.tree-header {
+  margin-bottom: 1rem;
+}
+
+.tree-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+}
+
+.tree-description {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.form-editor {
+  padding-bottom: 2rem;
 }
 
 .editor-actions {
