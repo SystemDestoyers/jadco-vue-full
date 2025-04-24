@@ -5,24 +5,24 @@
             Vue App Loaded Successfully! <button @click="showDebug = false" style="background: #721c24; color: white; border: none; padding: 2px 8px; margin-left: 10px; cursor: pointer;">Close</button>
         </div>
 
-        <!-- Preloader -->
-        <div class="preloader" v-show="isLoading">
+        <!-- Preloader - Hide on admin pages -->
+        <div class="preloader" v-show="isLoading && !isAdminPage">
             <img :src="'/images/logo.png'" alt="JADCO Logo" class="preloader-logo" ref="preloaderLogo">
         </div>
 
         <!-- Scroll Indicator -->
-        <div class="scroll-indicator-container">
+        <div class="scroll-indicator-container" v-if="!isAdminPage">
             <div class="scroll-indicator" :style="{ width: scrollPercent + '%' }"></div>
         </div>
 
-        <!-- Header & Navbar -->
-        <Navbar />
+        <!-- Header & Navbar - Hide on admin pages -->
+        <Navbar v-if="!isAdminPage" />
 
         <!-- Content Area -->
         <router-view></router-view>
 
-        <!-- Contact Section -->
-        <Contact />
+        <!-- Contact Section - Hide on admin pages -->
+        <Contact v-if="!isAdminPage" />
     </div>
 </template>
 
@@ -43,6 +43,16 @@ export default {
             scriptsLoaded: false,
             servicesLoaded: false
         };
+    },
+    computed: {
+        isAdminLoginPage() {
+            // Check if we're on the admin login page
+            return this.$route.name === 'admin.login' || this.$route.path === '/admin/login';
+        },
+        isAdminPage() {
+            // Check if we're on any admin page
+            return this.$route.path.startsWith('/admin');
+        }
     },
     mounted() {
         console.log('Vue App mounted successfully!');

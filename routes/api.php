@@ -34,12 +34,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Admin Authentication Routes
+// These routes are now handled by web.php, so they're commented out here
+/*
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('/user', [AdminAuthController::class, 'user'])->middleware('auth:sanctum');
     Route::get('/check-auth', [AdminAuthController::class, 'checkAuth']);
 });
+*/
 
 // Page routes
 Route::get('/home/sections', [PageController::class, 'getHomeSections']);
@@ -60,3 +63,22 @@ Route::get('/training-and-professional-development/sections', [PageController::c
 Route::get('/ai-and-advanced-technologies/sections', [PageController::class, 'getAiSections']);
 Route::get('/egaming-and-esport/sections', [PageController::class, 'getEgamingSections']);
 Route::get('/arts-and-entertainment/sections', [PageController::class, 'getArtsSections']);
+
+// Admin API Routes
+Route::prefix('admin')->group(function () {
+    // Pages management
+    Route::get('/pages', [AdminPageController::class, 'index']);
+    Route::post('/pages', [AdminPageController::class, 'store']);
+    Route::get('/pages/{id}', [AdminPageController::class, 'show']);
+    Route::put('/pages/{id}', [AdminPageController::class, 'update']);
+    Route::delete('/pages/{id}', [AdminPageController::class, 'destroy']);
+
+    // Sections management
+    Route::get('/pages/{pageId}/sections', [AdminSectionController::class, 'index']);
+    Route::post('/pages/{pageId}/sections', [AdminSectionController::class, 'store']);
+    Route::get('/sections/{id}', [AdminSectionController::class, 'show']);
+    Route::put('/sections/{id}', [AdminSectionController::class, 'update']);
+    Route::put('/sections/{id}/content', [AdminSectionController::class, 'updateContent']);
+    Route::put('/sections/{id}/order', [AdminSectionController::class, 'updateOrder']);
+    Route::delete('/sections/{id}', [AdminSectionController::class, 'destroy']);
+});

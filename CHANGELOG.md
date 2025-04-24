@@ -14,6 +14,30 @@ All notable changes to this project will be documented in this file.
   - Added getPageContent method for retrieving page content by slug
   - Added updateSectionContent method for updating section content by key-value pairs
   - Added updateSectionImage method for updating section images with file uploads
+- Implemented admin dashboard for content management:
+  - Created AdminLayout component with responsive sidebar and top navigation
+  - Added secure login page with error handling
+  - Built dashboard overview with page and section statistics
+  - Implemented Pages CRUD interface with modal forms
+  - Built Sections management with ordering functionality
+  - Created Section Editor using vue-json-ui-editor for structured content editing
+  - Added authentication guards for protected routes
+  - Implemented FontAwesome integration for consistent iconography
+- Added new prefix for admin authentication routes (`admin-auth`)
+- Created web routes for admin authentication (login, logout, user, check-auth)
+- Added mock data for admin dashboard for development and testing
+
+### Changed
+- Updated Vue router to use new web routes for authentication
+- Modified LoginPage.vue to use new web routes instead of API routes
+- Updated authentication route middleware
+- Fixed admin dashboard layout to not include frontend header and footer
+- Updated admin layout to use correct logout endpoint
+- Enhanced admin interface with improved navigation and styling
+- Fixed dashboard to properly show mock data when API endpoints are not available
+
+### Removed
+- Removed duplicate API routes for admin authentication (these are now handled by web routes)
 
 ## [0.1.0] - 2023-05-16
 
@@ -589,3 +613,11 @@ All notable changes to this project will be documented in this file.
     - Prevented animation conflicts between different components
     - Fixed duplicate animation issues during page reloads
     - Applied final animation state directly to ensure proper completion 
+
+### Changed
+- Updated Vue router to use new web routes for authentication
+- Modified LoginPage.vue to use new web routes instead of API routes
+- Updated authentication route middleware
+
+### Removed
+- Removed duplicate API routes for admin authentication (these are now handled by web routes) 

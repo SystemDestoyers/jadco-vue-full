@@ -6,6 +6,13 @@ import AiAndAdvancedTechnologies from './pages/services/AiAndAdvancedTechnologie
 import EgamingAndEsport from './pages/services/EgamingAndEsport.vue';
 import ArtsAndEntertainment from './pages/services/ArtsAndEntertainment.vue';
 
+// Import admin components
+import LoginPage from './backend/LoginPage.vue';
+import DashboardPage from './backend/DashboardPage.vue';
+import PagesPage from './backend/PagesPage.vue';
+import SectionsPage from './backend/SectionsPage.vue';
+import SectionEditor from './backend/SectionEditor.vue';
+
 const routes = [
     // Home route removed - handled by Laravel Blade template
     {
@@ -38,6 +45,37 @@ const routes = [
         name: 'services.arts',
         component: ArtsAndEntertainment
     },
+
+    // Admin routes
+    {
+        path: '/admin/login',
+        name: 'admin.login',
+        component: LoginPage
+    },
+    {
+        path: '/admin',
+        name: 'admin.dashboard',
+        component: DashboardPage,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/pages',
+        name: 'admin.pages',
+        component: PagesPage,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/pages/:id/sections',
+        name: 'admin.sections',
+        component: SectionsPage,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/sections/:id/edit',
+        name: 'admin.section-editor',
+        component: SectionEditor,
+        meta: { requiresAuth: true }
+    }
 ];
 
 export default routes; 
