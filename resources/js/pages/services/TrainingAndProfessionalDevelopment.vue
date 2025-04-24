@@ -191,40 +191,34 @@ export default {
         async fetchData() {
             try {
                 // Try to get data from the API
-                const response = await axios.get('/api/training/sections');
-                console.log('API Response:', response);
+                const response = await axios.get('/api/training-and-professional-development/sections');
+                console.log('API Response:', response.data);
                 
-                // Check if we have a response with data
-                if (response && response.data && response.data.success) {
-                    console.log('Response data:', response.data);
-                    
-                    // Get sections data
+                if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data)) {
                     const sections = response.data.data;
                     
-                    if (sections && sections.length > 0) {
-                        // Process each section
-                        for (const section of sections) {
-                            if (section.name === 'training-and-professional-development') {
-                                let sectionContent = section.content;
-                                
-                                // Parse content if it's a string
-                                if (typeof sectionContent === 'string') {
-                                    try {
-                                        sectionContent = JSON.parse(sectionContent);
-                                        console.log('Parsed section content:', sectionContent);
-                                    } catch (parseError) {
-                                        console.error('Error parsing section content:', parseError);
-                                    }
-                                }
-                                
-                                // Replace the content with data from API
-                                if (sectionContent) {
-                                    this.content = sectionContent;
-                                    break;
-                                }
+                    // Process each section and update content accordingly
+                    sections.forEach(section => {
+                        let sectionContent = section.content;
+                        
+                        // Parse content if it's a string
+                        if (typeof sectionContent === 'string') {
+                            try {
+                                sectionContent = JSON.parse(sectionContent);
+                            } catch (error) {
+                                console.error('Error parsing section content:', error);
                             }
                         }
-                    }
+                        
+                        // Map each section to the appropriate content property
+                        if (section.name === 'fellowship') {
+                            this.content.fellowship = sectionContent;
+                        } else if (section.name === 'technical') {
+                            this.content.technical = sectionContent;
+                        } else if (section.name === 'online') {
+                            this.content.online = sectionContent;
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching training service data:', error);
