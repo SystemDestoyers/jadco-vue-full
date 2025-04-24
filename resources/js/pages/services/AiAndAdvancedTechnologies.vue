@@ -46,11 +46,11 @@ export default {
         return {
             loading: true,
             content: {
-                title: 'Artificial Intelligence (AI) and Advanced Tech',
-                description: 'AI represents a transformative technology with the potential to revolutionize organizations services and operations.<br>By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.<br>By investing in AI education, training and projects, organizations can better meet the needs of their people, drive innovation and ensure sustainable development.',
-                image: '/images/04_AI/01.jpg',
-                subtitle: 'We Customize Transformation Projects',
-                mainContent: 'JADCO and partners support to harness the power of AI and digital technologies to help improve business operations and organization thrive.<br>We help to explore ways to leverage new advances in digital-tech to re-invent how things get done and boost your organization positioning in its sector.<br>We analyze the existing structure, navigate challenges and evaluate ways that technology can affect factors in your organization and identify new business models enabled by AI and explore opportunities presented by AI.<br>Learn how to shape your AI business strategy, organizational dynamics, products, services innovation and evolving workforce skills and discover practical solutions to build business advantage.'
+                title: '',
+                description: '',
+                image: '',
+                subtitle: '',
+                mainContent: '',
             }
         };
     },

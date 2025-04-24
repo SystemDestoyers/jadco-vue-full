@@ -5,7 +5,6 @@ import TrainingAndProfessionalDevelopment from './pages/services/TrainingAndProf
 import AiAndAdvancedTechnologies from './pages/services/AiAndAdvancedTechnologies.vue';
 import EgamingAndEsport from './pages/services/EgamingAndEsport.vue';
 import ArtsAndEntertainment from './pages/services/ArtsAndEntertainment.vue';
-import ScholarshipProgramsManagement from './pages/services/ScholarshipProgramsManagement.vue';
 
 const routes = [
     // Home route removed - handled by Laravel Blade template
@@ -39,11 +38,6 @@ const routes = [
         name: 'services.arts',
         component: ArtsAndEntertainment
     },
-    {
-        path: '/services/scholarship-programs-management',
-        name: 'services.scholarship',
-        component: ScholarshipProgramsManagement
-    }
 ];
 
 export default routes; 
