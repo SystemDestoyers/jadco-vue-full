@@ -49,4 +49,9 @@ class PageRepository
     {
         return $this->getSectionsByName('contact');
     }
+
+    public function getSectionByName($name)
+    {
+        return Section::where('name', $name)->first();
+    }
 } 

@@ -33,14 +33,26 @@ class PageController extends Controller
 
     public function getHeaderContent()
     {
-        $content = $this->pageService->getHeaderContent();
-        return response()->json($content);
+        // Get header section from database
+        $headerSection = $this->pageService->getHeaderSection();
+        
+        // Return the entire section with content
+        return response()->json([
+            'success' => true,
+            'data' => $headerSection
+        ]);
     }
 
     public function getContactContent()
     {
-        $content = $this->pageService->getContactContent();
-        return response()->json($content);
+        // Get contact section from database
+        $contactSection = $this->pageService->getContactSection();
+        
+        // Return the entire section with content
+        return response()->json([
+            'success' => true,
+            'data' => $contactSection
+        ]);
     }
 
     public function getAboutContent()

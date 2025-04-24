@@ -24,6 +24,11 @@ class PageService
         return $this->pageRepository->getHomeSections();
     }
 
+    public function getHeaderSection()
+    {
+        return $this->pageRepository->getSectionByName('header');
+    }
+
     public function getHeaderContent()
     {
         $sections = $this->pageRepository->getHeaderSections();
@@ -33,6 +38,11 @@ class PageService
         }
         
         return [];
+    }
+
+    public function getContactSection()
+    {
+        return $this->pageRepository->getSectionByName('contact');
     }
 
     public function getContactContent()

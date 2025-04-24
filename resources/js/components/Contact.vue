@@ -169,20 +169,23 @@ export default {
                 const response = await axios.get('/api/contact/sections');
                 
                 if (response.data && response.data.success) {
-                    const contactData = response.data.data;
+                    const contactSection = response.data.data;
                     
-                    if (contactData && contactData.content) {
+                    if (contactSection && contactSection.content) {
                         // Parse content if needed
-                        let content = contactData.content;
+                        let content = contactSection.content;
                         if (typeof content === 'string') {
                             content = JSON.parse(content);
                         }
                         
-                        // Merge with default content
-                        this.content = {
-                            ...this.content,
-                            ...content
-                        };
+                        // Only update the content properties, preserving component structure
+                        if (content.logo) this.content.logo = content.logo;
+                        if (content.tagline) this.content.tagline = content.tagline;
+                        if (content.heading) this.content.heading = content.heading;
+                        if (content.locations) this.content.locations = content.locations;
+                        if (content.form) this.content.form = content.form;
+                        if (content.socialLinks) this.content.socialLinks = content.socialLinks;
+                        if (content.copyright) this.content.copyright = content.copyright;
                     }
                 }
             } catch (error) {

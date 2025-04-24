@@ -146,30 +146,32 @@ export default {
                 const response = await axios.get('/api/header/sections');
                 
                 if (response.data && response.data.success) {
-                    const headerData = response.data.data;
+                    const headerSection = response.data.data;
                     
-                    if (headerData && headerData.content) {
+                    if (headerSection && headerSection.content) {
                         // Parse content if needed
-                        let content = headerData.content;
+                        let content = headerSection.content;
                         if (typeof content === 'string') {
                             content = JSON.parse(content);
                         }
                         
-                        // Merge with default content
-                        this.content = {
-                            ...this.content,
-                            ...content
-                        };
-                    }
-                    
-                    // Update carousel slides if provided
-                    if (headerData.slides && headerData.slides.length) {
-                        this.carouselSlides = headerData.slides;
-                    }
-                    
-                    // Update services if provided
-                    if (headerData.services && headerData.services.length) {
-                        this.services = headerData.services;
+                        // Only update the content properties, preserving component structure
+                        if (content.headings) this.content.headings = content.headings;
+                        if (content.aboutHeading) this.content.aboutHeading = content.aboutHeading;
+                        if (content.serviceHeadings) this.content.serviceHeadings = content.serviceHeadings;
+                        if (content.errorHeading) this.content.errorHeading = content.errorHeading;
+                        if (content.servicesTitle) this.content.servicesTitle = content.servicesTitle;
+                        if (content.talkButtonText) this.content.talkButtonText = content.talkButtonText;
+                        
+                        // Update services if provided in content
+                        if (content.services && content.services.length) {
+                            this.services = content.services;
+                        }
+                        
+                        // Update slides if provided in content
+                        if (content.slides && content.slides.length) {
+                            this.carouselSlides = content.slides;
+                        }
                     }
                 }
             } catch (error) {
