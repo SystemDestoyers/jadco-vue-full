@@ -1,0 +1,23 @@
+/* Admin CSS base styles */
+:root {
+  --primary-color: #4a6cf7;
+  --primary-hover: #3b5de7;
+  --secondary-color: #10b981;
+  --danger-color: #ef4444;
+  --dark-color: #1a202c;
+  --text-color: #333333;
+  --text-muted: #718096;
+  --border-color: #e2e8f0;
+  --bg-light: #f7fafc;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Reset styles handled in the Vue component */
+
+/* Base font setup for better readability */
+body {
+  font-size: 16px;
+  color: var(--text-color);
+  background-color: var(--bg-light);
+} 
