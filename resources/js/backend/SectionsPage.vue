@@ -346,16 +346,38 @@ const saveSection = async () => {
         // Preserve the order property from the response
         sections.value[index] = { ...sections.value[index], ...response.data };
       }
+      
+      // Show success notification
+      if (window.$notifications) {
+        window.$notifications.success('Section updated successfully!');
+      }
     } else {
       // Create new section
       const response = await axios.post(`/api/admin/pages/${pageId}/sections`, form);
       sections.value.push(response.data);
+      
+      // Show success notification
+      if (window.$notifications) {
+        window.$notifications.success('Section created successfully!');
+      }
     }
     
     // Close the modal after successful save
     closeModal();
   } catch (err) {
-    error.value = 'Failed to save section. Please try again.';
+    // Show error notification instead of setting error.value
+    if (window.$notifications) {
+      if (err.response && err.response.status === 422) {
+        // Validation errors
+        const errors = err.response.data.errors;
+        const firstError = errors ? Object.values(errors)[0][0] : 'Validation failed';
+        window.$notifications.error(`Validation error: ${firstError}`);
+      } else {
+        window.$notifications.error(err.response?.data?.message || 'Failed to save section. Please try again.');
+      }
+    } else {
+      error.value = 'Failed to save section. Please try again.';
+    }
   } finally {
     isSubmitting.value = false;
   }
@@ -369,8 +391,18 @@ const moveSection = async (section, direction) => {
     
     // Refresh the sections list after reordering
     await fetchSections();
+    
+    // Show success notification
+    if (window.$notifications) {
+      window.$notifications.success(`Section ${direction === 'up' ? 'moved up' : 'moved down'} successfully!`);
+    }
   } catch (err) {
-    error.value = 'Failed to reorder section. Please try again.';
+    // Show error notification
+    if (window.$notifications) {
+      window.$notifications.error(err.response?.data?.message || 'Failed to reorder section. Please try again.');
+    } else {
+      error.value = 'Failed to reorder section. Please try again.';
+    }
   }
 };
 
@@ -396,10 +428,20 @@ const deleteSection = async () => {
       sections.value.splice(index, 1);
     }
     
+    // Show success notification
+    if (window.$notifications) {
+      window.$notifications.success('Section deleted successfully!');
+    }
+    
     // Close the modal after successful delete
     closeDeleteModal();
   } catch (err) {
-    error.value = 'Failed to delete section. Please try again.';
+    // Show error notification
+    if (window.$notifications) {
+      window.$notifications.error(err.response?.data?.message || 'Failed to delete section. Please try again.');
+    } else {
+      error.value = 'Failed to delete section. Please try again.';
+    }
   } finally {
     isDeleting.value = false;
   }

@@ -155,10 +155,25 @@ export default defineComponent({
         // Update section with the new content
         section.value.content = { ...contentData.value };
         
-        // Show success message
-        showSavedMessage();
+        // Show success notification using the global notification system
+        if (window.$notifications) {
+          window.$notifications.success('Content saved successfully!');
+        } else if (jsonEditor.value) {
+          // Fallback to JsonEditor's notification system
+          jsonEditor.value.notifySuccess('Content saved successfully!');
+        }
+        
+        hasChanges.value = false;
       } catch (err) {
         error.value = 'Failed to save content. Please try again.';
+        
+        // Show error notification
+        if (window.$notifications) {
+          window.$notifications.error(err.response?.data?.message || 'Failed to save content. Please try again.');
+        } else if (jsonEditor.value) {
+          // Fallback to JsonEditor's notification system
+          jsonEditor.value.notifyError(err.response?.data?.message || 'Failed to save content. Please try again.');
+        }
       } finally {
         isSaving.value = false;
       }
@@ -167,6 +182,11 @@ export default defineComponent({
     const resetContent = () => {
       if (jsonEditor.value) {
         jsonEditor.value.reset();
+        
+        // Show reset notification
+        if (window.$notifications) {
+          window.$notifications.warning('Content has been reset to original values.');
+        }
       }
     };
 
@@ -175,8 +195,6 @@ export default defineComponent({
     };
 
     const showSavedMessage = () => {
-      // Display a success message (could use a toast notification here)
-      alert('Content saved successfully!');
       hasChanges.value = false;
     };
 

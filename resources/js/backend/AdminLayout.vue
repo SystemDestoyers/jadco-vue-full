@@ -54,12 +54,16 @@
         <slot></slot>
       </main>
     </div>
+    
+    <!-- Global Notification Manager -->
+    <NotificationManager />
   </div>
 </template>
 
 <script setup>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import NotificationManager from './components/NotificationManager.vue';
 
 const router = useRouter();
 
@@ -68,7 +72,7 @@ const logout = async () => {
     await axios.post('/admin-auth/logout');
     router.push('/admin/login');
   } catch (error) {
-    // Replace console.error('Logout failed', error); with nothing
+    // Silent fail
   }
 };
 </script>

@@ -261,16 +261,38 @@ const savePage = async () => {
       if (index !== -1) {
         pages.value[index] = response.data;
       }
+      
+      // Show success notification
+      if (window.$notifications) {
+        window.$notifications.success('Page updated successfully!');
+      }
     } else {
       // Create new page
       const response = await axios.post('/api/admin/pages', form);
       pages.value.unshift(response.data);
+      
+      // Show success notification
+      if (window.$notifications) {
+        window.$notifications.success('Page created successfully!');
+      }
     }
     
     // Close the modal after successful save
     closeModal();
   } catch (err) {
-    error.value = 'Failed to save page. Please try again.';
+    // Show error notification instead of setting error.value
+    if (window.$notifications) {
+      if (err.response && err.response.status === 422) {
+        // Validation errors
+        const errors = err.response.data.errors;
+        const firstError = errors ? Object.values(errors)[0][0] : 'Validation failed';
+        window.$notifications.error(`Validation error: ${firstError}`);
+      } else {
+        window.$notifications.error(err.response?.data?.message || 'Failed to save page. Please try again.');
+      }
+    } else {
+      error.value = 'Failed to save page. Please try again.';
+    }
   } finally {
     isSubmitting.value = false;
   }
@@ -298,10 +320,20 @@ const deletePage = async () => {
       pages.value.splice(index, 1);
     }
     
+    // Show success notification
+    if (window.$notifications) {
+      window.$notifications.success('Page deleted successfully!');
+    }
+    
     // Close the modal after successful delete
     closeDeleteModal();
   } catch (err) {
-    error.value = 'Failed to delete page. Please try again.';
+    // Show error notification
+    if (window.$notifications) {
+      window.$notifications.error(err.response?.data?.message || 'Failed to delete page. Please try again.');
+    } else {
+      error.value = 'Failed to delete page. Please try again.';
+    }
   } finally {
     isDeleting.value = false;
   }
