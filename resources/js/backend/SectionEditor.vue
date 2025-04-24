@@ -69,12 +69,30 @@
           </div>
           
           <div class="editor-main">
-            <vue-json-ui-editor 
-              v-model="content" 
-              :schema="getSchema(section.type)"
-              @input="handleEditorInput"
-              @error="handleEditorError" 
-            />
+            <div v-if="currentSchema">
+              <JsonEditor 
+                ref="jsonEditor"
+                :schema="currentSchema"
+                v-model="contentData"
+                @input="handleEditorInput"
+              >
+                <div class="editor-actions">
+                  <button 
+                    @click="saveContent" 
+                    class="btn btn-primary" 
+                    :disabled="isSaving"
+                  >
+                    {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                  </button>
+                  <button 
+                    @click="resetContent"
+                    class="btn btn-secondary"
+                  >
+                    Reset Changes
+                  </button>
+                </div>
+              </JsonEditor>
+            </div>
           </div>
         </div>
       </div>
@@ -82,232 +100,269 @@
   </AdminLayout>
 </template>
 
-<script setup>
-import { ref, onMounted, watch } from 'vue';
+<script>
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import AdminLayout from './AdminLayout.vue';
-import VueJsonUiEditor from 'vue-json-ui-editor';
+import JsonEditor from './components/JsonEditor.vue';
 
-const route = useRoute();
-const router = useRouter();
-const sectionId = route.params.id;
-
-const section = ref(null);
-const content = ref({});
-const isLoading = ref(true);
-const isSaving = ref(false);
-const error = ref(null);
-const hasChanges = ref(false);
-const contentData = ref({});
-
-const fetchSection = async () => {
-  isLoading.value = true;
-  error.value = null;
+export default defineComponent({
+  components: {
+    AdminLayout,
+    JsonEditor
+  },
   
-  try {
-    const response = await axios.get(`/api/admin/sections/${sectionId}`);
-    section.value = response.data;
-    
-    // Initialize the content with current content
-    contentData.value = { ...section.value.content };
-  } catch (err) {
-    console.error('Error fetching section:', err);
-    error.value = 'Failed to load section. Please try again.';
-  } finally {
-    isLoading.value = false;
-  }
-};
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const sectionId = route.params.id;
+    const jsonEditor = ref(null);
 
-const saveContent = async () => {
-  isSaving.value = true;
-  error.value = null;
-  
-  try {
-    await axios.put(`/api/admin/sections/${sectionId}/content`, {
-      content: contentData.value
-    });
-    
-    // Update section with the new content
-    section.value.content = { ...contentData.value };
-    
-    // Show success message
-    showSavedMessage();
-  } catch (err) {
-    console.error('Error saving content:', err);
-    error.value = 'Failed to save content. Please try again.';
-  } finally {
-    isSaving.value = false;
-  }
-};
+    const section = ref(null);
+    const contentData = ref({});
+    const isLoading = ref(true);
+    const isSaving = ref(false);
+    const error = ref(null);
+    const hasChanges = ref(false);
 
-const handleEditorInput = () => {
-  hasChanges.value = true;
-};
-
-const handleEditorError = (err) => {
-  console.error('Editor error:', err);
-};
-
-const formatSectionType = (type) => {
-  const types = {
-    hero: 'Hero Section',
-    content: 'Content Block',
-    cards: 'Card Grid',
-    features: 'Feature List',
-    cta: 'Call to Action',
-    testimonials: 'Testimonials',
-    custom: 'Custom Section'
-  };
-  
-  return types[type] || type;
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleString();
-};
-
-const getSchemaFields = (type) => {
-  const schemas = {
-    hero: {
-      title: { description: 'Main heading text' },
-      subtitle: { description: 'Subheading text' },
-      cta_text: { description: 'Call-to-action button text' },
-      cta_link: { description: 'Button link URL' },
-      background_image: { description: 'Background image URL' }
-    },
-    content: {
-      title: { description: 'Section title' },
-      content: { description: 'Main content (HTML allowed)' }
-    },
-    cards: {
-      title: { description: 'Section title' },
-      cards: { description: 'Array of card objects with title, content, and image' }
-    },
-    features: {
-      title: { description: 'Section title' },
-      features: { description: 'Array of feature objects with title, description, and icon' }
-    },
-    cta: {
-      title: { description: 'Call-to-action title' },
-      description: { description: 'Description text' },
-      button_text: { description: 'Button text' },
-      button_link: { description: 'Button link URL' }
-    },
-    testimonials: {
-      title: { description: 'Section title' },
-      testimonials: { description: 'Array of testimonial objects with quote, author, and role' }
-    },
-    custom: { description: 'Custom JSON structure' }
-  };
-  
-  return schemas[type] || {};
-};
-
-const getSchema = (type) => {
-  const schemas = {
-    hero: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', title: 'Title' },
-        subtitle: { type: 'string', title: 'Subtitle' },
-        cta_text: { type: 'string', title: 'CTA Button Text' },
-        cta_link: { type: 'string', title: 'CTA Button Link' },
-        background_image: { type: 'string', title: 'Background Image URL' }
+    const fetchSection = async () => {
+      isLoading.value = true;
+      error.value = null;
+      
+      try {
+        const response = await axios.get(`/api/admin/sections/${sectionId}`);
+        section.value = response.data;
+        
+        // Initialize the content with current content
+        contentData.value = { ...section.value.content };
+      } catch (err) {
+        console.error('Error fetching section:', err);
+        error.value = 'Failed to load section. Please try again.';
+      } finally {
+        isLoading.value = false;
       }
-    },
-    content: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', title: 'Title' },
-        content: { type: 'string', title: 'Content (HTML)', format: 'textarea' }
+    };
+
+    const saveContent = async () => {
+      isSaving.value = true;
+      error.value = null;
+      
+      try {
+        await axios.put(`/api/admin/sections/${sectionId}/content`, {
+          content: contentData.value
+        });
+        
+        // Update section with the new content
+        section.value.content = { ...contentData.value };
+        
+        // Show success message
+        showSavedMessage();
+      } catch (err) {
+        console.error('Error saving content:', err);
+        error.value = 'Failed to save content. Please try again.';
+      } finally {
+        isSaving.value = false;
       }
-    },
-    cards: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', title: 'Section Title' },
+    };
+
+    const resetContent = () => {
+      if (jsonEditor.value) {
+        jsonEditor.value.reset();
+      }
+    };
+
+    const handleEditorInput = () => {
+      hasChanges.value = true;
+    };
+
+    const showSavedMessage = () => {
+      // Display a success message (could use a toast notification here)
+      alert('Content saved successfully!');
+      hasChanges.value = false;
+    };
+
+    const formatSectionType = (type) => {
+      const types = {
+        hero: 'Hero Section',
+        content: 'Content Block',
+        cards: 'Card Grid',
+        features: 'Feature List',
+        cta: 'Call to Action',
+        testimonials: 'Testimonials',
+        custom: 'Custom Section'
+      };
+      
+      return types[type] || type;
+    };
+
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    };
+
+    const getSchemaFields = (type) => {
+      const schemas = {
+        hero: {
+          title: { description: 'Main heading text' },
+          subtitle: { description: 'Subheading text' },
+          cta_text: { description: 'Call-to-action button text' },
+          cta_link: { description: 'Button link URL' },
+          background_image: { description: 'Background image URL' }
+        },
+        content: {
+          title: { description: 'Section title' },
+          content: { description: 'Main content (HTML allowed)' }
+        },
         cards: {
-          type: 'array',
-          title: 'Cards',
-          items: {
-            type: 'object',
-            properties: {
-              title: { type: 'string', title: 'Card Title' },
-              content: { type: 'string', title: 'Card Content' },
-              image: { type: 'string', title: 'Card Image URL' }
-            }
-          }
-        }
-      }
-    },
-    features: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', title: 'Section Title' },
+          title: { description: 'Section title' },
+          cards: { description: 'Array of card objects with title, content, and image' }
+        },
         features: {
-          type: 'array',
-          title: 'Features',
-          items: {
-            type: 'object',
-            properties: {
-              title: { type: 'string', title: 'Feature Title' },
-              description: { type: 'string', title: 'Feature Description' },
-              icon: { type: 'string', title: 'Feature Icon' }
-            }
-          }
-        }
-      }
-    },
-    cta: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', title: 'CTA Title' },
-        description: { type: 'string', title: 'Description', format: 'textarea' },
-        button_text: { type: 'string', title: 'Button Text' },
-        button_link: { type: 'string', title: 'Button Link' }
-      }
-    },
-    testimonials: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', title: 'Section Title' },
+          title: { description: 'Section title' },
+          features: { description: 'Array of feature objects with title, description, and icon' }
+        },
+        cta: {
+          title: { description: 'Call-to-action title' },
+          description: { description: 'Description text' },
+          button_text: { description: 'Button text' },
+          button_link: { description: 'Button link URL' }
+        },
         testimonials: {
-          type: 'array',
-          title: 'Testimonials',
-          items: {
-            type: 'object',
-            properties: {
-              quote: { type: 'string', title: 'Quote', format: 'textarea' },
-              author: { type: 'string', title: 'Author Name' },
-              role: { type: 'string', title: 'Author Role/Company' }
+          title: { description: 'Section title' },
+          testimonials: { description: 'Array of testimonial objects with quote, author, and role' }
+        },
+        custom: { description: 'Custom JSON structure' }
+      };
+      
+      return schemas[type] || {};
+    };
+
+    const currentSchema = computed(() => {
+      if (!section.value) return null;
+      
+      const type = section.value.type;
+      
+      const schemas = {
+        hero: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', title: 'Title' },
+            subtitle: { type: 'string', title: 'Subtitle' },
+            cta_text: { type: 'string', title: 'CTA Button Text' },
+            cta_link: { type: 'string', title: 'CTA Button Link' },
+            background_image: { type: 'string', title: 'Background Image URL' }
+          }
+        },
+        content: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', title: 'Title' },
+            content: { type: 'string', title: 'Content (HTML)', format: 'textarea' }
+          }
+        },
+        cards: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', title: 'Section Title' },
+            cards: {
+              type: 'array',
+              title: 'Cards',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string', title: 'Card Title' },
+                  content: { type: 'string', title: 'Card Content' },
+                  image: { type: 'string', title: 'Card Image URL' }
+                }
+              }
             }
           }
+        },
+        features: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', title: 'Section Title' },
+            features: {
+              type: 'array',
+              title: 'Features',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string', title: 'Feature Title' },
+                  description: { type: 'string', title: 'Feature Description' },
+                  icon: { type: 'string', title: 'Feature Icon' }
+                }
+              }
+            }
+          }
+        },
+        cta: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', title: 'CTA Title' },
+            description: { type: 'string', title: 'Description', format: 'textarea' },
+            button_text: { type: 'string', title: 'Button Text' },
+            button_link: { type: 'string', title: 'Button Link' }
+          }
+        },
+        testimonials: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', title: 'Section Title' },
+            testimonials: {
+              type: 'array',
+              title: 'Testimonials',
+              items: {
+                type: 'object',
+                properties: {
+                  quote: { type: 'string', title: 'Quote', format: 'textarea' },
+                  author: { type: 'string', title: 'Author Name' },
+                  role: { type: 'string', title: 'Author Role/Company' }
+                }
+              }
+            }
+          }
+        },
+        custom: {
+          type: 'object',
+          properties: {}
         }
-      }
-    },
-    custom: {
-      type: 'object',
-      properties: {}
-    }
-  };
-  
-  return schemas[type] || schemas.custom;
-};
+      };
+      
+      return schemas[type] || schemas.custom;
+    });
 
-// Handle page leave with unsaved changes
-window.addEventListener('beforeunload', (e) => {
-  if (hasChanges.value) {
-    e.preventDefault();
-    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    // Handle page leave with unsaved changes
+    onMounted(() => {
+      fetchSection();
+      
+      window.addEventListener('beforeunload', (e) => {
+        if (hasChanges.value) {
+          e.preventDefault();
+          e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+      });
+    });
+
+    return {
+      section,
+      contentData,
+      isLoading,
+      isSaving,
+      error,
+      jsonEditor,
+      currentSchema,
+      fetchSection,
+      saveContent,
+      resetContent,
+      handleEditorInput,
+      formatSectionType,
+      formatDate,
+      getSchemaFields
+    };
   }
-});
-
-// Cleanup
-onMounted(() => {
-  fetchSection();
 });
 </script>
 
@@ -371,6 +426,15 @@ onMounted(() => {
 .btn-primary:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #7f8c8d;
 }
 
 .content-container {
@@ -472,57 +536,9 @@ onMounted(() => {
   overflow-y: auto;
 }
 
-/* JSON Editor Overrides */
-:deep(.jsonforms-container) {
-  max-width: 100%;
-}
-
-:deep(.jsonforms-container label) {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-:deep(.jsonforms-container input),
-:deep(.jsonforms-container textarea),
-:deep(.jsonforms-container select) {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-:deep(.jsonforms-container textarea) {
-  min-height: 100px;
-  resize: vertical;
-}
-
-:deep(.jsonforms-container button) {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-:deep(.jsonforms-container button:hover) {
-  background-color: #2980b9;
-}
-
-:deep(.array-item) {
-  border: 1px solid #ecf0f1;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 4px;
-}
-
-:deep(.array-buttons) {
-  margin-bottom: 1rem;
+.editor-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
 }
 </style> 

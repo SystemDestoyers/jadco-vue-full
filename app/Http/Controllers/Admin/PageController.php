@@ -16,8 +16,15 @@ class PageController extends Controller
      */
     public function index()
     {
-        $pages = Page::orderBy('updated_at', 'desc')->get();
-        return response()->json($pages);
+        try {
+            $pages = Page::orderBy('updated_at', 'desc')->get();
+            return response()->json($pages);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to load pages',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -29,16 +36,18 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:pages',
+            'template' => 'nullable|string|max:50',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:1000',
             'is_active' => 'boolean',
         ]);
 
         $page = Page::create([
-            'title' => $request->title,
+            'name' => $request->name,
             'slug' => $request->slug,
+            'template' => $request->template ?? 'default',
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
             'is_active' => $request->is_active ?? true,
@@ -55,8 +64,15 @@ class PageController extends Controller
      */
     public function show($id)
     {
-        $page = Page::findOrFail($id);
-        return response()->json($page);
+        try {
+            $page = Page::findOrFail($id);
+            return response()->json($page);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Page not found',
+                'message' => $e->getMessage()
+            ], 404);
+        }
     }
 
     /**
@@ -71,16 +87,18 @@ class PageController extends Controller
         $page = Page::findOrFail($id);
 
         $request->validate([
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:pages,slug,' . $id,
+            'template' => 'nullable|string|max:50',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:1000',
             'is_active' => 'boolean',
         ]);
 
         $page->update([
-            'title' => $request->title,
+            'name' => $request->name,
             'slug' => $request->slug,
+            'template' => $request->template ?? $page->template,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
             'is_active' => $request->is_active ?? $page->is_active,

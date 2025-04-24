@@ -72,8 +72,15 @@ class SectionController extends Controller
      */
     public function show($id)
     {
-        $section = Section::with('page')->findOrFail($id);
-        return response()->json($section);
+        try {
+            $section = Section::with('page')->findOrFail($id);
+            return response()->json($section);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Section not found',
+                'message' => $e->getMessage()
+            ], 404);
+        }
     }
 
     /**
@@ -111,17 +118,24 @@ class SectionController extends Controller
      */
     public function updateContent(Request $request, $id)
     {
-        $section = Section::findOrFail($id);
-        
-        $request->validate([
-            'content' => 'required|array',
-        ]);
+        try {
+            $request->validate([
+                'content' => 'required|array',
+            ]);
+            
+            $section = Section::findOrFail($id);
+            
+            $section->update([
+                'content' => $request->content,
+            ]);
 
-        $section->update([
-            'content' => $request->content,
-        ]);
-
-        return response()->json($section);
+            return response()->json($section);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to update content',
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**

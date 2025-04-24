@@ -6,7 +6,7 @@
           <router-link to="/admin/pages" class="back-btn">
             <i class="fas fa-arrow-left"></i> Back to Pages
           </router-link>
-          <h1>{{ page ? `Sections for "${page.title}"` : 'Sections' }}</h1>
+          <h1>{{ page ? `Sections for "${page.name}"` : 'Sections' }}</h1>
         </div>
         <button v-if="page" @click="openCreateModal" class="btn btn-primary">
           <i class="fas fa-plus"></i> Add New Section

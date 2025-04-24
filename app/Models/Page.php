@@ -13,6 +13,9 @@ class Page extends Model
         'name',
         'slug',
         'template',
+        'is_active',
+        'meta_title',
+        'meta_description',
     ];
 
     public function sections()

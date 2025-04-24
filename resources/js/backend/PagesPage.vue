@@ -30,7 +30,7 @@
             </thead>
             <tbody>
               <tr v-for="page in pages" :key="page.id">
-                <td>{{ page.title }}</td>
+                <td>{{ page.name }}</td>
                 <td>{{ page.slug }}</td>
                 <td>
                   <span :class="['status-badge', page.is_active ? 'active' : 'inactive']">
@@ -69,12 +69,12 @@
           <div class="modal-body">
             <form @submit.prevent="savePage">
               <div class="form-group">
-                <label for="title">Title</label>
+                <label for="name">Name</label>
                 <input 
-                  v-model="form.title" 
+                  v-model="form.name" 
                   type="text" 
-                  id="title" 
-                  placeholder="Page Title" 
+                  id="name" 
+                  placeholder="Page Name" 
                   required
                 />
               </div>
@@ -89,6 +89,22 @@
                   required
                 />
                 <small>The URL-friendly version of the title</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="template">Template</label>
+                <select 
+                  v-model="form.template" 
+                  id="template"
+                >
+                  <option value="default">Default</option>
+                  <option value="home">Home</option>
+                  <option value="about">About</option>
+                  <option value="services">Services</option>
+                  <option value="contact">Contact</option>
+                  <option value="service-detail">Service Detail</option>
+                </select>
+                <small>The template layout to use for this page</small>
               </div>
               
               <div class="form-group">
@@ -139,7 +155,7 @@
           </div>
           
           <div class="modal-body">
-            <p>Are you sure you want to delete the page "<strong>{{ pageToDelete?.title }}</strong>"?</p>
+            <p>Are you sure you want to delete the page "<strong>{{ pageToDelete?.name }}</strong>"?</p>
             <p class="warning">This action cannot be undone. All sections belonging to this page will also be deleted.</p>
             
             <div class="modal-actions">
@@ -172,8 +188,9 @@ const isDeleting = ref(false);
 
 const form = reactive({
   id: null,
-  title: '',
+  name: '',
   slug: '',
+  template: 'default',
   meta_title: '',
   meta_description: '',
   is_active: true
@@ -185,6 +202,7 @@ const fetchPages = async () => {
   
   try {
     const response = await axios.get('/api/admin/pages');
+    console.log(response);
     pages.value = response.data;
   } catch (err) {
     console.error('Error fetching pages:', err);
@@ -200,8 +218,9 @@ const openCreateModal = () => {
   // Reset form
   Object.assign(form, {
     id: null,
-    title: '',
+    name: '',
     slug: '',
+    template: 'default',
     meta_title: '',
     meta_description: '',
     is_active: true
@@ -216,8 +235,9 @@ const openEditModal = (page) => {
   // Populate form with page data
   Object.assign(form, {
     id: page.id,
-    title: page.title,
+    name: page.name,
     slug: page.slug,
+    template: page.template || 'default',
     meta_title: page.meta_title || '',
     meta_description: page.meta_description || '',
     is_active: page.is_active
