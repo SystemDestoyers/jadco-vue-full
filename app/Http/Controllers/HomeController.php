@@ -16,8 +16,10 @@ class HomeController extends Controller
 
     public function index()
     {
+
         // Get home page sections
         $sections = $this->pageService->getHomeSections();
+
         
         // Return the home view with sections data
         return view('frontend.pages.home', compact('sections'));

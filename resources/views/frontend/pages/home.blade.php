@@ -4,7 +4,9 @@
 <div class="home-page">
     <!-- Hero Section -->
    
-
+    {{-- @php
+    dd($sections);
+    @endphp --}}
     <!-- About Section -->
     <section id="about" class="about-section py-5 section" style="transform: translateZ(0);"> 
         <div class="container">

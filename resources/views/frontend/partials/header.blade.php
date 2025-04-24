@@ -1,10 +1,26 @@
 <!-- Main Header Content -->
 <div class="heading">
     @php
+    
+    // dd($headerContent);
     use Illuminate\Support\Facades\Route;
     $currentRouteName = Route::currentRouteName();
     $isServicePage = str_starts_with($currentRouteName, 'services.') || request()->is('services/*');
     $isHomePage = $currentRouteName == 'home' || request()->is('/');
+    
+    // Get header content from the sections collection
+    $headerSection = isset($sections) ? $sections->where('name', 'header')->first() : null;
+    
+    // Check if content is already an array or needs to be decoded
+    if ($headerSection) {
+        if (is_string($headerSection->content)) {
+            $headerContent = json_decode($headerSection->content, true);
+        } else {
+            $headerContent = $headerSection->content;
+        }
+    } else {
+        $headerContent = [];
+    }
     
     // Determine which image to show based on current page
     $headerImage = isset($headerContent['slides'][0]['src']) ? $headerContent['slides'][0]['src'] : 'images/Header/01_EDU_Home.jpg';
