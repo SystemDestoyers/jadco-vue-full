@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('name');
             $table->integer('order');
             $table->json('content');
+            $table->boolean('is_active')->default(true);
+            $table->string('type')->default('content');
             $table->timestamps();
         });
     }

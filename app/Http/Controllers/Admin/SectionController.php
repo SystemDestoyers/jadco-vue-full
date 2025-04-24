@@ -96,14 +96,18 @@ class SectionController extends Controller
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
-            'is_active' => 'boolean',
+            'type' => 'string|max:50|nullable',
+            'is_active' => 'boolean|nullable',
+            'content' => 'json|nullable',
+            'order' => 'integer|nullable',
         ]);
 
         $section->update([
             'name' => $request->name,
             'type' => $request->type,
             'is_active' => $request->is_active ?? $section->is_active,
+            'content' => $request->content ?? $section->content,
+            'order' => $request->order ?? $section->order,
         ]);
 
         return response()->json($section);
