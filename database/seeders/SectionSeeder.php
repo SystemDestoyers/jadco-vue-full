@@ -170,11 +170,11 @@ class SectionSeeder extends Seeder
             ]
         ]);
 
-        // Contact section
+        // Home contact section - duplicate for home page
         Section::create([
-            'page_id' => 4, // Contact page
+            'page_id' => 1, // Home page
             'name' => 'contact',
-            'order' => 1,
+            'order' => 6,
             'content' => [
                 'logo' => 'images/logo.png',
                 'tagline' => 'We Listen, design your vision and bring it to life...',
@@ -465,6 +465,53 @@ class SectionSeeder extends Seeder
                 'image' => '/images/06_Arts/01.jpg',
                 'subtitle' => 'From Training and education in Arts & Entertainment subjects, to customizing projects and live events in association with our local and international partners.',
                 'services' => []
+            ]
+        ]);
+
+        // Contact page contact section
+        Section::create([
+            'page_id' => 4, // Contact page
+            'name' => 'contact',
+            'order' => 1,
+            'content' => [
+                'logo' => 'images/logo.png',
+                'tagline' => 'We Listen, design your vision and bring it to life...',
+                'heading' => 'LET\'S TALK.',
+                'locations' => [
+                    [
+                        'title' => 'Saudi Arabia',
+                        'address' => 'Level 7, Building 4.07, Zone 4<br>King Abdullah Financial District<br>(KAFD)<br>Riyadh 13519, Saudi Arabia.',
+                        'contacts' => [
+                            ['label' => 'Tel', 'value' => '(+966) 115256175', 'type' => 'whatsapp'],
+                            ['label' => 'Mobile', 'value' => '(+966) 569292048', 'type' => 'whatsapp'],
+                            ['label' => 'Email', 'value' => 'jad@jadco.co', 'type' => 'email']
+                        ]
+                    ],
+                    [
+                        'title' => 'USA',
+                        'address' => '3972 Barranca Parkway,<br>Ste J139, Irvine, CA 92606'
+                    ],
+                    [
+                        'title' => 'UAE',
+                        'address' => 'A1, Dubai Digital Park, Dubai<br>Silicon Oasis, Dubai,<br>United Arab Emirates.'
+                    ]
+                ],
+                'form' => [
+                    'labels' => [
+                        'firstName' => 'First Name',
+                        'lastName' => 'Last Name',
+                        'email' => 'Email',
+                        'phone' => 'Phone Number',
+                        'message' => 'Message'
+                    ],
+                    'submitButton' => 'SEND A MESSAGE',
+                    'successMessage' => 'Thank you for your message. We will get back to you soon!'
+                ],
+                'socialLinks' => [
+                    ['icon' => 'fab fa-youtube', 'title' => 'YouTube', 'url' => '#'],
+                    ['icon' => 'fab fa-linkedin', 'title' => 'LinkedIn', 'url' => '#']
+                ],
+                'copyright' => 'All Rights Reserved.'
             ]
         ]);
     }
