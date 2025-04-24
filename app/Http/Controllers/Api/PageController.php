@@ -59,6 +59,7 @@ class PageController extends Controller
     {
         $content = $this->pageService->getAboutContent();
         return response()->json([
+            'success' => true,
             'content' => $content
         ]);
     }
