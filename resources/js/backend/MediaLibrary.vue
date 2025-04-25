@@ -245,15 +245,61 @@
           </div>
           <div class="modal-body">
             <div class="media-detail-container">
-              <div class="media-preview">
-                <img 
-                  v-if="selectedMedia.mime_type && selectedMedia.mime_type.startsWith('image/')" 
-                  :src="selectedMedia.url" 
-                  :alt="selectedMedia.alt_text || selectedMedia.original_filename"
-                />
-                <div v-else class="file-preview-icon">
-                  <i :class="getFileIcon(selectedMedia.mime_type)"></i>
-                  <span>{{ selectedMedia.original_filename }}</span>
+              <div class="media-preview-section">
+                <div class="media-preview">
+                  <img 
+                    v-if="selectedMedia.mime_type && selectedMedia.mime_type.startsWith('image/')" 
+                    :src="selectedMedia.url" 
+                    :alt="selectedMedia.alt_text || selectedMedia.original_filename"
+                  />
+                  <div v-else class="file-preview-icon">
+                    <i :class="getFileIcon(selectedMedia.mime_type)"></i>
+                    <span>{{ selectedMedia.original_filename }}</span>
+                  </div>
+                </div>
+                
+                <div class="media-info-list">
+                  <div class="info-item">
+                    <span class="label">Type:</span>
+                    <span class="value">{{ formatFileType(selectedMedia.mime_type) }}</span>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="label">Size:</span>
+                    <span class="value">{{ formatFileSize(selectedMedia.size) }}</span>
+                  </div>
+                  
+                  <div class="info-item" v-if="selectedMedia.metadata && selectedMedia.metadata.dimensions">
+                    <span class="label">Dimensions:</span>
+                    <span class="value">{{ selectedMedia.metadata.dimensions.width }} x {{ selectedMedia.metadata.dimensions.height }}</span>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="label">Path:</span>
+                    <div class="copyable-field">
+                      <span class="value path-value">{{ selectedMedia.path }}</span>
+                      <button @click="copyToClipboard(selectedMedia.path)" class="copy-btn" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="label">URL:</span>
+                    <div class="copyable-field">
+                      <span class="value url-value">
+                        <a :href="selectedMedia.url" target="_blank" class="url-link">{{ selectedMedia.url }}</a>
+                      </span>
+                      <button @click="copyToClipboard(selectedMedia.url)" class="copy-btn" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="info-item">
+                    <span class="label">Uploaded:</span>
+                    <span class="value">{{ formatDate(selectedMedia.created_at) }}</span>
+                  </div>
                 </div>
               </div>
               
@@ -308,28 +354,6 @@
                       {{ folder.name }}
                     </option>
                   </select>
-                </div>
-                
-                <div class="media-info-list">
-                  <div class="info-item">
-                    <span class="label">Type:</span>
-                    <span class="value">{{ formatFileType(selectedMedia.mime_type) }}</span>
-                  </div>
-                  
-                  <div class="info-item">
-                    <span class="label">Size:</span>
-                    <span class="value">{{ formatFileSize(selectedMedia.size) }}</span>
-                  </div>
-                  
-                  <div class="info-item" v-if="selectedMedia.metadata && selectedMedia.metadata.dimensions">
-                    <span class="label">Dimensions:</span>
-                    <span class="value">{{ selectedMedia.metadata.dimensions.width }} x {{ selectedMedia.metadata.dimensions.height }}</span>
-                  </div>
-                  
-                  <div class="info-item">
-                    <span class="label">Uploaded:</span>
-                    <span class="value">{{ formatDate(selectedMedia.created_at) }}</span>
-                  </div>
                 </div>
                 
                 <div class="form-buttons">
@@ -1112,6 +1136,24 @@ export default defineComponent({
       }
     };
     
+    // Copy text to clipboard
+    const copyToClipboard = (text) => {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          // Show success notification
+          if (window.$notifications) {
+            window.$notifications.success('Copied to clipboard');
+          }
+        })
+        .catch(err => {
+          console.error('Failed to copy: ', err);
+          // Show error notification
+          if (window.$notifications) {
+            window.$notifications.error('Failed to copy to clipboard');
+          }
+        });
+    };
+    
     // Initialize
     onMounted(() => {
       fetchMedia();
@@ -1168,7 +1210,8 @@ export default defineComponent({
       openCreateFolderModal,
       openDeleteFolderModal,
       getCurrentFolderName,
-      deleteFolder
+      deleteFolder,
+      copyToClipboard
     };
   }
 });
@@ -1443,36 +1486,106 @@ export default defineComponent({
   gap: 2rem;
 }
 
-.media-preview {
+.media-preview-section {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.media-preview {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f8f9fa;
   border-radius: 4px;
-  min-height: 250px;
-  max-height: 400px;
+  min-height: 200px;
+  max-height: 350px;
   overflow: hidden;
+  border: 1px solid #ecf0f1;
 }
 
 .media-preview img {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 350px;
   object-fit: contain;
 }
 
-.file-preview {
-  max-height: 250px;
+.media-info-list {
+  margin: 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  border: 1px solid #ecf0f1;
+}
+
+.info-item {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  margin-bottom: 0.75rem;
 }
 
-.file-preview img {
-  max-width: 100%;
-  max-height: 250px;
-  object-fit: contain;
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item .label {
+  font-weight: 600;
+  color: #2c3e50;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.info-item .value {
+  color: #7f8c8d;
+  word-break: break-word;
+}
+
+.path-value, .url-value {
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 0.7rem;
+  background-color: #f8f9fa;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid #eee;
+  display: inline-block;
+  width: 100%;
+  overflow-x: auto;
+  max-height: 50px;
+  overflow-y: auto;
+}
+
+.url-link {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.url-link:hover {
+  text-decoration: underline;
+}
+
+.copyable-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  font-size: 0.875rem;
+  color: #95a5a6;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.copy-btn:hover {
+  color: #3498db;
 }
 
 .media-form {
@@ -1503,53 +1616,6 @@ export default defineComponent({
 
 .form-group textarea {
   resize: vertical;
-}
-
-.media-info {
-  flex: 1;
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.media-info h4 {
-  margin: 0 0 0.25rem;
-  font-size: 0.875rem;
-  color: #2c3e50;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.media-type {
-  font-size: 0.75rem;
-  color: #7f8c8d;
-}
-
-.media-info-list {
-  margin: 1rem 0;
-  padding: 0.75rem;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-
-.info-item {
-  display: flex;
-  margin-bottom: 0.5rem;
-}
-
-.info-item .label {
-  font-weight: 600;
-  color: #2c3e50;
-  width: 100px;
-  flex-shrink: 0;
-}
-
-.info-item .value {
-  color: #7f8c8d;
-  word-break: break-word;
 }
 
 .form-buttons {
@@ -1716,8 +1782,30 @@ export default defineComponent({
     flex-direction: column;
   }
   
+  .media-preview-section {
+    margin-bottom: 1.5rem;
+  }
+  
   .media-preview {
     max-height: 300px;
+  }
+  
+  .media-preview img {
+    max-height: 300px;
+  }
+  
+  .info-item {
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  
+  .info-item .label {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  
+  .media-detail-modal {
+    width: 95%;
   }
   
   .media-grid {
@@ -1876,5 +1964,29 @@ export default defineComponent({
 
 .action-buttons .btn-sm i {
   font-size: 0.75rem;
+}
+
+.media-info {
+  padding: 0.75rem;
+  background-color: white;
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.media-info h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+
+.media-type {
+  color: #95a5a6;
+  font-size: 0.7rem;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style> 
