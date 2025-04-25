@@ -46,9 +46,9 @@
             <!-- Folder filter -->
             <div class="folder-filter">
               <select v-model="filters.folder">
-                <option value="">All Folders</option>
+                <option value="">All Folders / Root</option>
                 <option v-for="folder in folders" :key="folder.path" :value="folder.path">
-                  {{ folder.name }}
+                  {{ folder.name }} ({{ folder.file_count }})
                 </option>
               </select>
             </div>
@@ -419,7 +419,10 @@
                 <div class="form-group">
                   <label for="upload-folder">Folder</label>
                   <select id="upload-folder" v-model="uploadData.folder">
-                    <option v-for="folder in folders" :key="folder.id" :value="folder.name">{{ folder.name }}</option>
+                    <option value="">Root Folder</option>
+                    <option v-for="folder in folders" :key="folder.path" :value="folder.path">
+                      {{ folder.name }}
+                    </option>
                   </select>
                 </div>
                 
@@ -663,7 +666,7 @@ export default defineComponent({
     
     // Watch for filter changes
     const watchFilters = () => {
-      const propsToWatch = ['collection', 'type'];
+      const propsToWatch = ['collection', 'type', 'folder'];
       
       propsToWatch.forEach(prop => {
         watch(() => filters[prop], () => {
@@ -1000,6 +1003,7 @@ export default defineComponent({
     onMounted(() => {
       fetchMedia();
       fetchFolders();
+      watchFilters();
     });
     
     return {
