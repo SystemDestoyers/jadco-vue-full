@@ -94,6 +94,12 @@ All notable changes to this project will be documented in this file.
   - Modified home.blade.php to use conditional rendering for all service buttons
   - Made button styling and text consistent across all services
   - Used consistent icon styling for all button elements
+- Added dynamic navbar content management:
+  - Created new navbar section in SectionSeeder for home page
+  - Updated navbar.blade.php to use dynamic content from database
+  - Added support for custom navigation items and logo
+  - Implemented HTML rendering for navigation text
+  - Added fallback for sites without navbar content
 
 ### Changed
 - Updated Vue router to use new web routes for authentication

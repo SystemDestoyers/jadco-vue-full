@@ -56,6 +56,29 @@ class SectionSeeder extends Seeder
             ]
         ]);
 
+        // Navbar section
+        Section::create([
+            'page_id' => 1, // Home page
+            'name' => 'navbar',
+            'order' => 0, // Place before header
+            'content' => [
+                'logo' => '/images/logo.png',
+                'talkButtonText' => 'Let\'s Talk',
+                'navItems' => [
+                    [
+                        'text' => 'HOME',
+                        'link' => '/',
+                        'id' => 'home-nav-link'
+                    ],
+                    [
+                        'text' => 'ABOUT',
+                        'link' => '/about',
+                        'id' => ''
+                    ]
+                ]
+            ]
+        ]);
+
         // Home about section
         Section::create([
             'page_id' => 1, // Home page

@@ -1,5 +1,19 @@
 @php
 use Illuminate\Support\Facades\Route;
+
+// Get navbar content from the sections collection
+$navbarSection = isset($sections) ? $sections->where('name', 'navbar')->first() : null;
+
+// Check if content is already an array or needs to be decoded
+if ($navbarSection) {
+    if (is_string($navbarSection->content)) {
+        $navbarContent = json_decode($navbarSection->content, true);
+    } else {
+        $navbarContent = $navbarSection->content;
+    }
+} else {
+    $navbarContent = [];
+}
 @endphp
 <!-- Header Section -->
 <header class="header" id="home">
@@ -9,7 +23,9 @@ use Illuminate\Support\Facades\Route;
             <div class="container-fluid">
                 <!-- Logo Container (Left-aligned) -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{ asset('images/logo.png') }}" alt="JADCO Logo" class="logo">
+                    @if(isset($navbarContent['logo']))
+                        <img src="{{ asset($navbarContent['logo']) }}" alt="JADCO Logo" class="logo">
+                    @endif
                 </a>
                 
                 <!-- Mobile Toggle Button (Right-aligned) -->
@@ -22,14 +38,23 @@ use Illuminate\Support\Facades\Route;
                 <!-- Navigation Items -->
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav me-3">
-                        <li class="nav-item">
-                            <a class="nav-link home {{ (Route::currentRouteName() == 'home' || request()->is('/')) ? 'active' : '' }}" href="{{ url('/') }}" id="home-nav-link">HOME</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link about {{ Route::currentRouteName() == 'about' ? 'active' : '' }}" href="{{ url('/about') }}">ABOUT</a>
-                        </li>
+                        @if(isset($navbarContent['navItems']) && is_array($navbarContent['navItems']))
+                            @foreach($navbarContent['navItems'] as $item)
+                                <li class="nav-item">
+                                    <a class="nav-link {{ strtolower($item['text']) }} {{ (Route::currentRouteName() == strtolower($item['text']) || request()->is($item['link'] == '/' ? '/' : trim($item['link'], '/'))) ? 'active' : '' }}" 
+                                       href="{{ url($item['link']) }}" 
+                                       @if(!empty($item['id'])) id="{{ $item['id'] }}" @endif>
+                                        {!! $item['text'] !!}
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
                     </ul>
-                    <a href="{{ url('/#contact') }}" class="btn btn-talk">Let's Talk</a>
+                    <a href="{{ url('/#contact') }}" class="btn btn-talk">
+                        @if(isset($navbarContent['talkButtonText']))
+                            {!! $navbarContent['talkButtonText'] !!}
+                        @endif
+                    </a>
                 </div>
             </div>
         </nav>
