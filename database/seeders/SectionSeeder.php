@@ -33,19 +33,19 @@ class SectionSeeder extends Seeder
                 'servicesMenuTitle' => 'SERVICES',
                 'talkButtonText' => 'Let\'s Talk',
                 'slides' => [
-                    ['src' => '/images/Header/01_EDU_Home.jpg', 'alt' => 'Education'],
-                    ['src' => '/images/Header/02_AI_Home.jpg', 'alt' => 'AI'],
-                    ['src' => '/images/Header/03_Games_Home.jpg', 'alt' => 'Gaming'],
-                    ['src' => '/images/Header/04_Arts_Header.jpg', 'alt' => 'Arts']
+                    ['src' => '/images/header/main1.jpg', 'alt' => 'Education'],
+                    ['src' => '/images/header/main2.jpg', 'alt' => 'AI'],
+                    ['src' => '/images/header/main3.jpg', 'alt' => 'Gaming'],
+                    ['src' => '/images/header/main4.jpg', 'alt' => 'Arts']
                 ],
                 'service_images' => [
-                    'education' => '/images/Header/01_EDU_Home.jpg',
-                    'ai' => '/images/Header/02_AI_Home.jpg',
-                    'egaming' => '/images/Header/03_Games_Home.jpg',
-                    'arts' => '/images/Header/04_Arts_Header.jpg',
-                    'training' => '/images/01_Training_Header.jpg'
+                    'education' => '/images/header/education.jpg',
+                    'ai' => '/images/header/ai.jpg',
+                    'egaming' => '/images/header/gaming.jpg',
+                    'arts' => '/images/header/arts.jpg',
+                    'training' => '/images/header/training.jpg'
                 ],
-                'aboutPageHeader_image' => '/images/About_Page.jpg',
+                'aboutPageHeader_image' => '/images/header/about_header.jpg',
                 'servicesMenuLinks' => [
                     ['title' => 'Education and Scholarship', 'link' => '/services/education-and-scholarship'],
                     ['title' => 'Training and Professional Development', 'link' => '/services/training-and-professional-development'],
@@ -63,12 +63,12 @@ class SectionSeeder extends Seeder
             'order' => 2,
             'content' => [
                 'title' => 'ABOUT',
-                'logo' => '/images/jadoo-logo 2.png',
+                'logo' => '/images/about_section/jadoo-logo2.png',
                 'main_text' => 'After more than 20 years of experience in the Saudi Arabia\'s Human Capital Development market, JAD Consulting (JADCO) was established to continue supporting the industry with a new inspired vision by the great Saudi Vision 2030.',
                 'description1' => 'JADCO and its highly ranked international partners of Companies, Universities and SMEs are forming together an exclusive and innovative consortium to serve and be part of the revolution and development and support the transformation for the next levels.',
                 'description2' => 'JADCO in collaboration with the best partners in the globe, customize and Tailor projects to bridge the gap and providing the latest technologies to ensure the max level of quality of deliverables, support local content and transform knowledge to meet the objectives of our clients.',
-                'image1' => '/images/About_01.jpg',
-                'image2' => '/images/About_02.jpg'
+                'image1' => '/images/about_section/about1.jpg',
+                'image2' => '/images/about_section/about2.jpg'
             ]
         ]);
 
@@ -83,7 +83,7 @@ class SectionSeeder extends Seeder
                     [
                         'title' => 'Education and Training',
                         'description' => 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets.',
-                        'image' => '/images/Home_Serv_01.jpg',
+                        'image' => '/images/services_section/education.jpg',
                         'buttons' => [
                             [
                                 'text' => 'Education',
@@ -100,19 +100,19 @@ class SectionSeeder extends Seeder
                     [
                         'title' => 'AI and Advanced Technologies',
                         'description' => 'AI represents a transformative technology with the potential to revolutionize organizations services and operations. By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.',
-                        'image' => '/images/Home_Serv_02.jpg',
+                        'image' => '/images/services_section/ai.jpg',
                         'link' => '/services/ai-and-advanced-technologies'
                     ],
                     [
                         'title' => 'eGaming and eSport',
                         'description' => 'JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of ...',
-                        'image' => '/images/Home_Serv_03.jpg',
+                        'image' => '/images/services_section/gaming.jpg',
                         'link' => '/services/egaming-and-esport'
                     ],
                     [
                         'title' => 'Arts and Entertainment',
                         'description' => 'Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.',
-                        'image' => '/images/Home_Serv_04.jpg',
+                        'image' => '/images/services_section/arts.jpg',
                         'link' => '/services/arts-and-entertainment'
                     ]
                 ]
@@ -224,12 +224,12 @@ class SectionSeeder extends Seeder
             'order' => 1,
             'content' => [
                 'title' => 'ABOUT',
-                'logo' => '/images/jadoo-logo 2.png',
+                'logo' => '/images/about_section/jadoo-logo2.png',
                 'main_text' => 'After more than 20 years of experience in the Saudi Arabia\'s Human Capital Development market, JAD Consulting (JADCO) was established to continue supporting the industry with a new inspired vision by the great Saudi Vision 2030.',
                 'description1' => 'JADCO and its highly ranked international partners of Companies, Universities and SMEs are forming together an exclusive and innovative consortium to serve and be part of the revolution and development and support the transformation for the next levels.',
                 'description2' => 'JADCO in collaboration with the best partners in the globe, customize and Tailor projects to bridge the gap and providing the latest technologies to ensure the max level of quality of deliverables, support local content and transform knowledge to meet the objectives of our clients.',
-                'image1' => '/images/About_01.jpg',
-                'image2' => '/images/About_02.jpg'
+                'image1' => '/images/about_section/about1.jpg',
+                'image2' => '/images/about_section/about2.jpg'
             ]
         ]);
 
@@ -299,7 +299,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'Scholarship Programs Management',
                 'description' => 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets. Services include but not limited to:',
-                'image' => '/images/02_Education/01.jpg',
+                'image' => '/images/02_education/1.jpg',
                 'services' => [
                     'Candidate Selection Criteria',
                     'Universities Selection Criteria',
@@ -323,7 +323,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'STEM Education and Innovation Centers',
                 'description' => 'Education is changing, STEM (Since, Technology, Engineering and Math), is the pathway to reshaping the ecosystem to rethinking and broadly reimagining. STEM is the future workforce skills, steps toward a new generation of innovators, creative leaders for now and the future.',
-                'image' => '/images/03_EDU.jpg',
+                'image' => '/images/02_education/2.jpg',
                 'listTitle' => 'Our services including:',
                 'services' => [
                     'STEM Teacher Training.',
@@ -346,7 +346,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'K-12 International Schools',
                 'description' => 'JADCO in partnership with the 1st international School Services Worldwide with more than 60 years of experience with track records, is supporting the global education community.',
-                'image' => '/images/04_EDU.jpg',
+                'image' => '/images/02_education/3.jpg',
                 'services' => [
                     'School Operation and Management.',
                     'Teacher Recruitment.',
@@ -366,7 +366,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'Fellowship, Internship and Work Experience',
                 'description' => 'For a new talented and future skilled generation, we draw the map and open the door for understanding the contemporary workplace and environment that promote ready to innovate employees.',
-                'image' => '/images/03_Trining/01.jpg',
+                'image' => '/images/03_training/1.jpg',
                 'mainContent' => 'JADCO, in association with prestigious organizations from all sizes, take your personal and professional development in an international company in a global city to learn new skills, reskill or upskill yourself and accelerate your career advancement.<br><br>Gain experience, new skills, network, knowledge, culture, friends and prepare yourself for a new workplace challenge:',
                 'services' => [
                     'In-person internship.',
@@ -384,7 +384,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'Technical and Vocational Training and Education (TVTE)',
                 'description' => 'Studying overseas at leading colleges that provide students with academic, technical skills, Knowledge, career training necessary to succeed in future jobs, make them ready to go for labor market.',
-                'image' => '/images/03_Trining/03_Training.jpg',
+                'image' => '/images/03_training/2.jpg',
                 'mainContent' => 'In collaboration with our best TVTE providers in the U.S, UK and other countries. These programs are hands-on diploma or associate degrees of 2 years study and training of majors from all fields and sectors, that make students equipped by all skills needed for the career job market.',
                 'listTitle' => 'Example majors including:',
                 'services' => [
@@ -411,7 +411,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'Online Professional Programs',
                 'description' => 'Flexible learning for students and busy professionals with high quality teaching, blended learning activities with expert instructors, SMEs, professionals and leaders from the industry.',
-                'image' => '/images/03_Trining/04_Training.jpg',
+                'image' => '/images/03_training/3.jpg',
                 'mainContent' => 'JADCO in partnership with top ranked universities in the world will serve to provide your organization the best online learning experience and quality of knowledge in all sectors, delivering programs that develop the skills necessary to success in a changing and challenging work environment.'
             ]
         ]);
@@ -424,7 +424,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'Artificial Intelligence (AI) and Advanced Tech',
                 'description' => 'AI represents a transformative technology with the potential to revolutionize organizations services and operations.<br>By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.<br>By investing in AI education, training and projects, organizations can better meet the needs of their people, drive innovation and ensure sustainable development.',
-                'image' => '/images/04_AI/01.jpg',
+                'image' => '/images/04_ai/1.jpg',
                 'subtitle' => 'We Customize Transformation Projects',
                 'mainContent' => 'JADCO and partners support to harness the power of AI and digital technologies to help improve business operations and organization thrive.<br>We help to explore ways to leverage new advances in digital-tech to re-invent how things get done and boost your organization positioning in its sector.<br>We analyze the existing structure, navigate challenges and evaluate ways that technology can affect factors in your organization and identify new business models enabled by AI and explore opportunities presented by AI.<br>Learn how to shape your AI business strategy, organizational dynamics, products, services innovation and evolving workforce skills and discover practical solutions to build business advantage.'
             ]
@@ -438,7 +438,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'eGaming and eSport',
                 'description' => 'JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of Commerce (International Trade Administration), are together forming a consortium to propose a broad-based support package and plans for e-gaming and eSport to help and greatly accelerate the Kingdom\'s positioning as a leader in this industry worldwide by leveraging international relevant partners, SMEs, and other resources to support developing the sector\'s entire value chain and achieve the objectives of the Saudi Arabia\'s newly gaming, eSport and AI strategy.',
-                'image' => '/images/05_eGame/01.jpg',
+                'image' => '/images/05_egaming/1.jpg',
                 'listTitle' => 'What we do:',
                 'services' => [
                     'Industry Analysis',
@@ -462,7 +462,7 @@ class SectionSeeder extends Seeder
             'content' => [
                 'title' => 'Arts and Entertainment',
                 'description' => 'Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.',
-                'image' => '/images/06_Arts/01.jpg',
+                'image' => '/images/06_arts/1.jpg',
                 'subtitle' => 'From Training and education in Arts & Entertainment subjects, to customizing projects and live events in association with our local and international partners.',
                 'services' => []
             ]
