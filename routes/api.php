@@ -98,7 +98,12 @@ Route::prefix('admin')->group(function () {
     Route::delete('/media/folders/delete', [MediaController::class, 'deleteFolder']);
 
     // Message management
+    Route::get('messages/archived', [\App\Http\Controllers\Admin\MessageController::class, 'archived']);
+    Route::get('messages/sent', [\App\Http\Controllers\Admin\MessageController::class, 'sent']);
     Route::apiResource('messages', \App\Http\Controllers\Admin\MessageController::class);
     Route::put('messages/{id}/mark-as-read', [\App\Http\Controllers\Admin\MessageController::class, 'markAsRead']);
     Route::put('messages/{id}/mark-as-unread', [\App\Http\Controllers\Admin\MessageController::class, 'markAsUnread']);
+    Route::put('messages/{id}/archive', [\App\Http\Controllers\Admin\MessageController::class, 'archive']);
+    Route::put('messages/{id}/unarchive', [\App\Http\Controllers\Admin\MessageController::class, 'unarchive']);
+    Route::post('messages/send', [\App\Http\Controllers\Admin\MessageController::class, 'sendMessage']);
 });

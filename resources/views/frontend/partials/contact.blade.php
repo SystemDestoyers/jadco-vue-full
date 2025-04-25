@@ -202,8 +202,19 @@
                                 successAlert.className = 'alert alert-success alert-dismissible fade';
                                 successAlert.role = 'alert';
                                 successAlert.style.display = 'none';
-                                successAlert.innerHTML = 'Thank you for your message! We will get back to you soon. <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+                                successAlert.innerHTML = `
+                                    <strong>Thank you for your message!</strong> We will get back to you soon.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-sm btn-outline-success send-another-btn">
+                                            <i class="fas fa-paper-plane"></i> Send Another Message
+                                        </button>
+                                    </div>
+                                `;
                                 form.parentNode.insertBefore(successAlert, form.nextSibling);
+                                
+                                // Ensure close button has event listener
+                                attachCloseButtonListeners();
                             }
                             
                             if (!errorAlert) {
@@ -215,6 +226,9 @@
                                 errorAlert.style.display = 'none';
                                 errorAlert.innerHTML = 'Sorry, there was a problem submitting your message. Please try again later. <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
                                 form.parentNode.insertBefore(errorAlert, successAlert.nextSibling);
+                                
+                                // Ensure close button has event listener
+                                attachCloseButtonListeners();
                             }
                             
                             if (!form) {
@@ -231,6 +245,19 @@
                                 const originalButtonHtml = submitButton.innerHTML;
                                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                                 submitButton.disabled = true;
+                                
+                                // Show loading overlay in the form
+                                const loadingOverlay = document.getElementById('loadingOverlay');
+                                console.log('Form container before loading:', form.parentNode);
+                                if (loadingOverlay) {
+                                    // Position the overlay on top of the form without hiding it
+                                    loadingOverlay.style.display = 'flex';
+                                    
+                                    // Make sure form is still in the DOM but visually hidden by the overlay
+                                    // We don't use display: none to avoid layout shifts
+                                    form.style.opacity = '0.1';
+                                    console.log('Loading overlay displayed, form opacity:', form.style.opacity);
+                                }
                                 
                                 // Get form data
                                 const formData = new FormData(form);
@@ -259,6 +286,8 @@
                                 
                                 xhr.onload = function() {
                                     console.log('Got response:', xhr.status, xhr.responseText);
+                                    
+                                    // Return button to original state
                                     submitButton.innerHTML = originalButtonHtml;
                                     submitButton.disabled = false;
                                     
@@ -267,25 +296,72 @@
                                             const response = JSON.parse(xhr.responseText);
                                             
                                             if (response.success) {
-                                                // Show success message
-                                                successAlert.style.display = 'block';
-                                                successAlert.classList.add('show');
-                                                
                                                 // Reset form
                                                 form.reset();
+                                                
+                                                // Keep showing the loading overlay for 2 seconds
+                                                setTimeout(function() {
+                                                    // Hide loading overlay
+                                                    if (loadingOverlay) {
+                                                        loadingOverlay.style.display = 'none';
+                                                    }
+                                                    
+                                                    // Ensure form is fully visible
+                                                    form.style.display = 'block';
+                                                    form.style.opacity = '1';
+                                                    console.log('Form should now be visible:', form.style.display, form.style.opacity);
+                                                    
+                                                    // Show inline success message in the form
+                                                    const inlineSuccess = document.createElement('div');
+                                                    inlineSuccess.className = 'alert alert-success mb-4';
+                                                    inlineSuccess.innerHTML = '<i class="fas fa-check-circle"></i> Your message has been sent successfully!';
+                                                    
+                                                    // Insert at the top of the form
+                                                    form.insertBefore(inlineSuccess, form.firstChild);
+                                                    
+                                                    // Remove the message after 5 seconds
+                                                    setTimeout(function() {
+                                                        inlineSuccess.remove();
+                                                    }, 5000);
+                                                    
+                                                    // Focus on first input
+                                                    const firstInput = form.querySelector('input[type="text"]');
+                                                    if (firstInput) {
+                                                        firstInput.focus();
+                                                    }
+                                                }, 2000);
                                             } else {
+                                                // Hide loading overlay immediately
+                                                if (loadingOverlay) {
+                                                    loadingOverlay.style.display = 'none';
+                                                }
+                                                
                                                 // Show error message
                                                 errorAlert.style.display = 'block';
                                                 errorAlert.classList.add('show');
+                                                
+                                                // Ensure close button works
+                                                attachCloseButtonListeners();
+                                                
                                                 console.error('Server error:', response.message);
                                             }
                                         } catch (e) {
+                                            // Hide loading overlay immediately
+                                            if (loadingOverlay) {
+                                                loadingOverlay.style.display = 'none';
+                                            }
+                                            
                                             console.error('Invalid JSON response', e);
                                             console.error('Response text:', xhr.responseText);
                                             errorAlert.style.display = 'block';
                                             errorAlert.classList.add('show');
                                         }
                                     } else {
+                                        // Hide loading overlay immediately
+                                        if (loadingOverlay) {
+                                            loadingOverlay.style.display = 'none';
+                                        }
+                                        
                                         // Show error message
                                         errorAlert.style.display = 'block';
                                         errorAlert.classList.add('show');
@@ -297,6 +373,16 @@
                                     console.error('XHR error occurred');
                                     submitButton.innerHTML = originalButtonHtml;
                                     submitButton.disabled = false;
+                                    
+                                    // Hide loading overlay immediately
+                                    if (loadingOverlay) {
+                                        loadingOverlay.style.display = 'none';
+                                    }
+                                    
+                                    // Ensure form is fully visible
+                                    form.style.display = 'block';
+                                    form.style.opacity = '1';
+                                    
                                     errorAlert.style.display = 'block';
                                     errorAlert.classList.add('show');
                                     console.error('Request failed');
@@ -317,10 +403,137 @@
                             // Hide alerts when close button is clicked
                             document.querySelectorAll('.alert .btn-close').forEach(function(button) {
                                 button.addEventListener('click', function() {
-                                    this.closest('.alert').style.display = 'none';
-                                    this.closest('.alert').classList.remove('show');
+                                    console.log('Close button clicked');
+                                    const alert = this.closest('.alert');
+                                    
+                                    // Manually hide the alert since data-bs-dismiss might not be working
+                                    alert.style.display = 'none';
+                                    alert.classList.remove('show');
+                                    
+                                    // If this was the success alert, make sure the form is visible again
+                                    if (alert.id === 'formSuccess') {
+                                        form.style.display = 'block';
+                                        
+                                        // Focus on first input
+                                        const firstInput = form.querySelector('input[type="text"]');
+                                        if (firstInput) {
+                                            firstInput.focus();
+                                        }
+                                    }
                                 });
                             });
+
+                            // Re-attach event listeners when new alerts are created
+                            function attachCloseButtonListeners() {
+                                document.querySelectorAll('.alert .btn-close').forEach(function(button) {
+                                    // Remove existing listeners to prevent duplicates
+                                    button.removeEventListener('click', handleCloseButtonClick);
+                                    // Add new listener
+                                    button.addEventListener('click', handleCloseButtonClick);
+                                });
+                            }
+
+                            function handleCloseButtonClick() {
+                                console.log('Close button clicked');
+                                const alert = this.closest('.alert');
+                                
+                                // Manually hide the alert
+                                alert.style.display = 'none';
+                                alert.classList.remove('show');
+                                
+                                // If this was the success alert, make sure the form is visible again
+                                if (alert.id === 'formSuccess') {
+                                    const contactForm = document.getElementById('contactForm');
+                                    if (contactForm) {
+                                        contactForm.style.display = 'block';
+                                        
+                                        // Focus on first input
+                                        const firstInput = contactForm.querySelector('input[type="text"]');
+                                        if (firstInput) {
+                                            firstInput.focus();
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Add event listener for "Send Another Message" button
+                            document.addEventListener('click', function(e) {
+                                if (e.target && e.target.classList.contains('send-another-btn') || 
+                                    (e.target.parentElement && e.target.parentElement.classList.contains('send-another-btn'))) {
+                                    // Hide success alert
+                                    if (successAlert) {
+                                        successAlert.style.display = 'none';
+                                        successAlert.classList.remove('show');
+                                    }
+                                    
+                                    // Show form again
+                                    form.style.display = 'block';
+                                    
+                                    // Focus on first input
+                                    const firstInput = form.querySelector('input[type="text"]');
+                                    if (firstInput) {
+                                        firstInput.focus();
+                                    }
+                                }
+                            });
+
+                            // Add direct click handler for all close buttons to ensure they work
+                            document.querySelectorAll('.alert .btn-close').forEach(function(closeBtn) {
+                                closeBtn.onclick = function() {
+                                    console.log('Close button clicked directly');
+                                    const alert = this.closest('.alert');
+                                    alert.style.display = 'none';
+                                    
+                                    // If this was the success alert, show the form
+                                    if (alert.id === 'formSuccess' && form) {
+                                        form.style.display = 'block';
+                                    }
+                                    
+                                    return false; // Prevent default and stop propagation
+                                };
+                            });
+
+                            // Add loading overlay HTML after the form
+                            if (!document.getElementById('loadingOverlay')) {
+                                const loadingOverlay = document.createElement('div');
+                                loadingOverlay.id = 'loadingOverlay';
+                                loadingOverlay.className = 'loading-overlay';
+                                loadingOverlay.style.display = 'none';
+                                loadingOverlay.innerHTML = `
+                                    <div class="loading-spinner">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-3">Sending your message...</p>
+                                    </div>
+                                `;
+                                form.parentNode.insertBefore(loadingOverlay, form.nextSibling);
+                            }
+
+                            // Add CSS for the overlay
+                            const style = document.createElement('style');
+                            style.textContent = `
+                                .loading-overlay {
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-color: rgba(255, 255, 255, 0.9);
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    z-index: 1000;
+                                }
+                                .loading-spinner {
+                                    text-align: center;
+                                }
+                                /* Ensure contact form is visible by default */
+                                #contactForm {
+                                    display: block !important;
+                                }
+                            `;
+                            document.head.appendChild(style);
                         });
                     </script>
                 </div>

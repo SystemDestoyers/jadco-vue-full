@@ -21,6 +21,8 @@ class Message extends Model
         'phone',
         'message',
         'read',
+        'archived',
+        'sent',
     ];
 
     /**
@@ -30,6 +32,8 @@ class Message extends Model
      */
     protected $casts = [
         'read' => 'boolean',
+        'archived' => 'boolean',
+        'sent' => 'boolean',
     ];
     
     /**

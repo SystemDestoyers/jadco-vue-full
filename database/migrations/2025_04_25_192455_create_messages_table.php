@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->text('message');
             $table->boolean('read')->default(false);
+            $table->boolean('archived')->default(false);
+            $table->boolean('sent')->default(false);
             $table->timestamps();
         });
     }

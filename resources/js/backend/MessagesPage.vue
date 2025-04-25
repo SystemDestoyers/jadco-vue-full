@@ -5,12 +5,17 @@
         <div class="col-12">
           <div class="d-flex justify-content-between align-items-center">
             <h1><i class="fas fa-envelope me-2"></i> Messages Inbox</h1>
-            <div class="inbox-search">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search messages..." v-model="searchQuery" @input="searchMessages">
-                <span class="input-group-text bg-primary text-white">
-                  <i class="fas fa-search"></i>
-                </span>
+            <div class="d-flex align-items-center">
+              <button class="btn btn-primary me-3" @click="showComposeModal">
+                <i class="fas fa-paper-plane me-1"></i> Compose
+              </button>
+              <div class="inbox-search">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Search messages..." v-model="searchQuery" @input="searchMessages">
+                  <span class="input-group-text bg-primary text-white">
+                    <i class="fas fa-search"></i>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -19,7 +24,7 @@
 
       <div class="row">
         <div class="col-12">
-          <div class="messages-container">
+          <div class="messages-container" :class="{'archived-view': showArchived}">
             <!-- Toolbar -->
             <div class="messages-toolbar bg-light border p-2 d-flex align-items-center">
               <div class="form-check me-2">
@@ -49,11 +54,35 @@
                   <i class="fas fa-envelope"></i> Mark as Unread
                 </button>
                 <button 
+                  class="btn btn-sm btn-outline-primary" 
+                  :disabled="!hasSelected" 
+                  @click="archiveSelected"
+                >
+                  <i class="fas fa-archive"></i> Archive
+                </button>
+                <button 
                   class="btn btn-sm btn-outline-danger" 
                   :disabled="!hasSelected" 
                   @click="deleteSelected"
                 >
                   <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+              
+              <div class="btn-group me-2">
+                <button 
+                  class="btn btn-sm" 
+                  :class="showArchived ? 'btn-primary' : 'btn-outline-secondary'"
+                  @click="toggleArchivedView"
+                >
+                  <i class="fas fa-archive"></i> {{ showArchived ? 'Show Inbox' : 'Show Archived' }}
+                </button>
+                <button 
+                  class="btn btn-sm" 
+                  :class="showSent ? 'btn-primary' : 'btn-outline-secondary'"
+                  @click="toggleSentView"
+                >
+                  <i class="fas fa-paper-plane"></i> {{ showSent ? 'Show Inbox' : 'Show Sent' }}
                 </button>
               </div>
 
@@ -67,6 +96,12 @@
                 <button class="btn btn-sm btn-outline-secondary ms-1" :disabled="currentPage >= totalPages" @click="nextPage">
                   <i class="fas fa-chevron-right"></i>
                 </button>
+                <select v-model="itemsPerPage" class="form-select form-select-sm d-inline-block ms-2" style="width: auto;">
+                  <option :value="10">10</option>
+                  <option :value="20">20</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
               </div>
             </div>
 
@@ -136,10 +171,28 @@
           <div class="modal-body">
             <div class="message-header mb-3">
               <div class="sender mb-1">
-                <span class="fw-bold">From:</span> {{ currentMessage.first_name }} {{ currentMessage.last_name }} &lt;{{ currentMessage.email }}&gt;
+                <span class="fw-bold">From:</span> {{ currentMessage.first_name }} {{ currentMessage.last_name }} 
+                &lt;{{ currentMessage.email }}&gt;
+                <button 
+                  class="btn btn-sm btn-outline-secondary ms-2" 
+                  @click="copyEmail(currentMessage.email)"
+                  data-bs-toggle="tooltip"
+                  :title="copyTooltip"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
               </div>
               <div v-if="currentMessage.phone" class="phone mb-1">
                 <span class="fw-bold">Phone:</span> {{ currentMessage.phone }}
+                <button 
+                  v-if="currentMessage.phone"
+                  class="btn btn-sm btn-outline-secondary ms-2" 
+                  @click="copyPhone(currentMessage.phone)"
+                  data-bs-toggle="tooltip"
+                  title="Copy Phone"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
               </div>
               <div class="date mb-1">
                 <span class="fw-bold">Date:</span> {{ formatFullDate(currentMessage.created_at) }}
@@ -157,6 +210,21 @@
             >
               <i :class="[currentMessage.read ? 'fas fa-envelope' : 'fas fa-envelope-open']"></i>
               {{ currentMessage.read ? 'Mark as Unread' : 'Mark as Read' }}
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-primary" 
+              @click="toggleArchiveStatus(currentMessage)"
+            >
+              <i class="fas fa-archive"></i>
+              {{ currentMessage.archived ? 'Unarchive' : 'Archive' }}
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-primary" 
+              @click="replyToMessage"
+            >
+              <i class="fas fa-reply"></i> Reply
             </button>
             <button 
               type="button" 
@@ -190,6 +258,53 @@
         </div>
       </div>
     </div>
+
+    <!-- Compose Message Modal -->
+    <div class="modal fade" id="composeModal" tabindex="-1" aria-labelledby="composeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="composeModalLabel">Compose Message</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="sendMessage">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="firstName" class="form-label">First Name</label>
+                  <input type="text" class="form-control" id="firstName" v-model="composeForm.first_name" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="lastName" class="form-label">Last Name</label>
+                  <input type="text" class="form-control" id="lastName" v-model="composeForm.last_name" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email Address</label>
+                  <input type="email" class="form-control" id="email" v-model="composeForm.email" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone Number (Optional)</label>
+                  <input type="tel" class="form-control" id="phone" v-model="composeForm.phone">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="messageContent" class="form-label">Message</label>
+                <textarea class="form-control" id="messageContent" rows="6" v-model="composeForm.message" required></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" @click="sendMessage" :disabled="sendingMessage">
+              <i class="fas" :class="sendingMessage ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+              {{ sendingMessage ? 'Sending...' : 'Send Message' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -210,13 +325,27 @@ export default {
       currentMessage: null,
       searchQuery: '',
       currentPage: 1,
-      itemsPerPage: 15,
+      itemsPerPage: 20,
       messageModal: null,
       deleteModal: null,
       deleteType: 'single', // 'single' or 'multiple'
       deleteId: null,
       totalMessages: 0,
-      unreadCount: 0
+      unreadCount: 0,
+      archivedMessages: [],
+      sentMessages: [],
+      showArchived: false,
+      showSent: false,
+      copyTooltip: 'Copy Email',
+      composeForm: {
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        message: ''
+      },
+      sendingMessage: false,
+      searchTimeout: null
     };
   },
   computed: {
@@ -225,27 +354,27 @@ export default {
     },
     selectedAll: {
       get() {
-        return this.paginatedMessages.length > 0 && this.selectedIds.length === this.paginatedMessages.length;
+        return this.filteredMessages.length > 0 && this.selectedIds.length === this.filteredMessages.length;
       },
       set(value) {
         this.selectedIds = value 
-          ? this.paginatedMessages.map(message => message.id) 
+          ? this.filteredMessages.map(message => message.id) 
           : [];
       }
     },
     paginatedMessages() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredMessages.slice(start, end);
+      // With server-side pagination, we directly use the filtered messages
+      // as they represent the current page from the server
+      return this.filteredMessages;
     },
     totalPages() {
-      return Math.ceil(this.filteredMessages.length / this.itemsPerPage);
+      return Math.ceil(this.totalMessages / this.itemsPerPage);
     },
     startIndex() {
       return (this.currentPage - 1) * this.itemsPerPage;
     },
     endIndex() {
-      return this.startIndex + this.paginatedMessages.length;
+      return this.startIndex + this.filteredMessages.length;
     }
   },
   mounted() {
@@ -256,17 +385,41 @@ export default {
     async fetchMessages() {
       this.loading = true;
       try {
-        const response = await axios.get('/api/admin/messages');
+        const params = {
+          per_page: this.itemsPerPage,
+          page: this.currentPage
+        };
+        
+        // Add search query if present
+        if (this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+        
+        const response = await axios.get('/api/admin/messages', { params });
         const data = response.data;
         
         if (data.success) {
-          this.messages = data.data.data || data.data;
-          this.filteredMessages = [...this.messages];
-          this.totalMessages = this.messages.length;
+          // Handle the case where data is wrapped in a data property (pagination response)
+          if (data.data && data.data.data) {
+            this.messages = data.data.data;
+            this.totalMessages = data.data.total;
+            this.currentPage = data.data.current_page;
+            this.itemsPerPage = data.data.per_page;
+          } else {
+            this.messages = data.data || [];
+            this.totalMessages = this.messages.length;
+          }
+          
+          this.filteredMessages = this.showArchived || this.showSent ? [] : [...this.messages];
           this.unreadCount = data.unread_count || 0;
           
           // Update the sidebar unread count if it exists
           this.updateSidebarUnreadCount(this.unreadCount);
+          
+          // Get archived messages
+          if (!this.showArchived && !this.showSent) {
+            await this.fetchArchivedMessages();
+          }
         } else {
           toast.error('Error fetching messages');
         }
@@ -278,9 +431,88 @@ export default {
       }
     },
     
+    async fetchArchivedMessages() {
+      try {
+        const params = {
+          per_page: this.itemsPerPage,
+          page: this.currentPage
+        };
+        
+        // Add search query if present
+        if (this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+        
+        const archivedResponse = await axios.get('/api/admin/messages/archived', { params });
+        if (archivedResponse.data.success) {
+          // Handle the case where data is wrapped in a data property (pagination response)
+          if (archivedResponse.data.data && archivedResponse.data.data.data) {
+            this.archivedMessages = archivedResponse.data.data.data;
+            
+            // If we're in archived view, update filtered messages
+            if (this.showArchived) {
+              this.filteredMessages = [...this.archivedMessages];
+              this.totalMessages = archivedResponse.data.data.total || this.archivedMessages.length;
+              this.currentPage = archivedResponse.data.data.current_page || 1;
+            }
+          } else {
+            this.archivedMessages = archivedResponse.data.data || [];
+            
+            // If we're in archived view, update filtered messages
+            if (this.showArchived) {
+              this.filteredMessages = [...this.archivedMessages];
+              this.totalMessages = this.archivedMessages.length;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching archived messages:', error);
+      }
+    },
+    
+    async fetchSentMessages() {
+      this.loading = true;
+      try {
+        const params = {
+          per_page: this.itemsPerPage,
+          page: this.currentPage
+        };
+        
+        // Add search query if present
+        if (this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+        
+        const response = await axios.get('/api/admin/messages/sent', { params });
+        const data = response.data;
+        
+        if (data.success) {
+          // Handle the case where data is wrapped in a data property (pagination response)
+          if (data.data && data.data.data) {
+            this.sentMessages = data.data.data;
+            this.totalMessages = data.data.total;
+            this.currentPage = data.data.current_page;
+          } else {
+            this.sentMessages = data.data || [];
+            this.totalMessages = this.sentMessages.length;
+          }
+          
+          this.filteredMessages = [...this.sentMessages];
+        } else {
+          toast.error('Error fetching sent messages');
+        }
+      } catch (error) {
+        console.error('Error fetching sent messages:', error);
+        toast.error('Failed to retrieve sent messages. Please try again.');
+      } finally {
+        this.loading = false;
+      }
+    },
+    
     initModals() {
       this.messageModal = new Modal(document.getElementById('messageModal'));
       this.deleteModal = new Modal(document.getElementById('deleteModal'));
+      this.composeModal = new Modal(document.getElementById('composeModal'));
     },
     
     viewMessage(message) {
@@ -490,33 +722,35 @@ export default {
     },
     
     searchMessages() {
-      if (!this.searchQuery.trim()) {
-        this.filteredMessages = [...this.messages];
-        return;
-      }
-      
-      const query = this.searchQuery.toLowerCase();
-      this.filteredMessages = this.messages.filter(message => 
-        message.first_name.toLowerCase().includes(query) ||
-        message.last_name.toLowerCase().includes(query) ||
-        message.email.toLowerCase().includes(query) ||
-        (message.phone && message.phone.toLowerCase().includes(query)) ||
-        message.message.toLowerCase().includes(query)
-      );
-      
-      // Reset to first page when searching
-      this.currentPage = 1;
+      // Debounce the search to avoid too many API calls
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        this.currentPage = 1; // Reset to first page when searching
+        this.refreshMessages();
+      }, 300);
     },
     
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
+        this.refreshMessages();
       }
     },
     
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
+        this.refreshMessages();
+      }
+    },
+    
+    refreshMessages() {
+      if (this.showArchived) {
+        this.fetchArchivedMessages();
+      } else if (this.showSent) {
+        this.fetchSentMessages();
+      } else {
+        this.fetchMessages();
       }
     },
     
@@ -563,6 +797,300 @@ export default {
       if (window.updateAdminUnreadCount) {
         window.updateAdminUnreadCount(count);
       }
+    },
+    
+    archiveSelected() {
+      const promises = this.selectedIds.map(id => this.archiveMessage(id));
+      
+      Promise.all(promises)
+        .then(() => {
+          this.selectedIds = [];
+          toast.success('Selected messages archived');
+        })
+        .catch(error => {
+          console.error('Error archiving selected messages:', error);
+          toast.error('Failed to archive one or more messages');
+        });
+    },
+    
+    toggleArchivedView() {
+      // If already showing archived messages, go back to inbox
+      if (this.showArchived) {
+        this.showArchived = false;
+        this.showSent = false;
+        this.currentPage = 1;
+        this.fetchMessages(); // Fetch regular inbox messages
+      } else {
+        this.showArchived = true;
+        this.showSent = false;
+        this.currentPage = 1;
+        this.fetchArchivedMessages();
+      }
+      
+      this.selectedIds = [];
+    },
+    
+    updateFilteredMessages() {
+      if (this.searchQuery.trim()) {
+        this.searchMessages();
+      } else {
+        if (this.showArchived) {
+          this.filteredMessages = [...this.archivedMessages];
+        } else if (this.showSent) {
+          this.filteredMessages = [...this.sentMessages];
+        } else {
+          this.filteredMessages = [...this.messages];
+        }
+        this.totalMessages = this.filteredMessages.length;
+      }
+    },
+    
+    copyEmail(email) {
+      navigator.clipboard.writeText(email)
+        .then(() => {
+          this.copyTooltip = 'Copied!';
+          setTimeout(() => {
+            this.copyTooltip = 'Copy Email';
+          }, 2000);
+          toast.success('Email copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Could not copy email: ', err);
+          toast.error('Failed to copy email');
+        });
+    },
+    
+    copyPhone(phone) {
+      navigator.clipboard.writeText(phone)
+        .then(() => {
+          toast.success('Phone number copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Could not copy phone: ', err);
+          toast.error('Failed to copy phone number');
+        });
+    },
+    
+    toggleArchiveStatus(message) {
+      if (message.archived) {
+        this.unarchiveMessage(message.id);
+      } else {
+        this.archiveMessage(message.id);
+      }
+    },
+    
+    async archiveMessage(id) {
+      try {
+        const response = await axios.put(`/api/admin/messages/${id}/archive`, {}, {
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        });
+        
+        const data = response.data;
+        
+        if (data.success) {
+          // Update local data
+          const messageIndex = this.messages.findIndex(m => m.id === id);
+          if (messageIndex !== -1) {
+            this.messages[messageIndex].archived = true;
+            
+            // Update filtered messages
+            const filteredIndex = this.filteredMessages.findIndex(m => m.id === id);
+            if (filteredIndex !== -1) {
+              this.filteredMessages[filteredIndex].archived = true;
+            }
+            
+            // If viewing the message details, update it there too
+            if (this.currentMessage && this.currentMessage.id === id) {
+              this.currentMessage.archived = true;
+            }
+            
+            // Move to archived array
+            const message = this.messages[messageIndex];
+            this.archivedMessages.push({...message});
+            
+            // Remove from main list if showing inbox
+            if (!this.showArchived) {
+              this.messages = this.messages.filter(m => m.id !== id);
+              this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
+              this.totalMessages = this.filteredMessages.length;
+              
+              // Adjust current page if needed
+              if (this.paginatedMessages.length === 0 && this.currentPage > 1) {
+                this.currentPage--;
+              }
+              
+              // Close modal if current message is archived
+              if (this.currentMessage && this.currentMessage.id === id) {
+                this.messageModal.hide();
+              }
+            }
+            
+            toast.success('Message archived');
+          }
+        }
+      } catch (error) {
+        console.error('Error archiving message:', error);
+        toast.error('Failed to archive message');
+      }
+    },
+    
+    async unarchiveMessage(id) {
+      try {
+        const response = await axios.put(`/api/admin/messages/${id}/unarchive`, {}, {
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        });
+        
+        const data = response.data;
+        
+        if (data.success) {
+          // Update local data
+          const archivedIndex = this.archivedMessages.findIndex(m => m.id === id);
+          
+          if (archivedIndex !== -1) {
+            const message = this.archivedMessages[archivedIndex];
+            message.archived = false;
+            
+            // If showing archived, update filtered messages
+            if (this.showArchived) {
+              const filteredIndex = this.filteredMessages.findIndex(m => m.id === id);
+              if (filteredIndex !== -1) {
+                this.filteredMessages[filteredIndex].archived = false;
+              }
+              
+              // Remove from display if in archived view
+              this.archivedMessages = this.archivedMessages.filter(m => m.id !== id);
+              this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
+              this.totalMessages = this.filteredMessages.length;
+              
+              // If viewing the message details, update it there too
+              if (this.currentMessage && this.currentMessage.id === id) {
+                this.currentMessage.archived = false;
+                this.messageModal.hide();
+              }
+            } else {
+              // Add back to main messages array
+              this.messages.unshift({...message});
+              this.updateFilteredMessages();
+            }
+            
+            toast.success('Message moved to inbox');
+          }
+        }
+      } catch (error) {
+        console.error('Error unarchiving message:', error);
+        toast.error('Failed to unarchive message');
+      }
+    },
+    
+    showComposeModal() {
+      // Pre-populate the form if replying to a message
+      if (this.currentMessage) {
+        this.composeForm.email = this.currentMessage.email;
+        this.composeForm.first_name = this.currentMessage.first_name;
+        this.composeForm.last_name = this.currentMessage.last_name;
+        this.composeForm.phone = this.currentMessage.phone || '';
+        this.composeForm.message = `\n\n---------- Original Message ----------\nFrom: ${this.currentMessage.full_name}\nDate: ${this.formatFullDate(this.currentMessage.created_at)}\n\n${this.currentMessage.message}`;
+      } else {
+        // Reset the form if creating a new message
+        this.composeForm = {
+          first_name: '',
+          last_name: '',
+          email: '',
+          phone: '',
+          message: ''
+        };
+      }
+      
+      this.composeModal.show();
+    },
+    
+    async sendMessage() {
+      this.sendingMessage = true;
+      try {
+        const response = await axios.post('/api/admin/messages/send', this.composeForm, {
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        });
+        
+        const data = response.data;
+        
+        if (data.success) {
+          // Close the modal
+          this.composeModal.hide();
+          
+          // Show success message
+          toast.success('Message sent successfully');
+          
+          // Reset the form
+          this.composeForm = {
+            first_name: '',
+            last_name: '',
+            email: '',
+            phone: '',
+            message: ''
+          };
+          
+          // If we are showing sent messages, refresh the list
+          if (this.showSent) {
+            this.fetchSentMessages();
+          }
+        } else {
+          toast.error('Error sending message: ' + (data.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        toast.error('Failed to send message: ' + (error.response?.data?.message || error.message || 'Unknown error'));
+      } finally {
+        this.sendingMessage = false;
+      }
+    },
+    
+    replyToMessage() {
+      // Close the message view modal
+      this.messageModal.hide();
+      
+      // Wait a bit for the modal to close to avoid Bootstrap modal issues
+      setTimeout(() => {
+        // Pre-populate the compose form with the recipient's details
+        this.composeForm = {
+          email: this.currentMessage.email,
+          first_name: this.currentMessage.first_name,
+          last_name: this.currentMessage.last_name,
+          phone: this.currentMessage.phone || '',
+          message: `\n\n---------- Original Message ----------\nFrom: ${this.currentMessage.full_name}\nDate: ${this.formatFullDate(this.currentMessage.created_at)}\n\n${this.currentMessage.message}`
+        };
+        
+        // Show the compose modal
+        this.composeModal.show();
+      }, 300);
+    },
+    
+    toggleSentView() {
+      // Don't toggle if we're already in sent view
+      if (this.showSent) {
+        this.showSent = false;
+        this.showArchived = false;
+        this.currentPage = 1;
+        this.fetchMessages(); // Show regular inbox
+      } else {
+        this.showSent = true;
+        this.showArchived = false;
+        this.currentPage = 1;
+        this.fetchSentMessages(); // Show sent messages
+      }
+      
+      this.selectedIds = [];
+    }
+  },
+  watch: {
+    itemsPerPage() {
+      this.currentPage = 1; // Reset to first page when changing items per page
+      this.refreshMessages();
     }
   }
 };
@@ -627,5 +1155,47 @@ export default {
 /* Message content */
 .message-content {
   min-height: 150px;
+}
+
+/* Copy buttons */
+.sender button, .phone button {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.75rem;
+}
+
+/* Archive button */
+.btn-archive {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Make toolbar responsive */
+@media (max-width: 768px) {
+  .messages-toolbar {
+    flex-wrap: wrap;
+  }
+  
+  .messages-toolbar .btn-group {
+    margin-bottom: 8px;
+  }
+  
+  .inbox-search {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+/* Add a highlight for archived view */
+.messages-container.archived-view {
+  border: 2px solid #6c757d;
+}
+
+.archived-badge {
+  background-color: #6c757d;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
 }
 </style> 

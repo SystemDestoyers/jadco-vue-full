@@ -8,14 +8,36 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class MessageService
 {
     /**
-     * Get all messages with pagination
+     * Get all messages with pagination (excluding archived ones)
      *
      * @param int $perPage
      * @return LengthAwarePaginator
      */
     public function getAllMessages(int $perPage = 10): LengthAwarePaginator
     {
-        return Message::latest()->paginate($perPage);
+        return Message::where('archived', false)->latest()->paginate($perPage);
+    }
+    
+    /**
+     * Get all archived messages with pagination
+     *
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function getArchivedMessages(int $perPage = 10): LengthAwarePaginator
+    {
+        return Message::where('archived', true)->latest()->paginate($perPage);
+    }
+    
+    /**
+     * Get all sent messages with pagination
+     *
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function getSentMessages(int $perPage = 10): LengthAwarePaginator
+    {
+        return Message::where('sent', true)->latest()->paginate($perPage);
     }
     
     /**
@@ -95,5 +117,73 @@ class MessageService
     public function getUnreadCount(): int
     {
         return Message::where('read', false)->count();
+    }
+    
+    /**
+     * Mark a message as archived
+     *
+     * @param int $id
+     * @return Message
+     */
+    public function archiveMessage(int $id): Message
+    {
+        return $this->updateMessage($id, ['archived' => true]);
+    }
+    
+    /**
+     * Unarchive a message
+     *
+     * @param int $id
+     * @return Message
+     */
+    public function unarchiveMessage(int $id): Message
+    {
+        return $this->updateMessage($id, ['archived' => false]);
+    }
+    
+    /**
+     * Create a sent message
+     *
+     * @param array $data
+     * @return Message
+     */
+    public function createSentMessage(array $data): Message
+    {
+        $data['sent'] = true;
+        return $this->createMessage($data);
+    }
+    
+    /**
+     * Search messages by term with various filters
+     *
+     * @param string $searchTerm
+     * @param bool $archived Whether to search in archived messages
+     * @param bool $sent Whether to search in sent messages
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function searchMessages(string $searchTerm, bool $archived = false, bool $sent = false, int $perPage = 10)
+    {
+        $query = Message::query();
+        
+        // Add filters for archived/sent status
+        if ($archived) {
+            $query->where('archived', true);
+        } else if ($sent) {
+            $query->where('sent', true);
+        } else {
+            $query->where('archived', false);
+        }
+        
+        // Add search conditions
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('first_name', 'like', "%{$searchTerm}%")
+              ->orWhere('last_name', 'like', "%{$searchTerm}%")
+              ->orWhere('email', 'like', "%{$searchTerm}%")
+              ->orWhere('message', 'like', "%{$searchTerm}%")
+              ->orWhere('phone', 'like', "%{$searchTerm}%");
+        });
+        
+        return $query->latest()->paginate($perPage);
     }
 } 

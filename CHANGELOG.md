@@ -126,6 +126,14 @@ All notable changes to this project will be documented in this file.
 - Email notifications for new contact form submissions
 - Error handling and logging for contact form submissions
 - Real-time unread message count updates across the admin panel
+- Enhanced messages management with archive and sent messages functionality:
+  - Added database columns for archived and sent states
+  - Created API endpoints for archiving/unarchiving messages
+  - Added endpoints for retrieving archived and sent messages
+  - Implemented service methods for managing message states
+  - Added UI features to copy email addresses and phone numbers
+  - Enhanced pagination with selectable items per page display
+  - Improved message organization with separate inbox and archive views
 
 ### Changed
 - Updated Vue router to use new web routes for authentication
