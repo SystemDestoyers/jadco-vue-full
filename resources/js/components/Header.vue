@@ -11,7 +11,7 @@
                     <span v-if="isHomePage" class="heading-text" :class="{ 'active': currentSlide === 2 }" data-slide="2">{{ content.headings?.[2] || 'Innovative Efforts in Revolutionizing the eSport Industry' }}</span>
                     <span v-if="isHomePage" class="heading-text" :class="{ 'active': currentSlide === 3 }" data-slide="3">{{ content.headings?.[3] || 'Bringing the global Arts and Entertainment Events to town' }}</span>
                     
-                    <span v-if="$route.path.includes('about')" class="heading-text active">{{ content.aboutHeading || 'We Listen, design your vision and bring it to life... Let\'s talk' }}</span>
+                    <span v-if="$route.path.includes('about')" class="heading-text active">{{ content.aboutPageHeading || 'We Listen, design your vision and bring it to life... Let\'s talk' }}</span>
                     <span v-if="$route.path.includes('services/education-and-scholarship')" class="heading-text active">{{ content.serviceHeadings?.education || 'From Education and Training to Innovation' }}</span>
                     <span v-if="$route.path.includes('services/ai-and-advanced-technologies')" class="heading-text active">{{ content.serviceHeadings?.ai || 'The Latest AI and Technologies' }}</span>
                     <span v-if="$route.path.includes('services/egaming-and-esport')" class="heading-text active">{{ content.serviceHeadings?.egaming || 'Innovative Efforts in Revolutionizing the eSport Industry' }}</span>
@@ -22,9 +22,9 @@
                 
                 <!-- Services Menu -->
                 <div class="services-menu">
-                    <h3>{{ content.servicesTitle || 'SERVICES' }}</h3>
-                    <ul class="service-list">
-                        <li v-for="(service, index) in services" :key="index">
+                    <h3>{{ content.servicesMenuTitle }}</h3>
+                    <ul class="service-list" v-if="servicesMenuLinks.length > 0">
+                        <li v-for="(service, index) in servicesMenuLinks" :key="index">
                             <div class="link-container">
                                 <router-link :to="service.link" :class="{ 'active': $route.path.includes(service.link) }">
                                     {{ service.title }}
@@ -94,40 +94,23 @@ export default {
         return {
             currentSlide: 0,
             carousel: null,
-            headerImage: '/images/Header/01_EDU_Home.jpg',
+            headerImage: '',
             servicesMenuInitialized: false,
             loading: true,
             content: {
-                headings: [
-                    'From Education and Training to Innovation',
-                    'The Latest AI and Technologies',
-                    'Innovative Efforts in Revolutionizing the eSport Industry',
-                    'Bringing the global Arts and Entertainment Events to town'
-                ],
-                aboutHeading: 'We Listen, design your vision and bring it to life... Let\'s talk',
-                serviceHeadings: {
-                    education: 'From Education and Training to Innovation',
-                    ai: 'The Latest AI and Technologies',
-                    egaming: 'Innovative Efforts in Revolutionizing the eSport Industry',
-                    arts: 'Bringing the Global Arts and Entertainment Events to town',
-                    training: 'From Education and Training to Innovation'
-                },
-                errorHeading: 'JADCO Error page',
-                servicesTitle: 'SERVICES',
-                talkButtonText: 'Let\'s Talk'
+                headings: [],
+                aboutPageHeading: '',
+                aboutPageHeader_image: '',
+                serviceHeadings: {},
+                errorHeading: '',
+                servicesMenuTitle: '',
+                talkButtonText: ''
             },
-            services: [
-                { title: 'Education and Scholarship', link: '/services/education-and-scholarship' },
-                { title: 'Training and Professional Development', link: '/services/training-and-professional-development' },
-                { title: 'AI and Advanced Technologies', link: '/services/ai-and-advanced-technologies' },
-                { title: 'E-Gaming and eSport', link: '/services/egaming-and-esport' },
-                { title: 'Arts and Entertainment', link: '/services/arts-and-entertainment' }
+            servicesMenuLinks: [
+                { title: '', link: '' },
             ],
             carouselSlides: [
-                { src: '/images/Header/01_EDU_Home.jpg', alt: 'Education' },
-                { src: '/images/Header/02_AI_Home.jpg', alt: 'AI' },
-                { src: '/images/Header/03_Games_Home.jpg', alt: 'Gaming' },
-                { src: '/images/Header/04_Arts_Header.jpg', alt: 'Arts' }
+                { src: '', alt: '' },
             ]
         };
     },
@@ -157,15 +140,15 @@ export default {
                         
                         // Only update the content properties, preserving component structure
                         if (content.headings) this.content.headings = content.headings;
-                        if (content.aboutHeading) this.content.aboutHeading = content.aboutHeading;
+                        if (content.aboutPageHeading) this.content.aboutPageHeading = content.aboutPageHeading;
                         if (content.serviceHeadings) this.content.serviceHeadings = content.serviceHeadings;
                         if (content.errorHeading) this.content.errorHeading = content.errorHeading;
-                        if (content.servicesTitle) this.content.servicesTitle = content.servicesTitle;
+                        if (content.servicesMenuTitle) this.content.servicesMenuTitle = content.servicesMenuTitle;
                         if (content.talkButtonText) this.content.talkButtonText = content.talkButtonText;
-                        
+                        if (content.aboutPageHeader_image) this.content.aboutPageHeader_image = content.aboutPageHeader_image;
                         // Update services if provided in content
-                        if (content.services && content.services.length) {
-                            this.services = content.services;
+                        if (content.servicesMenuLinks) {
+                            this.servicesMenuLinks = content.servicesMenuLinks;
                         }
                         
                         // Update slides if provided in content

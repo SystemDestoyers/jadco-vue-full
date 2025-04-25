@@ -21,7 +21,7 @@ class SectionSeeder extends Seeder
                     'Innovative Efforts in Revolutionizing the eSport Industry',
                     'Bringing the global Arts and Entertainment Events to town'
                 ],
-                'aboutHeading' => 'We Listen, design your vision and bring it to life... Let\'s talk',
+                'aboutPageHeading' => 'We Listen, design your vision and bring it to life... Let\'s talk',
                 'serviceHeadings' => [
                     'education' => 'From Education and Training to Innovation',
                     'ai' => 'The Latest AI and Technologies',
@@ -30,7 +30,7 @@ class SectionSeeder extends Seeder
                     'training' => 'From Education and Training to Innovation'
                 ],
                 'errorHeading' => 'JADCO Error page',
-                'servicesTitle' => 'SERVICES',
+                'servicesMenuTitle' => 'SERVICES',
                 'talkButtonText' => 'Let\'s Talk',
                 'slides' => [
                     ['src' => '/images/Header/01_EDU_Home.jpg', 'alt' => 'Education'],
@@ -45,8 +45,8 @@ class SectionSeeder extends Seeder
                     'arts' => 'images/Header/04_Arts_Header.jpg',
                     'training' => 'images/01_Training_Header.jpg'
                 ],
-                'about_image' => 'images/About_Page.jpg',
-                'services' => [
+                'aboutPageHeader_image' => 'images/About_Page.jpg',
+                'servicesMenuLinks' => [
                     ['title' => 'Education and Scholarship', 'link' => '/services/education-and-scholarship'],
                     ['title' => 'Training and Professional Development', 'link' => '/services/training-and-professional-development'],
                     ['title' => 'AI and Advanced Technologies', 'link' => '/services/ai-and-advanced-technologies'],

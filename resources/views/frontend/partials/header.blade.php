@@ -56,7 +56,7 @@
                         <span class="heading-text" data-slide="3">BRINGING THE GLOBAL ARTS AND ENTERTAINMENT EVENTS TO TOWN</span>
                     @endif
                 @elseif(request()->is('about*'))
-                    <span class="heading-text active">{{ $headerContent['aboutHeading'] ?? 'We Listen, design your vision and bring it to life... Let\'s talk' }}</span>
+                    <span class="heading-text active">{{ $headerContent['aboutPageHeading'] ?? 'We Listen, design your vision and bring it to life... Let\'s talk' }}</span>
                 @elseif(request()->is('services/education-and-scholarship*'))
                     <span class="heading-text active">{{ $headerContent['serviceHeadings']['education'] ?? 'FROM EDUCATION AND TRAINING TO INNOVATION' }}</span>
                 @elseif(request()->is('services/ai-and-advanced-technologies*'))
@@ -74,10 +74,12 @@
             
             <!-- Services Menu -->
             <div class="services-menu {{ $isServicePage ? 'active' : '' }}">
-                <h3>{{ $headerContent['servicesTitle'] ?? 'SERVICES' }}</h3>
+                @if(isset($headerContent['servicesMenuTitle']))
+                    <h3>{{ $headerContent['servicesMenuTitle'] }}</h3>
+                @endif
                 <ul class="service-list">
-                    @if(isset($headerContent['services']) && is_array($headerContent['services']))
-                        @foreach($headerContent['services'] as $service)
+                    @if(isset($headerContent['servicesMenuLinks']) && is_array($headerContent['servicesMenuLinks']))
+                        @foreach($headerContent['servicesMenuLinks'] as $service)
                             <li>
                                 <div class="link-container">
                                     <a href="{{ url($service['link'] ?? '#') }}" class="{{ request()->is(ltrim($service['link'] ?? '', '/')) ? 'active' : '' }}">

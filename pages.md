@@ -83,7 +83,7 @@ Vue: Example using axios to call APIs and bind to data
     "Innovative Efforts in Revolutionizing the eSport Industry",
     "Bringing the global Arts and Entertainment Events to town"
   ],
-  "aboutHeading": "We Listen, design your vision and bring it to life... Let's talk",
+  "aboutPageHeading": "We Listen, design your vision and bring it to life... Let's talk",
   "serviceHeadings": {
     "education": "From Education and Training to Innovation",
     "ai": "The Latest AI and Technologies",
@@ -92,7 +92,7 @@ Vue: Example using axios to call APIs and bind to data
     "training": "From Education and Training to Innovation"
   },
   "errorHeading": "JADCO Error page",
-  "servicesTitle": "SERVICES",
+  "servicesMenuTitle": "SERVICES",
   "talkButtonText": "Let's Talk",
   "slides": [
     { "src": "/images/Header/01_EDU_Home.jpg", "alt": "Education" },
@@ -297,7 +297,7 @@ The home page is made up of multiple sections:
     "Innovative Efforts in Revolutionizing the eSport Industry",
     "Bringing the global Arts and Entertainment Events to town"
   ],
-  "aboutHeading": "We Listen, design your vision and bring it to life... Let's talk",
+  "aboutPageHeading": "We Listen, design your vision and bring it to life... Let's talk",
   "serviceHeadings": {
     "education": "From Education and Training to Innovation",
     "ai": "The Latest AI and Technologies",
@@ -306,7 +306,7 @@ The home page is made up of multiple sections:
     "training": "From Education and Training to Innovation"
   },
   "errorHeading": "JADCO Error page",
-  "servicesTitle": "SERVICES",
+  "servicesMenuTitle": "SERVICES",
   "talkButtonText": "Let's Talk",
   "slides": [
     { "src": "/images/Header/01_EDU_Home.jpg", "alt": "Education" },
