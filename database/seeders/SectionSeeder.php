@@ -39,13 +39,13 @@ class SectionSeeder extends Seeder
                     ['src' => '/images/Header/04_Arts_Header.jpg', 'alt' => 'Arts']
                 ],
                 'service_images' => [
-                    'education' => 'images/Header/01_EDU_Home.jpg',
-                    'ai' => 'images/Header/02_AI_Home.jpg',
-                    'egaming' => 'images/Header/03_Games_Home.jpg',
-                    'arts' => 'images/Header/04_Arts_Header.jpg',
-                    'training' => 'images/01_Training_Header.jpg'
+                    'education' => '/images/Header/01_EDU_Home.jpg',
+                    'ai' => '/images/Header/02_AI_Home.jpg',
+                    'egaming' => '/images/Header/03_Games_Home.jpg',
+                    'arts' => '/images/Header/04_Arts_Header.jpg',
+                    'training' => '/images/01_Training_Header.jpg'
                 ],
-                'aboutPageHeader_image' => 'images/About_Page.jpg',
+                'aboutPageHeader_image' => '/images/About_Page.jpg',
                 'servicesMenuLinks' => [
                     ['title' => 'Education and Scholarship', 'link' => '/services/education-and-scholarship'],
                     ['title' => 'Training and Professional Development', 'link' => '/services/training-and-professional-development'],
@@ -63,12 +63,12 @@ class SectionSeeder extends Seeder
             'order' => 2,
             'content' => [
                 'title' => 'ABOUT',
-                'logo' => 'images/jadoo-logo 2.png',
+                'logo' => '/images/jadoo-logo 2.png',
                 'main_text' => 'After more than 20 years of experience in the Saudi Arabia\'s Human Capital Development market, JAD Consulting (JADCO) was established to continue supporting the industry with a new inspired vision by the great Saudi Vision 2030.',
                 'description1' => 'JADCO and its highly ranked international partners of Companies, Universities and SMEs are forming together an exclusive and innovative consortium to serve and be part of the revolution and development and support the transformation for the next levels.',
                 'description2' => 'JADCO in collaboration with the best partners in the globe, customize and Tailor projects to bridge the gap and providing the latest technologies to ensure the max level of quality of deliverables, support local content and transform knowledge to meet the objectives of our clients.',
-                'image1' => 'images/About_01.jpg',
-                'image2' => 'images/About_02.jpg'
+                'image1' => '/images/About_01.jpg',
+                'image2' => '/images/About_02.jpg'
             ]
         ]);
 
@@ -83,7 +83,7 @@ class SectionSeeder extends Seeder
                     [
                         'title' => 'Education and Training',
                         'description' => 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets.',
-                        'image' => 'images/Home_Serv_01.jpg',
+                        'image' => '/images/Home_Serv_01.jpg',
                         'buttons' => [
                             [
                                 'text' => 'Education',
@@ -100,19 +100,19 @@ class SectionSeeder extends Seeder
                     [
                         'title' => 'AI and Advanced Technologies',
                         'description' => 'AI represents a transformative technology with the potential to revolutionize organizations services and operations. By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.',
-                        'image' => 'images/Home_Serv_02.jpg',
+                        'image' => '/images/Home_Serv_02.jpg',
                         'link' => '/services/ai-and-advanced-technologies'
                     ],
                     [
                         'title' => 'eGaming and eSport',
                         'description' => 'JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of ...',
-                        'image' => 'images/Home_Serv_03.jpg',
+                        'image' => '/images/Home_Serv_03.jpg',
                         'link' => '/services/egaming-and-esport'
                     ],
                     [
                         'title' => 'Arts and Entertainment',
                         'description' => 'Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.',
-                        'image' => 'images/Home_Serv_04.jpg',
+                        'image' => '/images/Home_Serv_04.jpg',
                         'link' => '/services/arts-and-entertainment'
                     ]
                 ]
@@ -176,7 +176,7 @@ class SectionSeeder extends Seeder
             'name' => 'contact',
             'order' => 6,
             'content' => [
-                'logo' => 'images/logo.png',
+                'logo' => '/images/logo.png',
                 'tagline' => 'We Listen, design your vision and bring it to life...',
                 'heading' => 'LET\'S TALK.',
                 'locations' => [
@@ -474,7 +474,7 @@ class SectionSeeder extends Seeder
             'name' => 'contact',
             'order' => 1,
             'content' => [
-                'logo' => 'images/logo.png',
+                'logo' => '/images/logo.png',
                 'tagline' => 'We Listen, design your vision and bring it to life...',
                 'heading' => 'LET\'S TALK.',
                 'locations' => [

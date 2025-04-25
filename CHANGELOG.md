@@ -67,6 +67,11 @@ All notable changes to this project will be documented in this file.
   - Implemented word-break for better text wrapping of long content
   - Added scrollable containers for large text content
   - Enhanced editing experience with multiline support for HTML and long text
+- Updated Header.vue to use dynamic image paths:
+  - Added support for dynamic service header images from content object
+  - Changed about page header to use dynamic image path from content
+  - Added content watcher to update images when content changes
+  - Maintained fallback to static images when dynamic content is unavailable
 
 ### Changed
 - Updated Vue router to use new web routes for authentication
@@ -103,6 +108,12 @@ All notable changes to this project will be documented in this file.
   - Modified MediaLibrary component to ensure consistent path formatting
   - Enhanced MediaController to enforce leading slashes when storing, updating, and retrieving media files
   - Improved URL generation for media items
+- Fixed Header.vue initial image loading issue:
+  - Added conditional rendering to prevent showing header with empty image
+  - Improved loading sequence with proper async/await in created hook
+  - Ensured updateHeaderImage method is called after data is loaded
+  - Added fallback images for all header types to prevent empty src attributes
+  - Fixed image switching when navigating between pages
 
 ## [0.1.0] - 2023-05-16
 

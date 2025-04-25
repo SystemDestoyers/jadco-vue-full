@@ -1,6 +1,6 @@
 <template>
     <!-- Main Header Content -->
-    <div class="heading">
+    <div class="heading" v-if="!loading">
         <div class="row">
             <!-- Left Column: Headings and Services -->
             <div class="left-col col-sm-6 col-lg-6 order-lg-1 order-2">
@@ -104,7 +104,14 @@ export default {
                 serviceHeadings: {},
                 errorHeading: '',
                 servicesMenuTitle: '',
-                talkButtonText: ''
+                talkButtonText: '',
+                service_images: {
+                    education: '',
+                    ai: '',
+                    egaming: '',
+                    arts: '',
+                    training: ''
+                }
             },
             servicesMenuLinks: [
                 { title: '', link: '' },
@@ -124,6 +131,7 @@ export default {
     },
     methods: {
         async fetchHeaderData() {
+            this.loading = true;
             try {
                 // Get header content from API
                 const response = await axios.get('/api/header/sections');
@@ -146,6 +154,8 @@ export default {
                         if (content.servicesMenuTitle) this.content.servicesMenuTitle = content.servicesMenuTitle;
                         if (content.talkButtonText) this.content.talkButtonText = content.talkButtonText;
                         if (content.aboutPageHeader_image) this.content.aboutPageHeader_image = content.aboutPageHeader_image;
+                        if (content.service_images) this.content.service_images = content.service_images;
+                        
                         // Update services if provided in content
                         if (content.servicesMenuLinks) {
                             this.servicesMenuLinks = content.servicesMenuLinks;
@@ -158,8 +168,11 @@ export default {
                     }
                 }
             } catch (error) {
+                console.error('Error fetching header data:', error);
                 // Use default content on error
             } finally {
+                // Update the header image after content is loaded
+                this.updateHeaderImage();
                 this.loading = false;
             }
         },
@@ -192,19 +205,20 @@ export default {
             }
         },
         updateHeaderImage() {
-            // Set header image based on current route
+            // Set header image based on current route using dynamic content
             if (this.$route.path.includes('/about')) {
-                this.headerImage = '/images/About_Page.jpg';
+                // Use dynamic about page header image from content
+                this.headerImage = this.content.aboutPageHeader_image;
             } else if (this.$route.path.includes('/services/education-and-scholarship')) {
-                this.headerImage = '/images/Header/01_EDU_Home.jpg';
+                this.headerImage = this.content.service_images?.education;
             } else if (this.$route.path.includes('/services/ai-and-advanced-technologies')) {
-                this.headerImage = '/images/Header/02_AI_Home.jpg';
+                this.headerImage = this.content.service_images?.ai;
             } else if (this.$route.path.includes('/services/egaming-and-esport')) {
-                this.headerImage = '/images/Header/03_Games_Home.jpg';
+                this.headerImage = this.content.service_images?.egaming;
             } else if (this.$route.path.includes('/services/arts-and-entertainment')) {
-                this.headerImage = '/images/Header/04_Arts_Header.jpg';
+                this.headerImage = this.content.service_images?.arts;
             } else if (this.$route.path.includes('/services/training-and-professional-development')) {
-                this.headerImage = '/images/01_Training_Header.jpg';
+                this.headerImage = this.content.service_images?.training;
             }
             
             // Reset and replay the header image animation on service page navigation
@@ -242,12 +256,11 @@ export default {
         }
     },
     async created() {
+        // Load the header data first
         await this.fetchHeaderData();
     },
     mounted() {
-        this.updateHeaderImage();
-        
-        // Load the services menu manager first
+        // Load the services menu manager
         const managerScript = document.createElement('script');
         managerScript.src = '/js/partial/services-menu-manager.js';
         managerScript.onload = () => {
@@ -311,6 +324,19 @@ export default {
                     this.animateHeaderImage();
                 });
             }
+        },
+        // Update header image when content changes
+        'content': {
+            handler: function(newContent, oldContent) {
+                // Update header image if service_images or aboutPageHeader_image changed
+                const serviceImagesChanged = JSON.stringify(newContent.service_images) !== JSON.stringify(oldContent.service_images);
+                const aboutImageChanged = newContent.aboutPageHeader_image !== oldContent.aboutPageHeader_image;
+                
+                if (serviceImagesChanged || aboutImageChanged) {
+                    this.updateHeaderImage();
+                }
+            },
+            deep: true
         }
     }
 };
