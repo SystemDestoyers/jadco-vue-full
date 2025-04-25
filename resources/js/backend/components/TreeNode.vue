@@ -229,10 +229,18 @@ export default defineComponent({
     
     // Check if this is an image source field
     const isImageSrc = computed(() => {
-      return String(props.name).toLowerCase() === 'src' || 
+      // Check if field name suggests it's an image
+      const imageNamePattern = String(props.name).toLowerCase() === 'src' || 
             String(props.name).toLowerCase() === 'image' || 
             String(props.name).toLowerCase() === 'background_image' ||
             String(props.name).toLowerCase().includes('image_url');
+      
+      // Check if value looks like an image file (has image file extension)
+      const hasImageExtension = typeof props.value === 'string' && 
+        /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(props.value);
+      
+      // Return true if either condition is met
+      return imageNamePattern || hasImageExtension;
     });
     
     const valueType = computed(() => {

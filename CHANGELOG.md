@@ -593,6 +593,12 @@ All notable changes to this project will be documented in this file.
 - Adjusted about-image-secondary positioning on about page (-45px left instead of -208px) for better visibility
 - Completely repositioned about-image-secondary in about page (width: 80%, height: 192px, top: -38px, left: 361px)
 
+### Enhanced
+- Improved TreeNode component in JsonTreeView to detect image fields by both name and file extension:
+  - Added automatic image preview detection for any field with image file extension (.jpg, .jpeg, .png, .gif, .svg, etc.)
+  - Expanded media selection capability to any field containing image file paths
+  - Maintained existing detection by field name (src, image, background_image, etc.)
+
 ## [1.0.0] - 2023-08-01
 
 ### Added
