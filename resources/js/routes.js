@@ -15,6 +15,11 @@ import SectionEditor from './backend/SectionEditor.vue';
 import MediaLibrary from './backend/MediaLibrary.vue';
 
 const routes = [
+    // Redirect root to about page since home is handled by Laravel
+    {
+        path: '/',
+        redirect: '/about'
+    },
     // Home route removed - handled by Laravel Blade template
     {
         path: '/about',
@@ -75,7 +80,10 @@ const routes = [
         path: '/admin/sections/:id/edit',
         name: 'admin.section-editor',
         component: SectionEditor,
-        meta: { requiresAuth: true }
+        meta: { 
+            requiresAuth: true,
+            hasLocalNotification: true
+        }
     },
     {
         path: '/admin/media',

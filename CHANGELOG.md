@@ -114,6 +114,8 @@ All notable changes to this project will be documented in this file.
   - Ensured updateHeaderImage method is called after data is loaded
   - Added fallback images for all header types to prevent empty src attributes
   - Fixed image switching when navigating between pages
+- Fixed "Maximum recursive updates exceeded" error in AdminLayout component by conditionally rendering the NotificationManager based on route metadata
+- Fixed Vue Router warning by adding a redirect from root path to about page
 
 ## [0.1.0] - 2023-05-16
 

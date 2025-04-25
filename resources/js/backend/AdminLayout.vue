@@ -55,18 +55,23 @@
       </main>
     </div>
     
-    <!-- Global Notification Manager -->
-    <NotificationManager />
+    <!-- Global Notification Manager - only show when needed -->
+    <NotificationManager v-if="shouldShowNotificationManager" />
   </div>
 </template>
 
 <script setup>
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import NotificationManager from './components/NotificationManager.vue';
 import './assets/css/backend-global.css';
 
 const router = useRouter();
+const route = useRoute();
+
+// Determine if we should show the NotificationManager in AdminLayout
+// This prevents duplicate notification systems in components that use their own
+const shouldShowNotificationManager = !route.meta.hasLocalNotification;
 
 const logout = async () => {
   try {
