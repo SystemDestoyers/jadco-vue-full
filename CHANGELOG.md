@@ -87,6 +87,8 @@ All notable changes to this project will be documented in this file.
   - Enhanced all titles, headings, and button text to use HTML rendering with {!! !!}
   - Eliminated default values using ?? operator throughout the template
   - Consistent approach to content rendering for all text elements
+  - Extended HTML content rendering to contact.blade.php and header.blade.php partials
+  - Fixed duplicated title and button elements across all template files
 - Standardized service buttons structure:
   - Updated SectionSeeder to use consistent buttons array structure for all services
   - Modified home.blade.php to use conditional rendering for all service buttons

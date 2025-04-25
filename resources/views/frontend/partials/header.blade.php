@@ -47,7 +47,7 @@
                 @if($isHomePage)
                     @if(isset($headerContent['headings']) && is_array($headerContent['headings']))
                         @foreach($headerContent['headings'] as $index => $heading)
-                            <span class="heading-text {{ $index == 0 ? 'active' : '' }}" data-slide="{{ $index }}">{{ $heading }}</span>
+                            <span class="heading-text {{ $index == 0 ? 'active' : '' }}" data-slide="{{ $index }}">{!! $heading !!}</span>
                         @endforeach
                     @else
                         <span class="heading-text active" data-slide="0">FROM EDUCATION AND TRAINING TO INNOVATION</span>
@@ -56,26 +56,40 @@
                         <span class="heading-text" data-slide="3">BRINGING THE GLOBAL ARTS AND ENTERTAINMENT EVENTS TO TOWN</span>
                     @endif
                 @elseif(request()->is('about*'))
-                    <span class="heading-text active">{{ $headerContent['aboutPageHeading'] ?? 'We Listen, design your vision and bring it to life... Let\'s talk' }}</span>
+                    @if(isset($headerContent['aboutPageHeading']))
+                        <span class="heading-text active">{!! $headerContent['aboutPageHeading'] !!}</span>
+                    @endif
                 @elseif(request()->is('services/education-and-scholarship*'))
-                    <span class="heading-text active">{{ $headerContent['serviceHeadings']['education'] ?? 'FROM EDUCATION AND TRAINING TO INNOVATION' }}</span>
+                    @if(isset($headerContent['serviceHeadings']['education']))
+                        <span class="heading-text active">{!! $headerContent['serviceHeadings']['education'] !!}</span>
+                    @endif
                 @elseif(request()->is('services/ai-and-advanced-technologies*'))
-                    <span class="heading-text active">{{ $headerContent['serviceHeadings']['ai'] ?? 'THE LATEST AI AND TECHNOLOGIES' }}</span>
+                    @if(isset($headerContent['serviceHeadings']['ai']))
+                        <span class="heading-text active">{!! $headerContent['serviceHeadings']['ai'] !!}</span>
+                    @endif
                 @elseif(request()->is('services/egaming-and-esport*'))
-                    <span class="heading-text active">{{ $headerContent['serviceHeadings']['egaming'] ?? 'INNOVATIVE EFFORTS IN REVOLUTIONIZING THE ESPORT INDUSTRY' }}</span>
+                    @if(isset($headerContent['serviceHeadings']['egaming']))
+                        <span class="heading-text active">{!! $headerContent['serviceHeadings']['egaming'] !!}</span>
+                    @endif
                 @elseif(request()->is('services/arts-and-entertainment*'))
-                    <span class="heading-text active">{{ $headerContent['serviceHeadings']['arts'] ?? 'BRINGING THE GLOBAL ARTS AND ENTERTAINMENT EVENTS TO TOWN' }}</span>
+                    @if(isset($headerContent['serviceHeadings']['arts']))
+                        <span class="heading-text active">{!! $headerContent['serviceHeadings']['arts'] !!}</span>
+                    @endif
                 @elseif(request()->is('services/training-and-professional-development*'))
-                    <span class="heading-text active">{{ $headerContent['serviceHeadings']['training'] ?? 'FROM EDUCATION AND TRAINING TO INNOVATION' }}</span>
+                    @if(isset($headerContent['serviceHeadings']['training']))
+                        <span class="heading-text active">{!! $headerContent['serviceHeadings']['training'] !!}</span>
+                    @endif
                 @else
-                    <span class="heading-text active">{{ $headerContent['errorHeading'] ?? 'JADCO CONSULTING' }}</span>
+                    @if(isset($headerContent['errorHeading']))
+                        <span class="heading-text active">{!! $headerContent['errorHeading'] !!}</span>
+                    @endif
                 @endif
             </h1>
             
             <!-- Services Menu -->
             <div class="services-menu {{ $isServicePage ? 'active' : '' }}">
                 @if(isset($headerContent['servicesMenuTitle']))
-                    <h3>{{ $headerContent['servicesMenuTitle'] }}</h3>
+                    <h3>{!! $headerContent['servicesMenuTitle'] !!}</h3>
                 @endif
                 <ul class="service-list">
                     @if(isset($headerContent['servicesMenuLinks']) && is_array($headerContent['servicesMenuLinks']))
@@ -133,7 +147,11 @@
                     @endif
                 </ul>
                 <!-- Copy of Let's Talk button for mobile view -->
-                <a href="{{ url('/#contact') }}" class="btn btn-talk">{{ $headerContent['talkButtonText'] ?? 'Let\'s Talk' }}</a>
+                <a href="{{ url('/#contact') }}" class="btn btn-talk">
+                    @if(isset($headerContent['talkButtonText']))
+                        {!! $headerContent['talkButtonText'] !!}
+                    @endif
+                </a>
             </div>
         </div>
         

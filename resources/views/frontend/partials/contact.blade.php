@@ -91,8 +91,12 @@
             </div>
 
             <div class="col-lg-9 col-sm-9">
-                <h3 class="contact-tagline">{{ $contactContent['tagline'] ?? 'We Listen, design your vision and bring it to life...' }}</h3>
-                <h2 class="let-talk">{{ $contactContent['heading'] ?? 'LET\'S TALK.' }}</h2>
+                @if(isset($contactContent['tagline']))
+                    <h3 class="contact-tagline">{!! $contactContent['tagline'] !!}</h3>
+                @endif
+                @if(isset($contactContent['heading']))
+                    <h2 class="let-talk">{!! $contactContent['heading'] !!}</h2>
+                @endif
 
                 <div class="contact-form">
                     <form action="{{ route('contact.submit') }}" method="POST">
@@ -102,14 +106,18 @@
                                 <div class="form-group">
                                     <input type="text" class="form-control" id="firstName" name="first_name"
                                         placeholder=" " required>
-                                    <label for="firstName" class="form-label">{{ $contactContent['form']['labels']['firstName'] ?? 'First Name' }}</label>
+                                    @if(isset($contactContent['form']['labels']['firstName']))
+                                        <label for="firstName" class="form-label">{!! $contactContent['form']['labels']['firstName'] !!}</label>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <input type="text" class="form-control" id="lastName" name="last_name"
                                         placeholder=" " required>
-                                    <label for="lastName" class="form-label">{{ $contactContent['form']['labels']['lastName'] ?? 'Last Name' }}</label>
+                                    @if(isset($contactContent['form']['labels']['lastName']))
+                                        <label for="lastName" class="form-label">{!! $contactContent['form']['labels']['lastName'] !!}</label>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -118,24 +126,34 @@
                                 <div class="form-group">
                                     <input type="email" class="form-control" id="email" name="email"
                                         placeholder=" " required>
-                                    <label for="email" class="form-label">{{ $contactContent['form']['labels']['email'] ?? 'Email' }}</label>
+                                    @if(isset($contactContent['form']['labels']['email']))
+                                        <label for="email" class="form-label">{!! $contactContent['form']['labels']['email'] !!}</label>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <input type="tel" class="form-control" id="phone" name="phone"
                                         placeholder=" ">
-                                    <label for="phone" class="form-label">{{ $contactContent['form']['labels']['phone'] ?? 'Phone Number' }}</label>
+                                    @if(isset($contactContent['form']['labels']['phone']))
+                                        <label for="phone" class="form-label">{!! $contactContent['form']['labels']['phone'] !!}</label>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <textarea class="form-control" id="message" name="message" rows="4" placeholder=" " required></textarea>
-                            <label for="message" class="form-label">{{ $contactContent['form']['labels']['message'] ?? 'Message' }}</label>
+                            @if(isset($contactContent['form']['labels']['message']))
+                                <label for="message" class="form-label">{!! $contactContent['form']['labels']['message'] !!}</label>
+                            @endif
                         </div>
                         <div class="text-start">
-                            <button type="submit" class="btn btn-send">{{ $contactContent['form']['submitButton'] ?? 'SEND A MESSAGE' }} <i
-                                    class="fas fa-arrow-right"></i></button>
+                            <button type="submit" class="btn btn-send">
+                                @if(isset($contactContent['form']['submitButton']))
+                                    {!! $contactContent['form']['submitButton'] !!}
+                                @endif
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -159,7 +177,11 @@
                         @endif
                     </div>
                     <div>
-                        <p class="copyright"> {{ date('Y') }} <span class="jadco-shine">JADCO</span>. {{ $contactContent['copyright'] ?? 'All Rights Reserved.' }}</p>
+                        <p class="copyright"> {{ date('Y') }} <span class="jadco-shine">JADCO</span>. 
+                            @if(isset($contactContent['copyright']))
+                                {!! $contactContent['copyright'] !!}
+                            @endif
+                        </p>
                     </div>
                 </div>
             </div>
