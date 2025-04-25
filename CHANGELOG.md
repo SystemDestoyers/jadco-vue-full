@@ -17,6 +17,9 @@ All notable changes to this project will be documented in this file.
   - Added route and navigation link in admin sidebar
   - Added folder management with creation and deletion capabilities
   - Extracted CSS from MediaLibrary Vue component to separate media-library.css file in public/backend/css
+  - Created MediaSelector component for embedded media selection within other components
+  - Added search, filtering, and pagination for media items
+  - Implemented drag-and-drop file upload with progress indicators
 - Created FixesInvalidDates trait to handle datetime validation across all models
 - Enhanced Section Editor with JSON visualization and editing:
   - Added tree view for JSON structure visualization with inline editing capabilities
@@ -68,6 +71,12 @@ All notable changes to this project will be documented in this file.
 - Prevented duplicate "public" folder creation when creating new folders
 - Fixed datetime issue in models where future dates caused database errors
 - Added automatic date correction for all models with timestamps to ensure dates are valid
+- Fixed media thumbnail display issue in MediaSelector component:
+  - Improved image rendering with proper object-fit and positioning
+  - Added image error handling with fallback image display
+  - Implemented path correction for URLs missing leading slashes
+  - Added debugging tools to help diagnose image loading issues
+  - Enhanced image container styling for better visibility
 
 ## [0.1.0] - 2023-05-16
 

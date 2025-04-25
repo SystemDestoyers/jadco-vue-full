@@ -25,7 +25,7 @@
       </div>
       
       <!-- Editable value for primitive types -->
-      <div v-if="isPrimitive" class="node-value-container">
+      <div v-if="isPrimitive" class="node-value-container" :class="{'has-image': isImageSrc && typeof value === 'string' && value}">
         <span v-if="!isEditingValue" 
           class="node-value" 
           :class="valueType"
@@ -41,6 +41,21 @@
           @keyup.enter="finishEditValue"
           @keyup.esc="cancelEditValue"
         />
+        
+        <!-- Image preview for src fields -->
+        <div v-if="isImageSrc && typeof value === 'string' && value" class="image-preview">
+          <img :src="value" :alt="value" @click="startEditValue" />
+        </div>
+        
+        <!-- Media library button for src fields -->
+        <button 
+          v-if="isImageSrc" 
+          class="action-btn media-btn" 
+          title="Select from Media Library"
+          @click.stop="openMediaSelector"
+        >
+          <i class="fas fa-photo-video"></i>
+        </button>
       </div>
       
       <!-- Type indicator for objects and arrays -->
@@ -100,6 +115,19 @@
       </div>
     </div>
     
+    <!-- Media Selector Modal -->
+    <div v-if="showMediaModal" class="modal">
+      <div class="modal-content media-selector-modal">
+        <div class="modal-header">
+          <h3>Select Media</h3>
+          <button class="close-btn" @click="closeMediaSelector">&times;</button>
+        </div>
+        <div class="modal-body">
+          <media-selector @select="handleMediaSelect" />
+        </div>
+      </div>
+    </div>
+    
     <!-- Children nodes -->
     <ul v-if="isExpandable && isExpanded" class="node-children">
       <template v-if="isArray">
@@ -132,9 +160,13 @@
 
 <script>
 import { defineComponent, ref, computed, nextTick } from 'vue';
+import MediaSelector from './MediaSelector.vue';
 
 export default defineComponent({
   name: 'TreeNode',
+  components: {
+    MediaSelector
+  },
   props: {
     name: {
       type: [String, Number],
@@ -161,6 +193,9 @@ export default defineComponent({
     const keyInput = ref(null);
     const valueInput = ref(null);
     
+    // Media selector
+    const showMediaModal = ref(false);
+    
     // Adding items
     const isAddingItem = ref(false);
     const newItemKey = ref('');
@@ -172,6 +207,14 @@ export default defineComponent({
     const isObject = computed(() => typeof props.value === 'object' && props.value !== null && !isArray.value);
     const isPrimitive = computed(() => !isArray.value && !isObject.value);
     const isExpandable = computed(() => isArray.value || isObject.value);
+    
+    // Check if this is an image source field
+    const isImageSrc = computed(() => {
+      return String(props.name).toLowerCase() === 'src' || 
+            String(props.name).toLowerCase() === 'image' || 
+            String(props.name).toLowerCase() === 'background_image' ||
+            String(props.name).toLowerCase().includes('image_url');
+    });
     
     const valueType = computed(() => {
       if (props.value === null) return 'null';
@@ -266,6 +309,23 @@ export default defineComponent({
     
     const cancelEditValue = () => {
       isEditingValue.value = false;
+    };
+    
+    // Media selector methods
+    const openMediaSelector = () => {
+      showMediaModal.value = true;
+    };
+    
+    const closeMediaSelector = () => {
+      showMediaModal.value = false;
+    };
+    
+    const handleMediaSelect = (media) => {
+      emit('update:value', {
+        key: props.name,
+        value: media.url
+      });
+      closeMediaSelector();
     };
     
     // Delete node
@@ -400,6 +460,7 @@ export default defineComponent({
       isEditingKey,
       isEditingValue,
       isAddingItem,
+      showMediaModal,
       editableKey,
       editableValue,
       keyInput,
@@ -411,6 +472,7 @@ export default defineComponent({
       isObject,
       isPrimitive,
       isExpandable,
+      isImageSrc,
       valueType,
       displayValue,
       toggleExpand,
@@ -420,6 +482,9 @@ export default defineComponent({
       startEditValue,
       finishEditValue,
       cancelEditValue,
+      openMediaSelector,
+      closeMediaSelector,
+      handleMediaSelect,
       deleteNode,
       updateArrayIndex,
       updateArrayValue,
@@ -571,6 +636,15 @@ i.leaf {
   color: #e74c3c;
 }
 
+.media-btn {
+  color: #3498db;
+  margin-left: 4px;
+}
+
+.media-btn:hover {
+  color: #2980b9;
+}
+
 .add-item-form {
   margin-left: 20px;
   margin-top: 4px;
@@ -621,5 +695,82 @@ i.leaf {
 
 .btn-secondary:hover {
   background-color: #7f8c8d;
+}
+
+/* Image preview styles */
+.image-preview {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  max-width: 150px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.has-image .node-value {
+  margin-bottom: 4px;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.media-selector-modal {
+  height: 80vh;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
 }
 </style> 
