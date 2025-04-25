@@ -68,6 +68,7 @@
 import { defineComponent, ref } from 'vue';
 import TreeNode from './TreeNode.vue';
 import '../assets/css/components/json-tree-view.css';
+import '../assets/css/backend-global.css';
 
 export default defineComponent({
   name: 'JsonTreeView',

@@ -468,6 +468,7 @@ export default defineComponent({
 <style scoped>
 .section-editor {
   padding: 1rem;
+  font-family: 'Outfit', sans-serif;
 }
 
 .page-header {
@@ -508,7 +509,9 @@ export default defineComponent({
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: var(--font-weight-semibold, 600);
   cursor: pointer;
   transition: background-color 0.2s;
 }

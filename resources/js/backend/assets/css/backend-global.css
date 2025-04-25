@@ -1,0 +1,66 @@
+/**
+ * Global backend styling - matches frontend styling
+ */
+
+/* Define essential variables directly instead of importing */
+:root {
+  /* Colors */
+  --primary-color: #d01c51;
+  --dark-color: #294359;
+  --light-color: #ffffff;
+  --gray-color: #63809a;
+  
+  /* Font weights */
+  --font-weight-light: 200;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Animation */
+  --transition-speed: 0.3s;
+  --transition-timing: ease;
+}
+
+/* Global backend styles */
+.backend-ui {
+  font-family: 'Outfit', sans-serif;
+  color: var(--dark-color);
+}
+
+/* Button styling to match frontend */
+.backend-ui .btn {
+  border-radius: 0;
+  padding: 10px 25px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-speed) var(--transition-timing);
+  font-size: 1rem;
+  font-family: 'Outfit', sans-serif;
+}
+
+.backend-ui .btn-primary {
+  background-color: var(--primary-color);
+  color: var(--light-color);
+}
+
+.backend-ui .btn-primary:hover {
+  background-color: var(--dark-color);
+}
+
+/* Common form styling */
+.backend-ui .form-control {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+}
+
+/* Headings */
+.backend-ui h1, 
+.backend-ui h2,
+.backend-ui h3,
+.backend-ui h4,
+.backend-ui h5,
+.backend-ui h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: var(--font-weight-semibold);
+  color: var(--dark-color);
+}

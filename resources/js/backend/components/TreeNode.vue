@@ -162,6 +162,7 @@
 import { defineComponent, ref, computed, nextTick } from 'vue';
 import MediaSelector from './MediaSelector.vue';
 import '../assets/css/components/tree-node.css';
+import '../assets/css/backend-global.css';
 
 export default defineComponent({
   name: 'TreeNode',

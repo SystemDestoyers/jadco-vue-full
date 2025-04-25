@@ -1,121 +1,120 @@
-.tree-node {
+.backend-ui .tree-node {
   list-style-type: none;
-  margin: 0;
+  margin: 2px 0;
   padding: 2px 0;
   width: 100%;
   box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-left: 20px;
+  font-family: 'Outfit', sans-serif;
 }
 
-.node-header {
+.backend-ui .node-header {
   display: flex;
-  align-items: flex-start;
-  padding: 4px 8px;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px 4px;
   border-radius: 4px;
-  flex-wrap: wrap;
-  min-width: 0;
-  width: 100%;
 }
 
-.node-header:hover {
+.backend-ui .node-header:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.node-toggle {
-  cursor: pointer;
-  margin-right: 8px;
-  flex-shrink: 0;
+.backend-ui .node-toggle {
+  margin-right: 4px;
+  width: 16px;
+  height: 16px;
 }
 
-.node-toggle i {
-  width: 10px;
-  text-align: center;
-  font-size: 12px;
-}
-
-i.expandable {
-  color: #3498db;
-}
-
-i.leaf {
+.backend-ui .node-toggle i {
+  font-size: 14px;
   color: #95a5a6;
-  font-size: 6px;
+  transition: transform 0.2s;
 }
 
-.node-key-container, .node-value-container {
+.backend-ui i.expandable {
+  cursor: pointer;
+  transform: rotate(0deg);
+}
+
+.backend-ui i.leaf {
+  color: transparent;
+  cursor: default;
+}
+
+.backend-ui .node-key-container, .backend-ui .node-value-container {
+  display: inline-block;
+}
+
+.backend-ui .node-key-container {
+  margin-right: 6px;
+}
+
+.backend-ui .node-value-container {
+  position: relative;
+  min-width: 40px;
+  max-width: 90%;
+  word-break: break-word;
+}
+
+.backend-ui .node-key {
+  color: #2c3e50;
+  font-weight: 600;
+  padding: 1px 3px;
+  border-radius: 2px;
+  cursor: pointer;
   position: relative;
 }
 
-.node-key-container {
-  margin-right: 8px;
+.backend-ui .node-key:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.node-value-container {
-  flex-grow: 1;
-  max-width: 70%;
-  overflow: hidden;
-  margin-right: 10px;
-}
-
-.node-key {
-  font-weight: 600;
-  margin-right: 8px;
-  color: #2c3e50;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 2px;
-}
-
-.node-key:hover {
-  background-color: rgba(52, 152, 219, 0.1);
-}
-
-.node-value {
-  color: #7f8c8d;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 2px;
-  display: inline-block;
-  word-break: break-word;
-  max-width: 100%;
-}
-
-.node-value:hover {
-  background-color: rgba(52, 152, 219, 0.1);
-}
-
-.node-type-indicator {
-  color: #95a5a6;
-  font-style: italic;
-  cursor: pointer;
-}
-
-.node-value.string {
+.backend-ui .node-value {
   color: #27ae60;
-  max-height: 120px;
-  overflow-y: auto;
+  padding: 1px 3px;
+  border-radius: 2px;
+  cursor: pointer;
+  min-height: 20px;
+  display: inline-block;
   white-space: pre-wrap;
 }
 
-.node-value.number {
-  color: #e67e22;
+.backend-ui .node-value:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.node-value.boolean {
-  color: #8e44ad;
-}
-
-.node-value.null {
+.backend-ui .node-type-indicator {
   color: #95a5a6;
+  font-size: 0.8em;
+  margin-left: 6px;
+}
+
+.backend-ui .node-value.string {
+  color: #e74c3c;
+  word-break: break-word;
+}
+
+.backend-ui .node-value.number {
+  color: #3498db;
+}
+
+.backend-ui .node-value.boolean {
+  color: #9b59b6;
+}
+
+.backend-ui .node-value.null {
+  color: #7f8c8d;
   font-style: italic;
 }
 
-.node-children {
-  padding-left: 0;
+.backend-ui .node-children {
+  margin-left: 20px;
 }
 
-.edit-input {
-  border: 1px solid #ddd;
-  border-radius: 2px;
+.backend-ui .edit-input {
   padding: 1px 3px;
   font-size: 14px;
   font-family: monospace;
@@ -125,7 +124,7 @@ i.leaf {
   box-sizing: border-box;
 }
 
-.node-actions {
+.backend-ui .node-actions {
   margin-left: auto;
   display: flex;
   gap: 4px;
@@ -133,11 +132,11 @@ i.leaf {
   transition: opacity 0.2s;
 }
 
-.node-header:hover .node-actions {
+.backend-ui .node-header:hover .node-actions {
   opacity: 1;
 }
 
-.action-btn {
+.backend-ui .action-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -147,28 +146,28 @@ i.leaf {
   color: #95a5a6;
 }
 
-.action-btn:hover {
+.backend-ui .action-btn:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.add-btn:hover {
+.backend-ui .add-btn:hover {
   color: #27ae60;
 }
 
-.delete-btn:hover {
+.backend-ui .delete-btn:hover {
   color: #e74c3c;
 }
 
-.media-btn {
+.backend-ui .media-btn {
   color: #3498db;
   margin-left: 4px;
 }
 
-.media-btn:hover {
+.backend-ui .media-btn:hover {
   color: #2980b9;
 }
 
-.add-item-form {
+.backend-ui .add-item-form {
   margin-left: 20px;
   margin-top: 4px;
   padding: 8px;
@@ -177,11 +176,11 @@ i.leaf {
   border-radius: 4px;
 }
 
-.form-group {
+.backend-ui .form-group {
   margin-bottom: 8px;
 }
 
-.form-control {
+.backend-ui .form-control {
   width: 100%;
   padding: 4px 8px;
   border: 1px solid #ddd;
@@ -189,39 +188,41 @@ i.leaf {
   font-size: 14px;
 }
 
-.form-actions {
+.backend-ui .form-actions {
   display: flex;
   gap: 8px;
 }
 
-.btn {
+.backend-ui .btn {
   padding: 4px 8px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: var(--font-weight-semibold, 600);
 }
 
-.btn-primary {
+.backend-ui .btn-primary {
   background-color: #3498db;
   color: white;
 }
 
-.btn-primary:hover {
+.backend-ui .btn-primary:hover {
   background-color: #2980b9;
 }
 
-.btn-secondary {
+.backend-ui .btn-secondary {
   background-color: #95a5a6;
   color: white;
 }
 
-.btn-secondary:hover {
+.backend-ui .btn-secondary:hover {
   background-color: #7f8c8d;
 }
 
 /* Image preview styles */
-.image-preview {
+.backend-ui .image-preview {
   margin-top: 4px;
   margin-bottom: 4px;
   max-width: 150px;
@@ -231,18 +232,18 @@ i.leaf {
   cursor: pointer;
 }
 
-.image-preview img {
+.backend-ui .image-preview img {
   width: 100%;
   height: auto;
   display: block;
 }
 
-.has-image .node-value {
+.backend-ui .has-image .node-value {
   margin-bottom: 4px;
 }
 
 /* Modal styles */
-.modal {
+.backend-ui .modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -255,7 +256,7 @@ i.leaf {
   z-index: 1000;
 }
 
-.modal-content {
+.backend-ui .modal-content {
   background-color: white;
   border-radius: 8px;
   width: 90%;
@@ -266,11 +267,11 @@ i.leaf {
   flex-direction: column;
 }
 
-.media-selector-modal {
+.backend-ui .media-selector-modal {
   height: 80vh;
 }
 
-.modal-header {
+.backend-ui .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -278,12 +279,12 @@ i.leaf {
   border-bottom: 1px solid #e9ecef;
 }
 
-.modal-header h3 {
+.backend-ui .modal-header h3 {
   margin: 0;
   color: #2c3e50;
 }
 
-.close-btn {
+.backend-ui .close-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -291,20 +292,20 @@ i.leaf {
   color: #7f8c8d;
 }
 
-.modal-body {
+.backend-ui .modal-body {
   padding: 1rem;
   overflow-y: auto;
   flex: 1;
 }
 
 /* Add additional styles to improve the value display for the edit state */
-.node-value-container .edit-input {
+.backend-ui .node-value-container .edit-input {
   min-height: 24px;
   resize: vertical;
 }
 
 /* Style for multiline text editing */
-.multiline-edit {
+.backend-ui .multiline-edit {
   font-family: monospace;
   min-height: 60px;
   max-height: 300px;

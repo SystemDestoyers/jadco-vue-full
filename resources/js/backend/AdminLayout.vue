@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-layout">
+  <div class="admin-layout backend-ui">
     <!-- Top Navigation -->
     <header class="admin-header">
       <div class="logo">
@@ -64,6 +64,7 @@
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import NotificationManager from './components/NotificationManager.vue';
+import './assets/css/backend-global.css';
 
 const router = useRouter();
 
@@ -82,6 +83,7 @@ const logout = async () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  font-family: 'Outfit', sans-serif;
 }
 
 .admin-header {

@@ -50,6 +50,7 @@ a:hover {
     padding: 10px 25px;
     font-weight: var(--font-weight-semibold);
     transition: all var(--transition-speed) var(--transition-timing);
+    font-size: initial; /* Ensure any font-size overrides from backend are reset */
 }
 
 .btn-talk {
