@@ -34,6 +34,11 @@ class PageService
         return $this->pageRepository->getSectionByName('header');
     }
 
+    public function getNavbarSection()
+    {
+        return $this->pageRepository->getSectionByName('navbar');
+    }
+
     public function getHeaderContent()
     {
         $sections = $this->pageRepository->getHeaderSections();

@@ -7,7 +7,7 @@
                 <div class="container-fluid">
                     <!-- Logo Container (Left-aligned) -->
                     <a class="navbar-brand" href="/">
-                        <img src="/images/logo.png" alt="JADCO Logo" class="logo">
+                        <img v-if="navbarContent.logo" :src="navbarContent.logo" alt="JADCO Logo" class="logo">
                     </a>
                     
                     <!-- Mobile Toggle Button (Right-aligned) -->
@@ -20,23 +20,30 @@
                     <!-- Navigation Items -->
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="navbar-nav me-3">
-                            <li class="nav-item">
-                                <a class="nav-link home" 
-                                   :class="{ 'active': isHome }" 
-                                   href="/" 
-                                   id="home-nav-link">
-                                    HOME
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <router-link class="nav-link about" 
-                                             :class="{ 'active': isAboutActive }" 
-                                             to="/about">
-                                    ABOUT
-                                </router-link>
-                            </li>
+                            <template v-if="navbarContent.navItems && navbarContent.navItems.length">
+                                <li v-for="(item, index) in navbarContent.navItems" :key="index" class="nav-item">
+                                    <router-link 
+                                        v-if="item.link.startsWith('/')" 
+                                        :to="item.link" 
+                                        class="nav-link"
+                                        :class="item.text.toLowerCase()"
+                                        :id="item.id || null"
+                                        v-html="item.text">
+                                    </router-link>
+                                    <a 
+                                        v-else 
+                                        :href="item.link" 
+                                        class="nav-link"
+                                        :class="item.text.toLowerCase()"
+                                        :id="item.id || null"
+                                        v-html="item.text">
+                                    </a>
+                                </li>
+                            </template>
                         </ul>
-                        <a href="/#contact" class="btn btn-talk" @click.prevent="handleLetsTalkClick">Let's Talk</a>
+                        <a href="/#contact" class="btn btn-talk" @click.prevent="handleLetsTalkClick">
+                            <span v-if="navbarContent.talkButtonText" v-html="navbarContent.talkButtonText"></span>
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -48,21 +55,48 @@
 
 <script>
 import Header from './Header.vue';
+import { ref, onMounted, computed } from 'vue';
 
 export default {
     components: {
         Header
     },
-    computed: {
-        isHome() {
+    setup() {
+        const navbarContent = ref({});
+        
+        const fetchNavbarContent = async () => {
+            try {
+                // Fetch navbar content from API
+                const response = await fetch('/api/navbar/section');
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result && result.success && result.data && result.data.content) {
+                        navbarContent.value = result.data.content;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching navbar content:', error);
+            }
+        };
+        
+        onMounted(() => {
+            fetchNavbarContent();
+            
+            // Import static.js to get the createFlashEffect function
+            const script = document.createElement('script');
+            script.src = '/js/partial/static.js';
+            document.head.appendChild(script);
+        });
+        
+        const isHome = computed(() => {
             return window.location.pathname === '/';
-        },
-        isAboutActive() {
-            return this.$route.name === 'about' || window.location.pathname === '/about';
-        }
-    },
-    methods: {
-        handleLetsTalkClick(e) {
+        });
+        
+        const isAboutActive = computed(() => {
+            return window.location.pathname === '/about';
+        });
+        
+        const handleLetsTalkClick = (e) => {
             e.preventDefault();
             
             // Recreate the flash effect from static.js if available
@@ -83,13 +117,14 @@ export default {
                     contactSection.scrollIntoView({ behavior: 'smooth' });
                 }
             }
-        }
-    },
-    mounted() {
-        // Import static.js to get the createFlashEffect function
-        const script = document.createElement('script');
-        script.src = '/js/partial/static.js';
-        document.head.appendChild(script);
+        };
+        
+        return {
+            navbarContent,
+            isHome,
+            isAboutActive,
+            handleLetsTalkClick
+        };
     }
 };
 </script>

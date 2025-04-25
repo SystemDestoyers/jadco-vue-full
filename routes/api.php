@@ -51,6 +51,7 @@ Route::get('/pages/{slug}/sections', [PageController::class, 'getPageSections'])
 Route::get('/header/sections', [PageController::class, 'getHeaderContent']);
 Route::get('/contact/sections', [PageController::class, 'getContactContent']);
 Route::get('/about/sections', [PageController::class, 'getAboutContent']);
+Route::get('/navbar/section', [PageController::class, 'getNavbarContent']);
 
 // Service routes
 Route::get('/services', [ServiceController::class, 'getAllServices']);

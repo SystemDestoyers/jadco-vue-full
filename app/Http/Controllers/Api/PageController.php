@@ -110,4 +110,16 @@ class PageController extends Controller
             'data' => $sections
         ]);
     }
+    
+    public function getNavbarContent()
+    {
+        // Get navbar section from database
+        $navbarSection = $this->pageService->getNavbarSection();
+        
+        // Return the entire section with content
+        return response()->json([
+            'success' => true,
+            'data' => $navbarSection
+        ]);
+    }
 } 

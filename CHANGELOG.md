@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Integrated dynamic content in Vue components:
+  - Updated Navbar.vue to consume content from the API
+  - Added support for dynamic nav items and logo in Vue components
+  - Implemented conditional rendering based on content availability
+  - Removed else conditions and fallback content for cleaner code
+  - Made UI elements appear only when dynamic content is available
+  - Added dedicated API endpoint for navbar section content
+  - Fixed router link handling for proper navigation
 - Integrated vue3-toastify for notifications:
   - Replaced custom notification system with vue3-toastify
   - Configured toast notifications to maintain the same API (success, error, warning, info)
