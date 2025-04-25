@@ -98,6 +98,11 @@ All notable changes to this project will be documented in this file.
   - Implemented path correction for URLs missing leading slashes
   - Added debugging tools to help diagnose image loading issues
   - Enhanced image container styling for better visibility
+- Standardized media file paths to always start with a forward slash:
+  - Updated MediaSeeder to generate paths with leading slashes
+  - Modified MediaLibrary component to ensure consistent path formatting
+  - Enhanced MediaController to enforce leading slashes when storing, updating, and retrieving media files
+  - Improved URL generation for media items
 
 ## [0.1.0] - 2023-05-16
 

@@ -56,6 +56,11 @@ class MediaController extends Controller
         
         // Add URL to each media item
         $media->getCollection()->transform(function ($item) {
+            // Ensure path has a leading slash
+            if ($item->path && !str_starts_with($item->path, '/')) {
+                $item->path = '/' . $item->path;
+            }
+            
             // Add the full URL to access the image
             $item->url = url($item->path);
             
@@ -159,6 +164,11 @@ class MediaController extends Controller
             
             // Database path (relative to public)
             $dbPath = $targetDir . '/' . $filename;
+            
+            // Ensure path starts with a forward slash
+            if (!str_starts_with($dbPath, '/')) {
+                $dbPath = '/' . $dbPath;
+            }
             
             // Create media record
             $media = new Media();
@@ -265,6 +275,12 @@ class MediaController extends Controller
                     
                     // Update path in database
                     $newDbPath = $newUploadPath . '/' . $media->filename;
+                    
+                    // Ensure path starts with a forward slash
+                    if (!str_starts_with($newDbPath, '/')) {
+                        $newDbPath = '/' . $newDbPath;
+                    }
+                    
                     $media->path = $newDbPath;
                     
                     // Update metadata
@@ -287,6 +303,11 @@ class MediaController extends Controller
             // Force a valid past date for updated_at
             $validDate = '2023' . substr(date('Y-m-d H:i:s'), 4);
             $media->updated_at = $validDate;
+            
+            // Ensure path always starts with a forward slash
+            if ($media->path && !str_starts_with($media->path, '/')) {
+                $media->path = '/' . $media->path;
+            }
             
             // Save without auto-updating timestamps
             $media->save(['timestamps' => false]);

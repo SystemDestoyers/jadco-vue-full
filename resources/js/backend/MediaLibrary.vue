@@ -697,7 +697,19 @@ export default defineComponent({
         };
         
         const response = await axios.get('/api/admin/media', { params });
-        mediaItems.value = response.data.data;
+        mediaItems.value = response.data.data.map(item => {
+          // Ensure path starts with a forward slash
+          if (item.path && !item.path.startsWith('/')) {
+            item.path = '/' + item.path;
+          }
+          
+          // Ensure URL starts with a forward slash
+          if (item.url && !item.url.startsWith('http') && !item.url.startsWith('/')) {
+            item.url = '/' + item.url;
+          }
+          
+          return item;
+        });
         
         // Update pagination
         pagination.value = {

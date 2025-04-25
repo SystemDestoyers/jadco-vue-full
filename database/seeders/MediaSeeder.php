@@ -117,7 +117,7 @@ class MediaSeeder extends Seeder
             $mimeType = File::mimeType($file->getPathname());
             
             // Path relative to public directory (for URL generation)
-            $publicPath = $relativePath . '/' . $filename;
+            $publicPath = '/' . $relativePath . '/' . $filename;
             
             // Create folder from directory path
             $folder = str_replace('images/', '', $relativePath);
