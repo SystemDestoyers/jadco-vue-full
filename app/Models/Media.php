@@ -37,6 +37,8 @@ class Media extends Model
     protected $casts = [
         'metadata' => 'array',
         'size' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
     
     /**

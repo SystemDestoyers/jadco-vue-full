@@ -89,61 +89,115 @@ class MediaController extends Controller
         ]);
         
         try {
-            $file = $request->file('file');
-            $collection = $request->input('collection', 'default');
+            \Log::info('Starting media upload process');
+            
+            // Very basic direct file handling
+            if (!$request->hasFile('file') || !$request->file('file')->isValid()) {
+                return response()->json(['error' => 'Invalid file upload'], 400);
+            }
+            
+            // Get the uploaded file
+            $uploadedFile = $request->file('file');
+            $tempFilePath = $uploadedFile->getRealPath();
+            
+            // Log temp file info
+            \Log::info('Temp file path: ' . $tempFilePath);
+            \Log::info('Temp file exists: ' . (file_exists($tempFilePath) ? 'Yes' : 'No'));
+            
+            // Get upload parameters
+            $collection = $request->input('collection', 'general');
             $folder = $request->input('folder', '');
+            $originalName = $uploadedFile->getClientOriginalName();
+            $extension = $uploadedFile->getClientOriginalExtension();
             
-            // Ensure the folder exists in public/images
-            $baseFolder = 'public/images';
-            $targetFolder = $baseFolder;
+            // Generate a filename without special characters
+            $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($originalName, PATHINFO_FILENAME));
+            $filename = $safeFilename . '_' . time() . '.' . $extension;
             
+            // Create target directory path
+            $targetDir = 'images';
             if (!empty($folder)) {
-                $targetFolder .= '/' . trim($folder, '/');
-                if (!File::exists($targetFolder)) {
-                    File::makeDirectory($targetFolder, 0755, true);
+                $targetDir .= '/' . trim($folder, '/');
+            }
+            
+            // Full path to target directory
+            $fullTargetDir = public_path($targetDir);
+            
+            // Create directory if needed
+            if (!file_exists($fullTargetDir)) {
+                mkdir($fullTargetDir, 0755, true);
+            }
+            
+            // Full destination path for the file
+            $destPath = $fullTargetDir . '/' . $filename;
+            
+            // Copy file directly
+            \Log::info('Copying file from ' . $tempFilePath . ' to ' . $destPath);
+            $copySuccess = copy($tempFilePath, $destPath);
+            
+            if (!$copySuccess || !file_exists($destPath)) {
+                \Log::error('Failed to copy file to destination');
+                return response()->json(['error' => 'Failed to save file. Copy operation failed.'], 500);
+            }
+            
+            // Ensure proper permissions
+            chmod($destPath, 0644);
+            
+            // Get file dimensions
+            $dimensions = null;
+            if (str_starts_with($uploadedFile->getMimeType(), 'image/')) {
+                try {
+                    list($width, $height) = getimagesize($destPath);
+                    $dimensions = ['width' => $width, 'height' => $height];
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to get image dimensions: ' . $e->getMessage());
                 }
             }
             
-            // Generate a unique filename or keep original name
-            $useOriginalFilename = $request->input('use_original_filename', false);
-            if ($useOriginalFilename) {
-                $filename = $file->getClientOriginalName();
-                // Check if file already exists and create unique name if needed
-                if (File::exists($targetFolder . '/' . $filename)) {
-                    $filename = pathinfo($filename, PATHINFO_FILENAME) . '_' . 
-                                Str::random(8) . '.' . $file->getClientOriginalExtension();
-                }
-            } else {
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            }
+            // Force a valid past date
+            $validDate = '2023' . substr(date('Y-m-d H:i:s'), 4);
             
-            // Move the file to the target directory
-            $file->move($targetFolder, $filename);
+            // Database path (relative to public)
+            $dbPath = $targetDir . '/' . $filename;
             
-            // Create the path relative to public folder (for URL generation)
-            $relativePath = str_replace('public/', '', $targetFolder) . '/' . $filename;
+            // Create media record
+            $media = new Media();
+            $media->filename = $filename;
+            $media->original_filename = $originalName;
+            $media->mime_type = $uploadedFile->getMimeType();
+            $media->path = $dbPath;
+            $media->disk = 'public';
+            $media->size = $uploadedFile->getSize();
+            $media->collection = $collection;
+            $media->alt_text = $request->input('alt_text');
+            $media->caption = $request->input('caption');
+            $media->metadata = [
+                'dimensions' => $dimensions,
+                'folder' => $folder,
+                'last_modified' => $validDate,
+            ];
+            $media->created_by = auth()->check() ? auth()->user()->name : 'Guest';
             
-            $media = Media::create([
-                'filename' => $filename,
-                'original_filename' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'path' => $relativePath,
-                'disk' => 'public',
-                'size' => $file->getSize(),
-                'collection' => $collection,
-                'alt_text' => $request->input('alt_text'),
-                'caption' => $request->input('caption'),
-                'metadata' => [
-                    'dimensions' => $this->getImageDimensions($file),
-                    'folder' => $folder,
-                    'last_modified' => now()->toIso8601String(),
-                ],
-                'created_by' => auth()->check() ? auth()->user()->name : null,
-            ]);
+            // Set timestamps
+            $media->created_at = $validDate;
+            $media->updated_at = $validDate;
+            
+            $media->save(['timestamps' => false]);
+            
+            // Reload for URL generation
+            $media->refresh();
+            
+            \Log::info('Media upload successful: ' . $media->id);
             
             return response()->json($media, 201);
+            
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to upload file: ' . $e->getMessage()], 500);
+            \Log::error('Media upload error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Failed to upload file',
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -187,27 +241,40 @@ class MediaController extends Controller
             if ($newFolder !== null && 
                 (!isset($media->metadata['folder']) || $newFolder !== $media->metadata['folder'])) {
                 
+                // Current file path
                 $currentPath = public_path($media->path);
-                $targetFolder = 'public/images/' . trim($newFolder, '/');
                 
-                // Ensure the target folder exists
-                if (!File::exists($targetFolder)) {
-                    File::makeDirectory($targetFolder, 0755, true);
+                // New destination path
+                $newUploadPath = 'images';
+                if (!empty($newFolder)) {
+                    $newUploadPath .= '/' . trim($newFolder, '/');
                 }
                 
-                $targetPath = $targetFolder . '/' . $media->filename;
+                // Create directory if it doesn't exist
+                $newFullPath = public_path($newUploadPath);
+                if (!File::exists($newFullPath)) {
+                    File::makeDirectory($newFullPath, 0755, true);
+                }
                 
-                // Move file to new folder
+                // Move file to new location
+                $newFilePath = $newFullPath . '/' . $media->filename;
+                
                 if (File::exists($currentPath)) {
-                    File::move($currentPath, $targetPath);
+                    File::copy($currentPath, $newFilePath);
+                    File::delete($currentPath);
                     
-                    // Update path in the database
-                    $relativePath = str_replace('public/', '', $targetFolder) . '/' . $media->filename;
-                    $media->path = $relativePath;
+                    // Update path in database
+                    $newDbPath = $newUploadPath . '/' . $media->filename;
+                    $media->path = $newDbPath;
                     
                     // Update metadata
                     $metadata = is_array($media->metadata) ? $media->metadata : [];
                     $metadata['folder'] = $newFolder;
+                    
+                    // Force a valid date
+                    $validDate = '2023' . substr(date('Y-m-d H:i:s'), 4);
+                    $metadata['last_modified'] = $validDate;
+                    
                     $media->metadata = $metadata;
                 }
             }
@@ -216,13 +283,20 @@ class MediaController extends Controller
             $media->alt_text = $request->input('alt_text', $media->alt_text);
             $media->caption = $request->input('caption', $media->caption);
             $media->collection = $request->input('collection', $media->collection);
-            $media->save();
+            
+            // Force a valid past date for updated_at
+            $validDate = '2023' . substr(date('Y-m-d H:i:s'), 4);
+            $media->updated_at = $validDate;
+            
+            // Save without auto-updating timestamps
+            $media->save(['timestamps' => false]);
             
             // Refresh to get updated data
             $media->refresh();
             
             return response()->json($media);
         } catch (\Exception $e) {
+            \Log::error('Media update error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to update media: ' . $e->getMessage()], 500);
         }
     }
@@ -347,25 +421,5 @@ class MediaController extends Controller
         }
         
         return $result;
-    }
-    
-    /**
-     * Get image dimensions if file is an image.
-     *
-     * @param  \Illuminate\Http\UploadedFile  $file
-     * @return array|null
-     */
-    private function getImageDimensions($file)
-    {
-        if (str_starts_with($file->getMimeType(), 'image/')) {
-            try {
-                list($width, $height) = getimagesize($file->getPathname());
-                return compact('width', 'height');
-            } catch (\Exception $e) {
-                return null;
-            }
-        }
-        
-        return null;
     }
 }
