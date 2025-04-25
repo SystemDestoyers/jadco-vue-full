@@ -44,7 +44,7 @@
         
         <!-- Image preview for src fields -->
         <div v-if="isImageSrc && typeof value === 'string' && value" class="image-preview">
-          <img :src="value" :alt="value" @click="startEditValue" />
+          <img :src="getImageUrl(value)" :alt="value" @click="startEditValue" />
         </div>
         
         <!-- Media library button for src fields -->
@@ -209,6 +209,24 @@ export default defineComponent({
     const isPrimitive = computed(() => !isArray.value && !isObject.value);
     const isExpandable = computed(() => isArray.value || isObject.value);
     
+    // Helper function to get the proper image URL for display
+    const getImageUrl = (value) => {
+      if (!value) return '';
+      
+      // If it's already a full URL, return it as is
+      if (value.startsWith('http') || value.startsWith('//')) {
+        return value;
+      }
+      
+      // If it's a relative path without leading slash, add one
+      if (!value.startsWith('/')) {
+        return '/' + value;
+      }
+      
+      // Otherwise return as is (relative path with leading slash)
+      return value;
+    };
+    
     // Check if this is an image source field
     const isImageSrc = computed(() => {
       return String(props.name).toLowerCase() === 'src' || 
@@ -358,7 +376,7 @@ export default defineComponent({
     const handleMediaSelect = (media) => {
       emit('update:value', {
         key: props.name,
-        value: media.url
+        value: media.path || media.url // Use path if available, otherwise fallback to url
       });
       closeMediaSelector();
     };
@@ -510,6 +528,7 @@ export default defineComponent({
       isImageSrc,
       valueType,
       displayValue,
+      getImageUrl,
       toggleExpand,
       startEditKey,
       finishEditKey,

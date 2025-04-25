@@ -76,6 +76,12 @@ All notable changes to this project will be documented in this file.
 - Updated admin layout to use correct logout endpoint
 - Enhanced admin interface with improved navigation and styling
 - Fixed dashboard to properly show mock data when API endpoints are not available
+- Modified image handling in JsonTreeView to store file paths instead of URLs:
+  - Updated TreeNode component to use paths for image references
+  - Modified MediaSelector to provide file paths when selecting media
+  - Added path extraction from URLs in MediaSelector
+  - Added proper URL handling for image display
+  - Improved image preview to handle both paths and URLs
 
 ### Removed
 - Removed duplicate API routes for admin authentication (these are now handled by web routes)

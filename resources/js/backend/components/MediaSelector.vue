@@ -297,6 +297,29 @@ export default defineComponent({
             item.type = getFileType(item.mime_type);
           }
           
+          // Ensure path property is set
+          if (!item.path && item.url) {
+            // Store the original file path without domain and leading slash
+            let path = item.url;
+            
+            // Handle full URLs
+            if (path.startsWith('http')) {
+              try {
+                const urlObj = new URL(path);
+                path = urlObj.pathname;
+              } catch (e) {
+                console.error('Error parsing URL:', e);
+              }
+            }
+            
+            // Remove leading slash if present
+            if (path.startsWith('/')) {
+              path = path.substring(1);
+            }
+            
+            item.path = path;
+          }
+          
           return item;
         });
         
@@ -335,6 +358,32 @@ export default defineComponent({
     // Confirm the selection and emit to parent
     const confirmSelection = () => {
       if (selectedMedia.value) {
+        // Ensure path is available in the media object
+        if (!selectedMedia.value.path && selectedMedia.value.url) {
+          // Extract path from URL if not explicitly provided
+          const url = selectedMedia.value.url;
+          
+          // Remove domain if present (handle both absolute and relative URLs)
+          let path = url;
+          if (url.startsWith('http')) {
+            // Extract path portion from full URL
+            try {
+              const urlObj = new URL(url);
+              path = urlObj.pathname;
+            } catch (e) {
+              console.error('Error parsing URL:', e);
+            }
+          }
+          
+          // Remove leading slash if present
+          if (path.startsWith('/')) {
+            path = path.substring(1);
+          }
+          
+          // Set the path property
+          selectedMedia.value.path = path;
+        }
+        
         emit('select', selectedMedia.value);
       }
     };
