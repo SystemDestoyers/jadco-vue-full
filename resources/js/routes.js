@@ -13,13 +13,14 @@ import PagesPage from './backend/PagesPage.vue';
 import SectionsPage from './backend/SectionsPage.vue';
 import SectionEditor from './backend/SectionEditor.vue';
 import MediaLibrary from './backend/MediaLibrary.vue';
+import MessagesPage from './backend/MessagesPage.vue';
 
 const routes = [
     // Redirect root to about page since home is handled by Laravel
-    {
-        path: '/',
-        redirect: '/about'
-    },
+    // {
+    //     path: '/',
+    //     redirect: '/about'
+    // },
     // Home route removed - handled by Laravel Blade template
     {
         path: '/about',
@@ -89,6 +90,12 @@ const routes = [
         path: '/admin/media',
         name: 'admin.media',
         component: MediaLibrary,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/messages',
+        name: 'admin.messages',
+        component: MessagesPage,
         meta: { requiresAuth: true }
     }
 ];

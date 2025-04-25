@@ -36,6 +36,12 @@
               </router-link>
             </li>
             <li>
+              <router-link to="/admin/messages" class="nav-link">
+                <i class="fas fa-envelope"></i> Messages
+                <span v-if="unreadCount > 0" class="badge bg-danger ms-2">{{ unreadCount }}</span>
+              </router-link>
+            </li>
+            <li>
               <a href="#" class="nav-link">
                 <i class="fas fa-cog"></i> Settings
               </a>
@@ -61,6 +67,7 @@
 
 <script setup>
 import axios from 'axios';
+import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -68,6 +75,7 @@ import './assets/css/backend-global.css';
 
 const router = useRouter();
 const route = useRoute();
+const unreadCount = ref(0);
 
 // Expose toast to the global window for components that can't use Vue composition API
 if (typeof window !== 'undefined') {
@@ -77,6 +85,11 @@ if (typeof window !== 'undefined') {
     warning: (message, options = {}) => toast.warning(message, options),
     info: (message, options = {}) => toast.info(message, options),
     remove: (id) => toast.dismiss(id)
+  };
+  
+  // Expose a global function to update the unread count
+  window.updateAdminUnreadCount = (count) => {
+    unreadCount.value = count;
   };
 }
 
@@ -88,6 +101,23 @@ const logout = async () => {
     // Silent fail
   }
 };
+
+const fetchUnreadCount = async () => {
+  try {
+    const response = await axios.get('/api/admin/messages');
+    if (response.data && response.data.unread_count) {
+      unreadCount.value = response.data.unread_count;
+    }
+  } catch (error) {
+    console.error('Error fetching unread count:', error);
+  }
+};
+
+onMounted(() => {
+  fetchUnreadCount();
+  // Refresh unread count every minute
+  setInterval(fetchUnreadCount, 60000);
+});
 </script>
 
 <style scoped>

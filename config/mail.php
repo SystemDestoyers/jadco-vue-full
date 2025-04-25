@@ -100,4 +100,16 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Notifications
+    |--------------------------------------------------------------------------
+    |
+    | Configure email notifications for contact form submissions
+    |
+    */
+
+    'enabled' => env('MAIL_NOTIFICATIONS_ENABLED', false),
+    'admin_email' => env('MAIL_ADMIN_EMAIL', 'admin@example.com'),
+
 ];

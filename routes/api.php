@@ -93,4 +93,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/media/folders', [MediaController::class, 'createFolder']);
     Route::get('/media/folders/list', [MediaController::class, 'listFolders']);
     Route::delete('/media/folders/delete', [MediaController::class, 'deleteFolder']);
+
+    // Message management
+    Route::apiResource('messages', \App\Http\Controllers\Admin\MessageController::class);
+    Route::put('messages/{id}/mark-as-read', [\App\Http\Controllers\Admin\MessageController::class, 'markAsRead']);
+    Route::put('messages/{id}/mark-as-unread', [\App\Http\Controllers\Admin\MessageController::class, 'markAsUnread']);
 });

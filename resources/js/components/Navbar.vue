@@ -5,8 +5,8 @@
             <!-- Navigation Bar -->
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <!-- Logo Container (Left-aligned) -->
-                    <a class="navbar-brand" href="/">
+                    <!-- Logo Container (Left-aligned) with hard refresh -->
+                    <a class="navbar-brand" href="/" @click="forcePageRefresh">
                         <img v-if="navbarContent.logo" :src="navbarContent.logo" alt="JADCO Logo" class="logo">
                     </a>
                     
@@ -22,14 +22,28 @@
                         <ul class="navbar-nav me-3">
                             <template v-if="navbarContent.navItems && navbarContent.navItems.length">
                                 <li v-for="(item, index) in navbarContent.navItems" :key="index" class="nav-item">
+                                    <!-- Home link - always use regular anchor for full page refresh -->
+                                    <a 
+                                        v-if="item.link === '/' || item.text.toLowerCase() === 'home'" 
+                                        href="/" 
+                                        class="nav-link"
+                                        :class="{ 'active': isHome }"
+                                        :id="item.id || null"
+                                        v-html="item.text"
+                                        @click="forcePageRefresh">
+                                    </a>
+                                    <!-- All other internal links - use router-link (no page refresh) -->
                                     <router-link 
-                                        v-if="item.link.startsWith('/')" 
+                                        v-else-if="item.link.startsWith('/')" 
                                         :to="item.link" 
                                         class="nav-link"
                                         :class="item.text.toLowerCase()"
                                         :id="item.id || null"
+                                        active-class="active"
+                                        exact-active-class="active"
                                         v-html="item.text">
                                     </router-link>
+                                    <!-- External links -->
                                     <a 
                                         v-else 
                                         :href="item.link" 
@@ -56,6 +70,7 @@
 <script>
 import Header from './Header.vue';
 import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
     components: {
@@ -63,6 +78,7 @@ export default {
     },
     setup() {
         const navbarContent = ref({});
+        const route = useRoute();
         
         const fetchNavbarContent = async () => {
             try {
@@ -93,6 +109,7 @@ export default {
         });
         
         const isAboutActive = computed(() => {
+            // Be very specific - only return true for EXACTLY /about path
             return window.location.pathname === '/about';
         });
         
@@ -119,11 +136,25 @@ export default {
             }
         };
         
+        // Method to force a page refresh when clicking home link
+        const forcePageRefresh = (e) => {
+            // Don't prevent default - let the browser handle the navigation
+            // This will cause a full page refresh when clicking the link
+            return true;
+        };
+        
+        // Method to check if a specific route is active
+        const isRouteActive = (path) => {
+            return route.path === path;
+        };
+        
         return {
             navbarContent,
             isHome,
             isAboutActive,
-            handleLetsTalkClick
+            handleLetsTalkClick,
+            forcePageRefresh,
+            isRouteActive
         };
     }
 };

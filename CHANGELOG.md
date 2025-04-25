@@ -112,6 +112,20 @@ All notable changes to this project will be documented in this file.
   - Updated home.blade.php to check if sections have is_active set to true before rendering
   - Implemented checks for about, services, educational_services, and statistics sections 
   - Sections with is_active set to false will be hidden from the frontend
+- Contact form message storage system
+- Admin API for message management (CRUD operations)
+- Message read/unread status tracking
+- Gmail-style messages inbox page for admin:
+  - Inbox with read/unread indicators and message preview
+  - Batch operations (mark as read/unread, delete)
+  - Search functionality for all message content
+  - Detailed message view with sender information
+  - Unread message counter in admin sidebar
+  - Pagination for long message lists
+- Enhanced contact form with success/error notifications
+- Email notifications for new contact form submissions
+- Error handling and logging for contact form submissions
+- Real-time unread message count updates across the admin panel
 
 ### Changed
 - Updated Vue router to use new web routes for authentication
