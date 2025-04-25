@@ -130,9 +130,11 @@
                                             @endif
                                         </p>
                                         <div class="service-buttons">
-                                            <a href="{{ $services[1]['link'] ?? '/services/ai-and-advanced-technologies' }}"
-                                                class="learn-more">LEARN MORE <i
+                                            @if(isset($services[1]['buttons']) && is_array($services[1]['buttons']) && count($services[1]['buttons']) > 0)
+                                                <a href="{{ $services[1]['buttons'][0]['link'] ?? '/services/ai-and-advanced-technologies' }}"
+                                                    class="learn-more {{ $services[1]['buttons'][0]['class'] ?? '' }}">{{ $services[1]['buttons'][0]['text'] ?? 'LEARN MORE' }} <i
                                                     class="fas fa-arrow-right-long"></i></a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -168,8 +170,11 @@
                                             @endif
                                         </p>
                                         <div class="service-buttons">
-                                            <a href="{{ $services[2]['link'] ?? '/services/egaming-and-esport' }}" class="learn-more">Learn
-                                                More <i class="fas fa-arrow-right-long"></i></a>
+                                            @if(isset($services[2]['buttons']) && is_array($services[2]['buttons']) && count($services[2]['buttons']) > 0)
+                                                <a href="{{ $services[2]['buttons'][0]['link'] ?? '/services/egaming-and-esport' }}"
+                                                    class="learn-more {{ $services[2]['buttons'][0]['class'] ?? '' }}">{{ $services[2]['buttons'][0]['text'] ?? 'LEARN MORE' }} <i
+                                                    class="fas fa-arrow-right-long"></i></a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -205,9 +210,11 @@
                                             @endif
                                         </p>
                                         <div class="service-buttons">
-                                            <a href="{{ $services[3]['link'] ?? '/services/arts-and-entertainment' }}"
-                                                class="learn-more">LEARN MORE <i
+                                            @if(isset($services[3]['buttons']) && is_array($services[3]['buttons']) && count($services[3]['buttons']) > 0)
+                                                <a href="{{ $services[3]['buttons'][0]['link'] ?? '/services/arts-and-entertainment' }}"
+                                                    class="learn-more {{ $services[3]['buttons'][0]['class'] ?? '' }}">{{ $services[3]['buttons'][0]['text'] ?? 'LEARN MORE' }} <i
                                                     class="fas fa-arrow-right-long"></i></a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

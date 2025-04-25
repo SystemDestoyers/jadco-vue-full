@@ -101,19 +101,37 @@ class SectionSeeder extends Seeder
                         'title' => 'AI and Advanced Technologies',
                         'description' => 'AI represents a transformative technology with the potential to revolutionize organizations services and operations. By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.',
                         'image' => '/images/services_section/ai.jpg',
-                        'link' => '/services/ai-and-advanced-technologies'
+                        'buttons' => [
+                            [
+                                'text' => 'LEARN MORE',
+                                'link' => '/services/ai-and-advanced-technologies',
+                                'class' => ''
+                            ]
+                        ]
                     ],
                     [
                         'title' => 'eGaming and eSport',
                         'description' => 'JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of ...',
                         'image' => '/images/services_section/gaming.jpg',
-                        'link' => '/services/egaming-and-esport'
+                        'buttons' => [
+                            [
+                                'text' => 'LEARN MORE',
+                                'link' => '/services/egaming-and-esport',
+                                'class' => ''
+                            ]
+                        ]
                     ],
                     [
                         'title' => 'Arts and Entertainment',
                         'description' => 'Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.',
                         'image' => '/images/services_section/arts.jpg',
-                        'link' => '/services/arts-and-entertainment'
+                        'buttons' => [
+                            [
+                                'text' => 'LEARN MORE',
+                                'link' => '/services/arts-and-entertainment',
+                                'class' => ''
+                            ]
+                        ]
                     ]
                 ]
             ]
