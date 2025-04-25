@@ -20,17 +20,25 @@
             </div>
             <div class="about-text-container">
                 <p class="about-text">
-                    {{ $aboutContent['main_text'] ?? 'After more than 20 years of experience in the Saudi Arabia\'s Human Capital Development market, JAD Consulting (JADCO) was established to continue supporting the industry with a new inspired vision by the great Saudi Vision 2030.' }}
+                    @if(isset($aboutContent['main_text']))
+                        {!! $aboutContent['main_text'] !!}
+                    @else
+                        After more than 20 years of experience in the Saudi Arabia's Human Capital Development market, JAD Consulting (JADCO) was established to continue supporting the industry with a new inspired vision by the great Saudi Vision 2030.
+                    @endif
                 </p>
             </div>
 
             <div class="row">
                 <div class="col-lg-6 col-sm-6 order-lg-1 order-2 about-main-description">
                     <p class="about-description">
-                        {{ $aboutContent['description1'] ?? 'JADCO and its highly ranked international partners of Companies, Universities and SMEs are forming together an exclusive and innovative consortium to serve and be part of the revolution and development and support the transformation for the next levels.' }}
+                        @if(isset($aboutContent['description1']))
+                            {!! $aboutContent['description1'] !!}
+                        @endif
                     </p>
                     <p class="about-description mt-4">
-                        {{ $aboutContent['description2'] ?? 'JADCO in collaboration with the best partners in the globe, customize and Tailor projects to bridge the gap and providing the latest technologies to ensure the max level of quality of deliverables, support local content and transform knowledge to meet the objectives of our clients.' }}
+                        @if(isset($aboutContent['description2']))
+                            {!! $aboutContent['description2'] !!}
+                        @endif
                     </p>
                 </div>
                 <div class="col-lg-6 col-sm-6 order-lg-2 order-1 about-image-wrapper">
@@ -77,7 +85,11 @@
                                     <div class="main-content">
                                         <h3 class="service-title">{{ $services[0]['title'] ?? 'Education and Training' }}</h3>
                                         <p class="service-description">
-                                            {{ $services[0]['description'] ?? 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets.' }}
+                                            @if(isset($services[0]['description']))
+                                                {!! $services[0]['description'] !!}
+                                            @else
+                                                With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor's vision and targets.
+                                            @endif
                                         </p>
                                         <div class="service-buttons">
                                             @if(isset($services[0]['buttons']) && is_array($services[0]['buttons']) && count($services[0]['buttons']) >= 2)
@@ -122,7 +134,11 @@
                                     <div class="main-content">
                                         <h3 class="service-title">{{ $services[1]['title'] ?? 'AI and Advanced Technologies' }}</h3>
                                         <p class="service-description">
-                                            {{ $services[1]['description'] ?? 'AI represents a transformative technology with the potential to revolutionize organizations services and operations. By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.' }}
+                                            @if(isset($services[1]['description']))
+                                                {!! $services[1]['description'] !!}
+                                            @else
+                                                AI represents a transformative technology with the potential to revolutionize organizations services and operations. By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.
+                                            @endif
                                         </p>
                                         <div class="service-buttons">
                                             <a href="{{ $services[1]['link'] ?? '/services/ai-and-advanced-technologies' }}"
@@ -158,7 +174,11 @@
                                     <div class="main-content">
                                         <h3 class="service-title">{{ $services[2]['title'] ?? 'eGaming and eSport' }}</h3>
                                         <p class="service-description">
-                                            {{ $services[2]['description'] ?? 'JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of ...' }}
+                                            @if(isset($services[2]['description']))
+                                                {!! $services[2]['description'] !!}
+                                            @else
+                                                JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of ...
+                                            @endif
                                         </p>
                                         <div class="service-buttons">
                                             <a href="{{ $services[2]['link'] ?? '/services/egaming-and-esport' }}" class="learn-more">Learn
@@ -193,7 +213,11 @@
                                     <div class="main-content">
                                         <h3 class="service-title">{{ $services[3]['title'] ?? 'Arts and Entertainment' }}</h3>
                                         <p class="service-description">
-                                            {{ $services[3]['description'] ?? 'Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.' }}
+                                            @if(isset($services[3]['description']))
+                                                {!! $services[3]['description'] !!}
+                                            @else
+                                                Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.
+                                            @endif
                                         </p>
                                         <div class="service-buttons">
                                             <a href="{{ $services[3]['link'] ?? '/services/arts-and-entertainment' }}"

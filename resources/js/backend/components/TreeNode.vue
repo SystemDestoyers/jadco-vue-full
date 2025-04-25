@@ -30,12 +30,14 @@
           class="node-value" 
           :class="valueType"
           @click="startEditValue"
-          v-html="displayValueHTML"
-        ></span>
+        >{{ displayRawValue }}</span>
+        
+        <!-- Preview of formatted content when editing -->
+        <div v-if="isEditingValue && hasHtmlFormatting" class="formatted-preview" v-html="editableValue"></div>
         
         <!-- Simple Textarea for regular input -->
         <textarea
-          v-else
+          v-if="isEditingValue"
           ref="valueInput"
           class="edit-input"
           v-model="editableValue"
@@ -492,7 +494,11 @@ export default defineComponent({
       if (props.value === null) return 'null';
       if (typeof props.value === 'boolean') return props.value.toString();
       if (typeof props.value === 'number') return props.value.toString();
-      if (typeof props.value === 'string') return `"${props.value}"`;
+      if (typeof props.value === 'string') {
+        // For plain display, remove any HTML tags for safety
+        const plainText = props.value.replace(/<[^>]*>/g, '');
+        return plainText;
+      }
       if (isArray.value) return `Array[${props.value.length}]`;
       if (isObject.value) return `Object{${Object.keys(props.value).length}}`;
       return String(props.value);
@@ -501,13 +507,16 @@ export default defineComponent({
     // For display with formatting, but safely escaping HTML for security
     const displayValueHTML = computed(() => {
       if (typeof props.value === 'string') {
-        // If the value has HTML tags, display it with the formatting
-        if (/<\/?[a-z][\s\S]*>/i.test(props.value)) {
-          return `"${props.value}"`;
+        // Remove the quotes that were surrounding the string value
+        let content = props.value;
+        
+        // If it already contains HTML tags, just return the content without quotes
+        if (/<[a-z][\s\S]*>/i.test(content)) {
+          return content;
         }
         
-        // Otherwise, display it with HTML escaped
-        return `"${escapeHTML(props.value)}"`;
+        // Otherwise, escape HTML special characters
+        return escapeHTML(content);
       }
       
       return displayValue.value;
@@ -564,7 +573,7 @@ export default defineComponent({
       } else if (typeof props.value === 'number') {
         editableValue.value = props.value.toString();
       } else if (typeof props.value === 'string') {
-        // For string values, use the raw value without quotes
+        // For string values, use the raw value without quotes or any processing
         editableValue.value = props.value;
       }
       
@@ -574,6 +583,15 @@ export default defineComponent({
       isUnderline.value = false;
       isMonospace.value = true;
       isSansSerif.value = false;
+      
+      // Try to parse existing font size from the content
+      const fontSizeMatch = props.value && typeof props.value === 'string' && 
+                            props.value.match(/font-size:\s*(\d+)px/);
+      if (fontSizeMatch && fontSizeMatch[1]) {
+        fontSize.value = parseInt(fontSizeMatch[1], 10);
+      } else {
+        fontSize.value = 14; // Default font size
+      }
       
       isEditingValue.value = true;
       
@@ -593,37 +611,21 @@ export default defineComponent({
       });
     };
     
-    // Handle blur events with special handling for toolbar clicks
-    const handleBlur = (e) => {
-      // Check if the related target (where focus is going) is within our toolbar
-      // This prevents closing edit mode when clicking toolbar buttons
-      const toolbar = document.querySelector('.rich-editor-toolbar');
-      if (toolbar && (toolbar.contains(e.relatedTarget) || toolbar === e.relatedTarget)) {
-        // If clicked on toolbar, don't close the edit mode
-        // Re-focus the textarea after a short delay to ensure it keeps focus
-        setTimeout(() => {
-          if (valueInput.value && isEditingValue.value) {
-            valueInput.value.focus();
-          }
-        }, 10);
-        return;
-      }
-      
-      // Normal blur handling - finish editing
-      finishEditValue();
-    };
-    
     const finishEditValue = () => {
       let newValue = editableValue.value;
       
       // Convert value based on type
       if (valueType.value === 'number') {
-        newValue = parseFloat(newValue);
+        // For numbers, strip any HTML and convert to number
+        const plainText = newValue.replace(/<[^>]*>/g, '');
+        newValue = parseFloat(plainText);
         if (isNaN(newValue)) {
           newValue = 0;
         }
       } else if (valueType.value === 'boolean') {
-        newValue = newValue.toLowerCase() === 'true';
+        // For booleans, strip any HTML and convert to boolean
+        const plainText = newValue.replace(/<[^>]*>/g, '');
+        newValue = plainText.toLowerCase() === 'true';
       } else if (valueType.value === 'null') {
         newValue = null;
       }
@@ -831,6 +833,47 @@ export default defineComponent({
       });
     };
     
+    // Handle blur events with special handling for toolbar clicks
+    const handleBlur = (e) => {
+      // Check if the related target (where focus is going) is within our toolbar
+      // This prevents closing edit mode when clicking toolbar buttons
+      const toolbar = document.querySelector('.rich-editor-toolbar');
+      if (toolbar && (toolbar.contains(e.relatedTarget) || toolbar === e.relatedTarget)) {
+        // If clicked on toolbar, don't close the edit mode
+        // Re-focus the textarea after a short delay to ensure it keeps focus
+        setTimeout(() => {
+          if (valueInput.value && isEditingValue.value) {
+            valueInput.value.focus();
+          }
+        }, 10);
+        return;
+      }
+      
+      // Normal blur handling - finish editing
+      finishEditValue();
+    };
+    
+    // Computed property to check if content has HTML formatting
+    const hasHtmlFormatting = computed(() => {
+      return /<[a-z][\s\S]*>/i.test(editableValue.value);
+    });
+    
+    // Display the raw value with HTML tags visible
+    const displayRawValue = computed(() => {
+      if (props.value === null) return 'null';
+      if (typeof props.value === 'boolean') return props.value.toString();
+      if (typeof props.value === 'number') return props.value.toString();
+      if (typeof props.value === 'string') {
+        // Show the raw HTML string by escaping < and > characters
+        return props.value
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+      if (isArray.value) return `Array[${props.value.length}]`;
+      if (isObject.value) return `Object{${Object.keys(props.value).length}}`;
+      return String(props.value);
+    });
+    
     return {
       isExpanded,
       isEditingKey,
@@ -895,7 +938,9 @@ export default defineComponent({
       fontSize,
       incrementFontSize,
       decrementFontSize,
-      insertLineBreak
+      insertLineBreak,
+      displayRawValue,
+      hasHtmlFormatting
     };
   }
 });
@@ -1143,5 +1188,22 @@ export default defineComponent({
   display: block;
   content: "";
   margin: 4px 0;
+}
+
+/* Formatted preview styling */
+.backend-ui .formatted-preview {
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  max-width: 64rem;
+  overflow: auto;
+  max-height: 200px;
+}
+
+.backend-ui .formatted-preview * {
+  font-family: inherit;
+  white-space: pre-wrap;
 }
 </style>
