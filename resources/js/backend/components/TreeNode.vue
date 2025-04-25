@@ -30,7 +30,8 @@
           class="node-value" 
           :class="valueType"
           @click="startEditValue"
-        >{{ displayValue }}</span>
+          v-html="displayValueHTML"
+        ></span>
         
         <!-- Simple Textarea for regular input -->
         <textarea
@@ -46,24 +47,68 @@
         
         <!-- Formatting toolbar when editing -->
         <div v-if="isEditingValue" class="rich-editor-toolbar">
-          <button type="button" class="toolbar-btn" :class="{ active: isBold }" @click.stop.prevent="toggleBold" title="Bold">
-            <i class="fas fa-bold"></i>
-          </button>
-          <button type="button" class="toolbar-btn" :class="{ active: isItalic }" @click.stop.prevent="toggleItalic" title="Italic">
-            <i class="fas fa-italic"></i>
-          </button>
-          <button type="button" class="toolbar-btn" :class="{ active: isLarge }" @click.stop.prevent="toggleLargeText" title="Larger Text">
-            <i class="fas fa-plus"></i>
-          </button>
-          <button type="button" class="toolbar-btn" :class="{ active: isSmall }" @click.stop.prevent="toggleSmallText" title="Smaller Text">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="toolbar-btn" :class="{ active: isMonospace }" @click.stop.prevent="toggleMonospace" title="Monospace">
-            <i class="fas fa-code"></i>
-          </button>
-          <button type="button" class="toolbar-btn" :class="{ active: isSansSerif }" @click.stop.prevent="toggleSansSerif" title="Sans-serif">
-            <i class="fas fa-font"></i>
-          </button>
+          <!-- Text style buttons -->
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" :class="{ active: isBold }" @click.stop.prevent="toggleBold" title="Bold">
+              <i class="fas fa-bold"></i>
+            </button>
+            <button type="button" class="toolbar-btn" :class="{ active: isItalic }" @click.stop.prevent="toggleItalic" title="Italic">
+              <i class="fas fa-italic"></i>
+            </button>
+            <button type="button" class="toolbar-btn" :class="{ active: isUnderline }" @click.stop.prevent="toggleUnderline" title="Underline">
+              <i class="fas fa-underline"></i>
+            </button>
+          </div>
+          
+          <!-- Font family buttons -->
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" :class="{ active: isMonospace }" @click.stop.prevent="toggleMonospace" title="Monospace">
+              <i class="fas fa-code"></i>
+            </button>
+            <button type="button" class="toolbar-btn" :class="{ active: isSansSerif }" @click.stop.prevent="toggleSansSerif" title="Sans-serif">
+              <i class="fas fa-font"></i>
+            </button>
+          </div>
+          
+          <!-- Font size control -->
+          <div class="toolbar-group font-size-control">
+            <span class="control-label">Size:</span>
+            <div class="number-input">
+              <button @click.stop.prevent="decrementFontSize" class="decrement" title="Decrease font size">-</button>
+              <input type="number" 
+                    min="8" 
+                    max="64" 
+                    step="1" 
+                    v-model="fontSize" 
+                    @change="updateFontSize" 
+                    @blur="handleInputBlur"
+                    @keydown.stop>
+              <button @click.stop.prevent="incrementFontSize" class="increment" title="Increase font size">+</button>
+            </div>
+          </div>
+          
+          <!-- Color controls -->
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#27ae60')" title="Green" style="color: #27ae60">
+              <i class="fas fa-paint-brush"></i>
+            </button>
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#3498db')" title="Blue" style="color: #3498db">
+              <i class="fas fa-paint-brush"></i>
+            </button>
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#e74c3c')" title="Red" style="color: #e74c3c">
+              <i class="fas fa-paint-brush"></i>
+            </button>
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#f39c12')" title="Orange" style="color: #f39c12">
+              <i class="fas fa-paint-brush"></i>
+            </button>
+          </div>
+          
+          <!-- Clear formatting -->
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" @click.stop.prevent="clearFormatting" title="Clear formatting">
+              <i class="fas fa-remove-format"></i>
+            </button>
+          </div>
         </div>
         
         <!-- Image preview for src fields -->
@@ -222,10 +267,10 @@ export default defineComponent({
     // Text formatting state
     const isBold = ref(false);
     const isItalic = ref(false);
-    const isLarge = ref(false);
-    const isSmall = ref(false);
+    const isUnderline = ref(false);
     const isMonospace = ref(true); // Default to monospace
     const isSansSerif = ref(false);
+    const fontSize = ref(14);
     
     // Media selector
     const showMediaModal = ref(false);
@@ -246,8 +291,7 @@ export default defineComponent({
     const textFormatClasses = computed(() => ({
       'bold': isBold.value,
       'italic': isItalic.value,
-      'larger': isLarge.value,
-      'smaller': isSmall.value,
+      'underline': isUnderline.value,
       'monospace': isMonospace.value,
       'sans-serif': isSansSerif.value
     }));
@@ -274,63 +318,131 @@ export default defineComponent({
     // Toggle text formatting functions
     const toggleBold = (e) => {
       e.preventDefault();
+      applyStyleToFullText('font-weight', isBold.value ? 'normal' : 'bold');
       isBold.value = !isBold.value;
       preserveFocus();
     };
     
     const toggleItalic = (e) => {
       e.preventDefault();
+      applyStyleToFullText('font-style', isItalic.value ? 'normal' : 'italic');
       isItalic.value = !isItalic.value;
       preserveFocus();
     };
     
-    const toggleLargeText = (e) => {
+    const toggleUnderline = (e) => {
       e.preventDefault();
-      isLarge.value = !isLarge.value;
-      isSmall.value = false;
-      preserveFocus();
-    };
-    
-    const toggleSmallText = (e) => {
-      e.preventDefault();
-      isSmall.value = !isSmall.value;
-      isLarge.value = false;
+      applyStyleToFullText('text-decoration', isUnderline.value ? 'none' : 'underline');
+      isUnderline.value = !isUnderline.value;
       preserveFocus();
     };
     
     const toggleMonospace = (e) => {
       e.preventDefault();
+      applyStyleToFullText('font-family', isMonospace.value ? 'Arial, sans-serif' : '"Courier New", monospace');
       isMonospace.value = !isMonospace.value;
-      isSansSerif.value = false;
+      isSansSerif.value = !isMonospace.value;
       preserveFocus();
     };
     
     const toggleSansSerif = (e) => {
       e.preventDefault();
+      applyStyleToFullText('font-family', isSansSerif.value ? '"Courier New", monospace' : 'Arial, sans-serif');
       isSansSerif.value = !isSansSerif.value;
-      isMonospace.value = false;
+      isMonospace.value = !isSansSerif.value;
       preserveFocus();
     };
     
-    // Ensure textarea stays focused and prevents the edit mode from closing
-    const preserveFocus = () => {
-      // Prevent any blur events from happening during the toggle
-      nextTick(() => {
-        if (valueInput.value && isEditingValue.value) {
-          valueInput.value.focus();
-          
-          // Preserve cursor position
-          const selectionStart = valueInput.value.selectionStart;
-          const selectionEnd = valueInput.value.selectionEnd;
-          
-          // Re-apply selection range after focus
-          nextTick(() => {
-            if (valueInput.value) {
-              valueInput.value.setSelectionRange(selectionStart, selectionEnd);
+    // Font size control
+    const incrementFontSize = () => {
+      if (fontSize.value < 64) {
+        fontSize.value++;
+        applyStyleToFullText('font-size', `${fontSize.value}px`);
+      }
+    };
+    
+    const decrementFontSize = () => {
+      if (fontSize.value > 8) {
+        fontSize.value--;
+        applyStyleToFullText('font-size', `${fontSize.value}px`);
+      }
+    };
+    
+    const updateFontSize = () => {
+      // Ensure font size is within limits
+      if (fontSize.value < 8) fontSize.value = 8;
+      if (fontSize.value > 64) fontSize.value = 64;
+      
+      applyStyleToFullText('font-size', `${fontSize.value}px`);
+    };
+    
+    // Color application
+    const applyColor = (color) => {
+      applyStyleToFullText('color', color);
+      preserveFocus();
+    };
+    
+    // Apply a specific style to the entire text
+    const applyStyleToFullText = (property, value) => {
+      if (!valueInput.value) return;
+      
+      let text = editableValue.value;
+      
+      // Check if text is already wrapped in a style tag
+      const styleRegex = /<span style="([^"]*)">([\s\S]*?)<\/span>/;
+      const match = text.match(styleRegex);
+      
+      if (match) {
+        // Text already has a style tag, update the style
+        let styles = match[1];
+        const content = match[2];
+        
+        // Parse existing styles into an object
+        const styleObj = {};
+        styles.split(';').forEach(style => {
+          if (style.trim()) {
+            const [prop, val] = style.split(':').map(s => s.trim());
+            if (prop && val) {
+              styleObj[prop] = val;
             }
-          });
-        }
-      });
+          }
+        });
+        
+        // Update or add the new style
+        styleObj[property] = value;
+        
+        // Convert back to style string
+        styles = Object.entries(styleObj)
+          .map(([prop, val]) => `${prop}: ${val}`)
+          .join('; ');
+        
+        // Recreate the style tag
+        text = `<span style="${styles}">${content}</span>`;
+      } else {
+        // No style tag yet, create one
+        text = `<span style="${property}: ${value};">${text}</span>`;
+      }
+      
+      editableValue.value = text;
+    };
+    
+    // Clear formatting from text
+    const clearFormatting = () => {
+      if (!valueInput.value) return;
+      
+      const text = editableValue.value;
+      
+      // Remove HTML tags using regex, preserve the innermost content
+      const cleanText = text.replace(/<[^>]+>|<\/[^>]+>/g, "");
+      editableValue.value = cleanText;
+      
+      // Reset all formatting states
+      isBold.value = false;
+      isItalic.value = false;
+      isUnderline.value = false;
+      fontSize.value = 14;
+      
+      preserveFocus();
     };
     
     // Helper function to get the proper image URL for display
@@ -385,6 +497,31 @@ export default defineComponent({
       return String(props.value);
     });
     
+    // For display with formatting, but safely escaping HTML for security
+    const displayValueHTML = computed(() => {
+      if (typeof props.value === 'string') {
+        // If the value has HTML tags, display it with the formatting
+        if (/<\/?[a-z][\s\S]*>/i.test(props.value)) {
+          return `"${props.value}"`;
+        }
+        
+        // Otherwise, display it with HTML escaped
+        return `"${escapeHTML(props.value)}"`;
+      }
+      
+      return displayValue.value;
+    });
+    
+    // Helper to escape HTML for display
+    const escapeHTML = (str) => {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+    
     // Toggle node expansion
     const toggleExpand = () => {
       if (isExpandable.value) {
@@ -426,14 +563,14 @@ export default defineComponent({
       } else if (typeof props.value === 'number') {
         editableValue.value = props.value.toString();
       } else if (typeof props.value === 'string') {
+        // For string values, use the raw value without quotes
         editableValue.value = props.value;
       }
       
       // Reset formatting states
       isBold.value = false;
       isItalic.value = false;
-      isLarge.value = false;
-      isSmall.value = false;
+      isUnderline.value = false;
       isMonospace.value = true;
       isSansSerif.value = false;
       
@@ -489,6 +626,7 @@ export default defineComponent({
       } else if (valueType.value === 'null') {
         newValue = null;
       }
+      // String values are preserved as-is with their HTML tags
       
       emit('update:value', {
         key: props.name,
@@ -646,6 +784,28 @@ export default defineComponent({
       isAddingItem.value = false;
     };
     
+    // Ensure textarea stays focused and prevents the edit mode from closing
+    const preserveFocus = () => {
+      // Prevent any blur events from happening during the toggle
+      nextTick(() => {
+        if (valueInput.value && isEditingValue.value) {
+          valueInput.value.focus();
+        }
+      });
+    };
+    
+    // Function to handle input blur events from font size input
+    const handleInputBlur = (e) => {
+      // Only prevent blur if it's coming from our font size input
+      if (e.target.type === 'number') {
+        e.stopPropagation();
+        return;
+      }
+      
+      // For other elements, proceed with normal blur handling
+      handleBlur(e);
+    };
+    
     return {
       isExpanded,
       isEditingKey,
@@ -667,6 +827,7 @@ export default defineComponent({
       valueType,
       valueTypeClass,
       displayValue,
+      displayValueHTML,
       getImageUrl,
       toggleExpand,
       startEditKey,
@@ -679,15 +840,13 @@ export default defineComponent({
       // Formatting controls
       isBold,
       isItalic,
-      isLarge,
-      isSmall,
+      isUnderline,
       isMonospace,
       isSansSerif,
       textFormatClasses,
       toggleBold,
       toggleItalic,
-      toggleLargeText,
-      toggleSmallText,
+      toggleUnderline,
       toggleMonospace,
       toggleSansSerif,
       // Media selector methods
@@ -703,7 +862,14 @@ export default defineComponent({
       deleteObjectProperty,
       showAddItemForm,
       cancelAddItem,
-      addNewItem
+      addNewItem,
+      handleInputBlur,
+      updateFontSize,
+      applyColor,
+      clearFormatting,
+      fontSize,
+      incrementFontSize,
+      decrementFontSize
     };
   }
 });
@@ -767,8 +933,8 @@ export default defineComponent({
 .backend-ui .rich-editor-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  padding: 5px;
+  gap: 8px;
+  padding: 8px;
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
   border-radius: 4px;
@@ -776,11 +942,24 @@ export default defineComponent({
   margin-bottom: 10px;
 }
 
+.backend-ui .toolbar-group {
+  display: flex;
+  gap: 2px;
+  border-right: 1px solid #e2e8f0;
+  padding-right: 8px;
+  margin-right: 0;
+}
+
+.backend-ui .toolbar-group:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
 .backend-ui .toolbar-btn {
   background: #fff;
   border: 1px solid #cbd5e1;
   border-radius: 3px;
-  padding: 3px 8px;
+  padding: 5px 10px;
   font-size: 12px;
   cursor: pointer;
   display: inline-flex;
@@ -788,6 +967,8 @@ export default defineComponent({
   justify-content: center;
   color: #334155;
   transition: all 0.2s ease;
+  min-width: 30px;
+  height: 30px;
 }
 
 .backend-ui .toolbar-btn:hover {
@@ -801,6 +982,74 @@ export default defineComponent({
   color: #0284c7;
 }
 
+.backend-ui .toolbar-btn i {
+  font-size: 14px;
+}
+
+/* Font size control styles */
+.backend-ui .font-size-control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.backend-ui .control-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.backend-ui .number-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fff;
+  height: 30px;
+}
+
+.backend-ui .number-input button {
+  border: none;
+  background: #f8fafc;
+  color: #64748b;
+  width: 25px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.backend-ui .number-input button:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.backend-ui .number-input input[type="number"] {
+  border: none;
+  width: 40px;
+  text-align: center;
+  font-size: 12px;
+  height: 100%;
+  padding: 0;
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.backend-ui .number-input input[type="number"]::-webkit-outer-spin-button,
+.backend-ui .number-input input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Color button styles */
+.backend-ui .color-btn i {
+  font-size: 14px;
+}
+
 /* Rich text styles that can be applied */
 .backend-ui .edit-input.bold {
   font-weight: bold;
@@ -810,12 +1059,8 @@ export default defineComponent({
   font-style: italic;
 }
 
-.backend-ui .edit-input.larger {
-  font-size: 16px;
-}
-
-.backend-ui .edit-input.smaller {
-  font-size: 12px;
+.backend-ui .edit-input.underline {
+  text-decoration: underline;
 }
 
 .backend-ui .edit-input.monospace {
@@ -824,6 +1069,26 @@ export default defineComponent({
 
 .backend-ui .edit-input.sans-serif {
   font-family: 'Arial', sans-serif;
+}
+
+/* Add styles for formatted HTML content */
+.backend-ui .node-value b {
+  font-weight: bold;
+}
+
+.backend-ui .node-value i {
+  font-style: italic;
+}
+
+.backend-ui .node-value u {
+  text-decoration: underline;
+}
+
+.backend-ui .node-value code {
+  font-family: 'Courier New', monospace;
+  background-color: #f1f5f9;
+  padding: 0 2px;
+  border-radius: 2px;
 }
 
 /* Style for multiline text editing */
