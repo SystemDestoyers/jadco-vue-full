@@ -187,53 +187,138 @@
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
+                            console.log('DOM loaded - initializing contact form');
+                            
+                            // Get elements
                             const form = document.getElementById('contactForm');
-                            const successAlert = document.getElementById('formSuccess');
-                            const errorAlert = document.getElementById('formError');
+                            let successAlert = document.getElementById('formSuccess');
+                            let errorAlert = document.getElementById('formError');
+                            
+                            // Create alerts if they don't exist
+                            if (!successAlert) {
+                                console.log('Success alert not found, creating it');
+                                successAlert = document.createElement('div');
+                                successAlert.id = 'formSuccess';
+                                successAlert.className = 'alert alert-success alert-dismissible fade';
+                                successAlert.role = 'alert';
+                                successAlert.style.display = 'none';
+                                successAlert.innerHTML = 'Thank you for your message! We will get back to you soon. <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+                                form.parentNode.insertBefore(successAlert, form.nextSibling);
+                            }
+                            
+                            if (!errorAlert) {
+                                console.log('Error alert not found, creating it');
+                                errorAlert = document.createElement('div');
+                                errorAlert.id = 'formError';
+                                errorAlert.className = 'alert alert-danger alert-dismissible fade';
+                                errorAlert.role = 'alert';
+                                errorAlert.style.display = 'none';
+                                errorAlert.innerHTML = 'Sorry, there was a problem submitting your message. Please try again later. <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+                                form.parentNode.insertBefore(errorAlert, successAlert.nextSibling);
+                            }
+                            
+                            if (!form) {
+                                console.error('Contact form not found!');
+                                return;
+                            }
                             
                             form.addEventListener('submit', function(e) {
+                                console.log('Form submitted');
                                 e.preventDefault();
                                 
-                                const formData = new FormData(form);
-                                const data = {
-                                    first_name: formData.get('first_name'),
-                                    last_name: formData.get('last_name'),
-                                    email: formData.get('email'),
-                                    phone: formData.get('phone'),
-                                    message: formData.get('message')
-                                };
+                                // Show loading indicator
+                                const submitButton = form.querySelector('button[type="submit"]');
+                                const originalButtonHtml = submitButton.innerHTML;
+                                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                                submitButton.disabled = true;
                                 
-                                fetch('/api/contact/submit', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                    },
-                                    body: JSON.stringify(data)
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        // Show success message
-                                        successAlert.style.display = 'block';
-                                        successAlert.classList.add('show');
-                                        
-                                        // Reset form
-                                        form.reset();
+                                // Get form data
+                                const formData = new FormData(form);
+                                
+                                // Create XMLHttpRequest
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', '{{ route("contact.submit") }}', true);
+                                
+                                // Get CSRF token safely
+                                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                                if (csrfToken) {
+                                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken.getAttribute('content'));
+                                } else {
+                                    // If no CSRF token, include it from the form
+                                    const csrfInput = form.querySelector('input[name="_token"]');
+                                    if (csrfInput) {
+                                        xhr.setRequestHeader('X-CSRF-TOKEN', csrfInput.value);
+                                        console.log('Using CSRF token from form:', csrfInput.value);
+                                    } else {
+                                        console.warn('No CSRF token found!');
+                                    }
+                                }
+                                
+                                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                                xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+                                
+                                xhr.onload = function() {
+                                    console.log('Got response:', xhr.status, xhr.responseText);
+                                    submitButton.innerHTML = originalButtonHtml;
+                                    submitButton.disabled = false;
+                                    
+                                    if (xhr.status === 200) {
+                                        try {
+                                            const response = JSON.parse(xhr.responseText);
+                                            
+                                            if (response.success) {
+                                                // Show success message
+                                                successAlert.style.display = 'block';
+                                                successAlert.classList.add('show');
+                                                
+                                                // Reset form
+                                                form.reset();
+                                            } else {
+                                                // Show error message
+                                                errorAlert.style.display = 'block';
+                                                errorAlert.classList.add('show');
+                                                console.error('Server error:', response.message);
+                                            }
+                                        } catch (e) {
+                                            console.error('Invalid JSON response', e);
+                                            console.error('Response text:', xhr.responseText);
+                                            errorAlert.style.display = 'block';
+                                            errorAlert.classList.add('show');
+                                        }
                                     } else {
                                         // Show error message
                                         errorAlert.style.display = 'block';
                                         errorAlert.classList.add('show');
-                                        
-                                        if (data.errors) {
-                                            console.error('Validation errors:', data.errors);
-                                        }
+                                        console.error('Request failed with status:', xhr.status);
                                     }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
+                                };
+                                
+                                xhr.onerror = function() {
+                                    console.error('XHR error occurred');
+                                    submitButton.innerHTML = originalButtonHtml;
+                                    submitButton.disabled = false;
                                     errorAlert.style.display = 'block';
                                     errorAlert.classList.add('show');
+                                    console.error('Request failed');
+                                };
+                                
+                                // Convert FormData to standard form data format
+                                const data = {};
+                                formData.forEach((value, key) => {
+                                    data[key] = value;
+                                    console.log('Form data:', key, value);
+                                });
+                                
+                                // Send the request
+                                console.log('Sending form data', data);
+                                xhr.send(JSON.stringify(data));
+                            });
+                            
+                            // Hide alerts when close button is clicked
+                            document.querySelectorAll('.alert .btn-close').forEach(function(button) {
+                                button.addEventListener('click', function() {
+                                    this.closest('.alert').style.display = 'none';
+                                    this.closest('.alert').classList.remove('show');
                                 });
                             });
                         });

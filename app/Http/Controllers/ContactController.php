@@ -107,6 +107,13 @@ class ContactController extends Controller
      */
     public function apiSubmit(Request $request)
     {
+        // Log the request to help with debugging
+        Log::info('Contact form API submission received', [
+            'request_type' => $request->header('Content-Type'),
+            'is_ajax' => $request->ajax(),
+            'is_json' => $request->isJson()
+        ]);
+        
         // Validate the form data
         $validated = $request->validate([
             'first_name' => 'required|string|max:100',
@@ -130,6 +137,7 @@ class ContactController extends Controller
                 'name' => "{$message->first_name} {$message->last_name}"
             ]);
             
+            // Return JSON response
             return response()->json([
                 'success' => true,
                 'message' => 'Thank you for your message! We will get back to you soon.'
@@ -138,6 +146,9 @@ class ContactController extends Controller
             // Log the error
             Log::error('Error submitting contact form via API', [
                 'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
                 'data' => $validated
             ]);
             
