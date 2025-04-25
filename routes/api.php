@@ -91,4 +91,5 @@ Route::prefix('admin')->group(function () {
     Route::delete('/media/{id}', [MediaController::class, 'destroy']);
     Route::post('/media/folders', [MediaController::class, 'createFolder']);
     Route::get('/media/folders/list', [MediaController::class, 'listFolders']);
+    Route::delete('/media/folders/delete', [MediaController::class, 'deleteFolder']);
 });

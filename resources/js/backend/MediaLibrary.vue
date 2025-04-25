@@ -73,6 +73,16 @@
               <span>Create Folder</span>
             </button>
             
+            <!-- Delete folder button -->
+            <button 
+              @click="openDeleteFolderModal" 
+              class="btn btn-danger"
+              :disabled="!canDeleteCurrentFolder"
+              v-if="filters.folder"
+            >
+              <span>Delete Folder</span>
+            </button>
+            
             <!-- View toggle -->
             <div class="view-toggle">
               <button 
@@ -512,6 +522,37 @@
           </div>
         </div>
       </div>
+      
+      <!-- Delete Folder Modal -->
+      <div v-if="showDeleteFolderModal" class="modal">
+        <div class="modal-content delete-folder-modal">
+          <div class="modal-header">
+            <h3>Delete Folder</h3>
+            <button class="close-btn" @click="showDeleteFolderModal = false">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete the folder <strong>{{ getCurrentFolderName() }}</strong>?</p>
+            <p class="warning">This action cannot be undone.</p>
+            <p class="info">Note: You can only delete empty folders with no subfolders.</p>
+            
+            <div class="form-buttons">
+              <button 
+                @click="deleteFolder" 
+                class="btn btn-danger"
+                :disabled="isDeletingFolder"
+              >
+                {{ isDeletingFolder ? 'Deleting...' : 'Delete Folder' }}
+              </button>
+              <button 
+                @click="showDeleteFolderModal = false" 
+                class="btn btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </AdminLayout>
 </template>
@@ -535,11 +576,13 @@ export default defineComponent({
     const showUploadModal = ref(false);
     const showDeleteConfirmModal = ref(false);
     const showCreateFolderModal = ref(false);
+    const showDeleteFolderModal = ref(false);
     const selectedMedia = ref({});
     const isUpdating = ref(false);
     const isUploading = ref(false);
     const isDeleting = ref(false);
     const isCreatingFolder = ref(false);
+    const isDeletingFolder = ref(false);
     const isDragging = ref(false);
     const fileInput = ref(null);
     const uploadFile = ref(null);
@@ -999,6 +1042,76 @@ export default defineComponent({
       showCreateFolderModal.value = true;
     };
     
+    // Check if current folder can be deleted (empty)
+    const canDeleteCurrentFolder = computed(() => {
+      if (!filters.folder) return false;
+      
+      const folder = folders.value.find(f => f.path === filters.folder);
+      return folder && folder.file_count === 0;
+    });
+    
+    // Get the name of the current folder
+    const getCurrentFolderName = () => {
+      if (!filters.folder) return '';
+      
+      const folder = folders.value.find(f => f.path === filters.folder);
+      return folder ? folder.name : filters.folder;
+    };
+    
+    // Open delete folder modal
+    const openDeleteFolderModal = () => {
+      if (!canDeleteCurrentFolder.value) return;
+      showDeleteFolderModal.value = true;
+    };
+    
+    // Delete the current folder
+    const deleteFolder = async () => {
+      if (!filters.folder) return;
+      
+      isDeletingFolder.value = true;
+      
+      try {
+        await axios.delete('/api/admin/media/folders/delete', {
+          data: { folder: filters.folder }
+        });
+        
+        // Reset folder filter
+        filters.folder = '';
+        
+        // Refresh folders
+        fetchFolders();
+        
+        // Close modal
+        showDeleteFolderModal.value = false;
+        
+        // Show success notification
+        if (window.$notifications) {
+          window.$notifications.success('Folder deleted successfully');
+        }
+      } catch (err) {
+        console.error('Failed to delete folder:', err);
+        
+        let errorMessage = 'Failed to delete folder';
+        
+        if (err.response) {
+          if (err.response.data.has_images) {
+            errorMessage = 'Cannot delete folder because it contains images';
+          } else if (err.response.data.has_subfolders) {
+            errorMessage = 'Cannot delete folder because it contains subfolders';
+          } else if (err.response.data.error) {
+            errorMessage = err.response.data.error;
+          }
+        }
+        
+        // Show error notification
+        if (window.$notifications) {
+          window.$notifications.error(errorMessage);
+        }
+      } finally {
+        isDeletingFolder.value = false;
+      }
+    };
+    
     // Initialize
     onMounted(() => {
       fetchMedia();
@@ -1018,11 +1131,13 @@ export default defineComponent({
       showUploadModal,
       showDeleteConfirmModal,
       showCreateFolderModal,
+      showDeleteFolderModal,
       selectedMedia,
       isUpdating,
       isUploading,
       isDeleting,
       isCreatingFolder,
+      isDeletingFolder,
       isDragging,
       fileInput,
       uploadFile,
@@ -1030,6 +1145,7 @@ export default defineComponent({
       uploadData,
       folders,
       newFolderName,
+      canDeleteCurrentFolder,
       fetchMedia,
       changePage,
       debounceSearch,
@@ -1049,7 +1165,10 @@ export default defineComponent({
       uploadMedia,
       fetchFolders,
       createFolder,
-      openCreateFolderModal
+      openCreateFolderModal,
+      openDeleteFolderModal,
+      getCurrentFolderName,
+      deleteFolder
     };
   }
 });
@@ -1502,6 +1621,12 @@ export default defineComponent({
 .warning {
   color: #e74c3c;
   font-weight: 600;
+}
+
+.info {
+  color: #3498db;
+  font-style: italic;
+  margin-top: 1rem;
 }
 
 .media-grid {

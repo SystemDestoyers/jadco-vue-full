@@ -469,4 +469,70 @@ class MediaController extends Controller
         
         return $result;
     }
+
+    /**
+     * Delete a folder in the images directory.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteFolder(Request $request)
+    {
+        $request->validate([
+            'folder' => 'required|string|max:255',
+        ]);
+        
+        try {
+            $folder = trim($request->folder, '/');
+            
+            // Ensure we're only working with folders in the images directory
+            $path = public_path('images/' . $folder);
+            
+            // Make sure this is a directory and not a file
+            if (!is_dir($path)) {
+                return response()->json(['error' => 'Folder not found'], 404);
+            }
+            
+            // First check if folder has images
+            $hasImages = $this->countImagesInDirectory($path) > 0;
+            if ($hasImages) {
+                return response()->json([
+                    'error' => 'Folder cannot be deleted because it contains images',
+                    'has_images' => true
+                ], 400);
+            }
+            
+            // Check for subfolders
+            $hasSubfolders = false;
+            $items = scandir($path);
+            foreach ($items as $item) {
+                if ($item === '.' || $item === '..') {
+                    continue;
+                }
+                
+                $fullPath = $path . '/' . $item;
+                if (is_dir($fullPath)) {
+                    $hasSubfolders = true;
+                    break;
+                }
+            }
+            
+            if ($hasSubfolders) {
+                return response()->json([
+                    'error' => 'Folder cannot be deleted because it contains subfolders',
+                    'has_subfolders' => true
+                ], 400);
+            }
+            
+            // Delete the folder
+            if (File::deleteDirectory($path)) {
+                return response()->json(['message' => 'Folder deleted successfully'], 200);
+            }
+            
+            return response()->json(['error' => 'Failed to delete folder'], 500);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting folder: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete folder: ' . $e->getMessage()], 500);
+        }
+    }
 }

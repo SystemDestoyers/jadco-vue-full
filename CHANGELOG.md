@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
   - Added support for editing metadata like alt text and captions
   - Created MediaSeeder to import existing images from the public directory
   - Added route and navigation link in admin sidebar
+  - Added folder management with creation and deletion capabilities
 - Created FixesInvalidDates trait to handle datetime validation across all models
 - Enhanced Section Editor with JSON visualization and editing:
   - Added tree view for JSON structure visualization with inline editing capabilities
