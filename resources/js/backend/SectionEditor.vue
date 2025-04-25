@@ -1,6 +1,15 @@
 <template>
   <AdminLayout>
     <div class="section-editor">
+      <!-- Notification Component -->
+      <Notification 
+        v-if="notification.show" 
+        :message="notification.message" 
+        :type="notification.type" 
+        :duration="notification.duration"
+        @close="closeNotification"
+      />
+      
       <header class="page-header">
         <div class="header-left">
           <router-link :to="`/admin/pages/${section?.page_id}/sections`" class="back-btn">
@@ -73,19 +82,19 @@
               <div class="view-toggle">
                 <button 
                   :class="['toggle-btn', activeView === 'form' ? 'active' : '']"
-                  @click="activeView = 'form'"
+                  @click="handleViewChange('form')"
                 >
                   <i class="fas fa-edit"></i> Form View
                 </button>
                 <button 
                   :class="['toggle-btn', activeView === 'tree' ? 'active' : '']"
-                  @click="activeView = 'tree'"
+                  @click="handleViewChange('tree')"
                 >
                   <i class="fas fa-sitemap"></i> Tree View
                 </button>
                 <button 
                   :class="['toggle-btn', activeView === 'split' ? 'active' : '']"
-                  @click="activeView = 'split'"
+                  @click="handleViewChange('split')"
                 >
                   <i class="fas fa-columns"></i> Split View
                 </button>
@@ -145,12 +154,14 @@ import axios from 'axios';
 import AdminLayout from './AdminLayout.vue';
 import JsonEditor from './components/JsonEditor.vue';
 import JsonTreeView from './components/JsonTreeView.vue';
+import Notification from './components/Notification.vue';
 
 export default defineComponent({
   components: {
     AdminLayout,
     JsonEditor,
-    JsonTreeView
+    JsonTreeView,
+    Notification
   },
   
   setup() {
@@ -167,6 +178,13 @@ export default defineComponent({
     const hasChanges = ref(false);
     const activeView = ref('form'); // 'form', 'tree', or 'split'
 
+    const notification = ref({
+      show: false,
+      message: '',
+      type: '',
+      duration: 3000
+    });
+
     const fetchSection = async () => {
       isLoading.value = true;
       error.value = null;
@@ -177,11 +195,25 @@ export default defineComponent({
         
         // Initialize the content with current content
         contentData.value = { ...section.value.content };
+        
+        // Show success notification for loading
+        showNotification('success', `Section "${section.value.name}" loaded successfully`, 2000);
       } catch (err) {
-        error.value = 'Failed to load section. Please try again.';
+        const errorMessage = err.response?.data?.message || 'Failed to load section. Please try again.';
+        error.value = errorMessage;
+        showNotification('error', errorMessage);
       } finally {
         isLoading.value = false;
       }
+    };
+
+    const showNotification = (type, message, duration = 3000) => {
+      notification.value = {
+        show: true,
+        type,
+        message,
+        duration
+      };
     };
 
     const saveContent = async () => {
@@ -196,25 +228,15 @@ export default defineComponent({
         // Update section with the new content
         section.value.content = { ...contentData.value };
         
-        // Show success notification using the global notification system
-        if (window.$notifications) {
-          window.$notifications.success('Content saved successfully!');
-        } else if (jsonEditor.value) {
-          // Fallback to JsonEditor's notification system
-          jsonEditor.value.notifySuccess('Content saved successfully!');
-        }
+        // Show success notification
+        showNotification('success', 'Content saved successfully!');
         
         hasChanges.value = false;
       } catch (err) {
         error.value = 'Failed to save content. Please try again.';
         
         // Show error notification
-        if (window.$notifications) {
-          window.$notifications.error(err.response?.data?.message || 'Failed to save content. Please try again.');
-        } else if (jsonEditor.value) {
-          // Fallback to JsonEditor's notification system
-          jsonEditor.value.notifyError(err.response?.data?.message || 'Failed to save content. Please try again.');
-        }
+        showNotification('error', err.response?.data?.message || 'Failed to save content. Please try again.');
       } finally {
         isSaving.value = false;
       }
@@ -225,9 +247,7 @@ export default defineComponent({
         jsonEditor.value.reset();
         
         // Show reset notification
-        if (window.$notifications) {
-          window.$notifications.warning('Content has been reset to original values.');
-        }
+        showNotification('warning', 'Content has been reset to original values.');
       }
     };
 
@@ -394,6 +414,13 @@ export default defineComponent({
     const handleTreeUpdate = (updatedJson) => {
       contentData.value = updatedJson;
       hasChanges.value = true;
+      showNotification('info', 'JSON structure updated', 1500);
+    };
+
+    // Add notification for view mode changes
+    const handleViewChange = (view) => {
+      activeView.value = view;
+      showNotification('info', `Switched to ${view} view`, 1500);
     };
 
     // Handle page leave with unsaved changes
@@ -407,6 +434,10 @@ export default defineComponent({
         }
       });
     });
+
+    const closeNotification = () => {
+      notification.value.show = false;
+    };
 
     return {
       section,
@@ -424,7 +455,11 @@ export default defineComponent({
       formatSectionType,
       formatDate,
       getSchemaFields,
-      handleTreeUpdate
+      handleTreeUpdate,
+      notification,
+      closeNotification,
+      showNotification,
+      handleViewChange
     };
   }
 });
