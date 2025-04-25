@@ -25,22 +25,46 @@
       </div>
       
       <!-- Editable value for primitive types -->
-      <div v-if="isPrimitive" class="node-value-container" :class="{'has-image': isImageSrc && typeof value === 'string' && value}">
+      <div v-if="isPrimitive" class="node-value-container" :class="valueTypeClass">
         <span v-if="!isEditingValue" 
           class="node-value" 
           :class="valueType"
           @click="startEditValue"
         >{{ displayValue }}</span>
-        <input 
+        
+        <!-- Simple Textarea for regular input -->
+        <textarea
           v-else
           ref="valueInput"
-          type="text"
           class="edit-input"
           v-model="editableValue"
-          @blur="finishEditValue"
-          @keyup.enter="finishEditValue"
+          @blur="handleBlur"
+          @keyup.enter.ctrl="finishEditValue"
           @keyup.esc="cancelEditValue"
-        />
+          :class="textFormatClasses"
+        ></textarea>
+        
+        <!-- Formatting toolbar when editing -->
+        <div v-if="isEditingValue" class="rich-editor-toolbar">
+          <button type="button" class="toolbar-btn" :class="{ active: isBold }" @click.stop.prevent="toggleBold" title="Bold">
+            <i class="fas fa-bold"></i>
+          </button>
+          <button type="button" class="toolbar-btn" :class="{ active: isItalic }" @click.stop.prevent="toggleItalic" title="Italic">
+            <i class="fas fa-italic"></i>
+          </button>
+          <button type="button" class="toolbar-btn" :class="{ active: isLarge }" @click.stop.prevent="toggleLargeText" title="Larger Text">
+            <i class="fas fa-plus"></i>
+          </button>
+          <button type="button" class="toolbar-btn" :class="{ active: isSmall }" @click.stop.prevent="toggleSmallText" title="Smaller Text">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button type="button" class="toolbar-btn" :class="{ active: isMonospace }" @click.stop.prevent="toggleMonospace" title="Monospace">
+            <i class="fas fa-code"></i>
+          </button>
+          <button type="button" class="toolbar-btn" :class="{ active: isSansSerif }" @click.stop.prevent="toggleSansSerif" title="Sans-serif">
+            <i class="fas fa-font"></i>
+          </button>
+        </div>
         
         <!-- Image preview for src fields -->
         <div v-if="isImageSrc && typeof value === 'string' && value" class="image-preview">
@@ -159,7 +183,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, nextTick } from 'vue';
+import { defineComponent, ref, computed, nextTick, watch } from 'vue';
 import MediaSelector from './MediaSelector.vue';
 import '../assets/css/components/tree-node.css';
 import '../assets/css/backend-global.css';
@@ -195,6 +219,14 @@ export default defineComponent({
     const keyInput = ref(null);
     const valueInput = ref(null);
     
+    // Text formatting state
+    const isBold = ref(false);
+    const isItalic = ref(false);
+    const isLarge = ref(false);
+    const isSmall = ref(false);
+    const isMonospace = ref(true); // Default to monospace
+    const isSansSerif = ref(false);
+    
     // Media selector
     const showMediaModal = ref(false);
     
@@ -209,6 +241,97 @@ export default defineComponent({
     const isObject = computed(() => typeof props.value === 'object' && props.value !== null && !isArray.value);
     const isPrimitive = computed(() => !isArray.value && !isObject.value);
     const isExpandable = computed(() => isArray.value || isObject.value);
+    
+    // Text format classes computed property
+    const textFormatClasses = computed(() => ({
+      'bold': isBold.value,
+      'italic': isItalic.value,
+      'larger': isLarge.value,
+      'smaller': isSmall.value,
+      'monospace': isMonospace.value,
+      'sans-serif': isSansSerif.value
+    }));
+    
+    // Value type class for styling
+    const valueTypeClass = computed(() => {
+      if (props.value === null) return 'null-value';
+      if (typeof props.value === 'boolean') return 'boolean-value';
+      if (typeof props.value === 'number') return 'number-value';
+      if (typeof props.value === 'string') return 'string-value';
+      return '';
+    });
+    
+    // Adjust textarea height on value change
+    watch(editableValue, (newValue) => {
+      nextTick(() => {
+        if (valueInput.value) {
+          valueInput.value.style.height = 'auto';
+          valueInput.value.style.height = (valueInput.value.scrollHeight) + 'px';
+        }
+      });
+    });
+    
+    // Toggle text formatting functions
+    const toggleBold = (e) => {
+      e.preventDefault();
+      isBold.value = !isBold.value;
+      preserveFocus();
+    };
+    
+    const toggleItalic = (e) => {
+      e.preventDefault();
+      isItalic.value = !isItalic.value;
+      preserveFocus();
+    };
+    
+    const toggleLargeText = (e) => {
+      e.preventDefault();
+      isLarge.value = !isLarge.value;
+      isSmall.value = false;
+      preserveFocus();
+    };
+    
+    const toggleSmallText = (e) => {
+      e.preventDefault();
+      isSmall.value = !isSmall.value;
+      isLarge.value = false;
+      preserveFocus();
+    };
+    
+    const toggleMonospace = (e) => {
+      e.preventDefault();
+      isMonospace.value = !isMonospace.value;
+      isSansSerif.value = false;
+      preserveFocus();
+    };
+    
+    const toggleSansSerif = (e) => {
+      e.preventDefault();
+      isSansSerif.value = !isSansSerif.value;
+      isMonospace.value = false;
+      preserveFocus();
+    };
+    
+    // Ensure textarea stays focused and prevents the edit mode from closing
+    const preserveFocus = () => {
+      // Prevent any blur events from happening during the toggle
+      nextTick(() => {
+        if (valueInput.value && isEditingValue.value) {
+          valueInput.value.focus();
+          
+          // Preserve cursor position
+          const selectionStart = valueInput.value.selectionStart;
+          const selectionEnd = valueInput.value.selectionEnd;
+          
+          // Re-apply selection range after focus
+          nextTick(() => {
+            if (valueInput.value) {
+              valueInput.value.setSelectionRange(selectionStart, selectionEnd);
+            }
+          });
+        }
+      });
+    };
     
     // Helper function to get the proper image URL for display
     const getImageUrl = (value) => {
@@ -304,46 +427,52 @@ export default defineComponent({
         editableValue.value = props.value.toString();
       } else if (typeof props.value === 'string') {
         editableValue.value = props.value;
-        
-        // Replace input with textarea for long strings
-        if (props.value.length > 100 || props.value.includes('\n')) {
-          nextTick(() => {
-            const input = valueInput.value;
-            if (input && input.type === 'text') {
-              // Create and configure textarea
-              const textarea = document.createElement('textarea');
-              textarea.className = input.className + ' multiline-edit';
-              textarea.value = editableValue.value;
-              textarea.style.minHeight = '60px';
-              textarea.style.height = Math.min(props.value.split('\n').length * 20, 200) + 'px';
-              
-              // Replace input with textarea
-              input.parentNode.replaceChild(textarea, input);
-              
-              // Update valueInput ref
-              valueInput.value = textarea;
-              textarea.focus();
-              
-              // Add event listeners to the new textarea
-              textarea.addEventListener('blur', finishEditValue);
-              textarea.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && e.ctrlKey) {
-                  finishEditValue();
-                } else if (e.key === 'Escape') {
-                  cancelEditValue();
-                }
-              });
-            }
-          });
-        }
       }
       
+      // Reset formatting states
+      isBold.value = false;
+      isItalic.value = false;
+      isLarge.value = false;
+      isSmall.value = false;
+      isMonospace.value = true;
+      isSansSerif.value = false;
+      
       isEditingValue.value = true;
+      
+      // Focus and adjust textarea height after Vue updates the DOM
       nextTick(() => {
         if (valueInput.value) {
           valueInput.value.focus();
+          
+          // Auto-adjust height based on content
+          valueInput.value.style.height = 'auto';
+          valueInput.value.style.height = (valueInput.value.scrollHeight) + 'px';
+          
+          // Position cursor at the end
+          const length = editableValue.value.length;
+          valueInput.value.setSelectionRange(length, length);
         }
       });
+    };
+    
+    // Handle blur events with special handling for toolbar clicks
+    const handleBlur = (e) => {
+      // Check if the related target (where focus is going) is within our toolbar
+      // This prevents closing edit mode when clicking toolbar buttons
+      const toolbar = document.querySelector('.rich-editor-toolbar');
+      if (toolbar && (toolbar.contains(e.relatedTarget) || toolbar === e.relatedTarget)) {
+        // If clicked on toolbar, don't close the edit mode
+        // Re-focus the textarea after a short delay to ensure it keeps focus
+        setTimeout(() => {
+          if (valueInput.value && isEditingValue.value) {
+            valueInput.value.focus();
+          }
+        }, 10);
+        return;
+      }
+      
+      // Normal blur handling - finish editing
+      finishEditValue();
     };
     
     const finishEditValue = () => {
@@ -536,6 +665,7 @@ export default defineComponent({
       isExpandable,
       isImageSrc,
       valueType,
+      valueTypeClass,
       displayValue,
       getImageUrl,
       toggleExpand,
@@ -543,8 +673,24 @@ export default defineComponent({
       finishEditKey,
       cancelEditKey,
       startEditValue,
+      handleBlur,
       finishEditValue,
       cancelEditValue,
+      // Formatting controls
+      isBold,
+      isItalic,
+      isLarge,
+      isSmall,
+      isMonospace,
+      isSansSerif,
+      textFormatClasses,
+      toggleBold,
+      toggleItalic,
+      toggleLargeText,
+      toggleSmallText,
+      toggleMonospace,
+      toggleSansSerif,
+      // Media selector methods
       openMediaSelector,
       closeMediaSelector,
       handleMediaSelect,
@@ -566,35 +712,138 @@ export default defineComponent({
 <style>
 /* Edit input styling */
 .backend-ui .edit-input {
-  /* width: 90%; */
   max-width: 100%;
   border: 1px solid #3498db;
-  border-radius: 2px;
-  padding: 1px 3px;
-  font-family: monospace;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: 'Courier New', monospace;
   background-color: #f8fafd;
   box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+  color: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.backend-ui .edit-input:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
 }
 
 .backend-ui .node-value-container .edit-input {
   min-height: 24px;
-  height: 61px;
+  height: auto;
+  min-height: 61px;
   resize: vertical;
   display: block;
   width: 64rem;
+  border-radius: 4px;
+  overflow-wrap: break-word;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+
+/* Different styling based on value type */
+.backend-ui .node-value-container.string-value .node-value {
+  color: #27ae60;
+}
+
+.backend-ui .node-value-container.number-value .node-value {
+  color: #3498db;
+  font-weight: bold;
+}
+
+.backend-ui .node-value-container.boolean-value .node-value {
+  color: #9b59b6;
+  font-weight: bold;
+}
+
+/* Rich text editor toolbar styles */
+.backend-ui .rich-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.backend-ui .toolbar-btn {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+.backend-ui .toolbar-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.backend-ui .toolbar-btn.active {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0284c7;
+}
+
+/* Rich text styles that can be applied */
+.backend-ui .edit-input.bold {
+  font-weight: bold;
+}
+
+.backend-ui .edit-input.italic {
+  font-style: italic;
+}
+
+.backend-ui .edit-input.larger {
+  font-size: 16px;
+}
+
+.backend-ui .edit-input.smaller {
+  font-size: 12px;
+}
+
+.backend-ui .edit-input.monospace {
+  font-family: 'Courier New', monospace;
+}
+
+.backend-ui .edit-input.sans-serif {
+  font-family: 'Arial', sans-serif;
 }
 
 /* Style for multiline text editing */
 .backend-ui .multiline-edit {
-  font-family: monospace;
+  font-family: 'Courier New', monospace;
   min-height: 60px;
   max-height: 300px;
   width: 100%;
-  padding: 4px;
+  padding: 8px 10px;
   border: 1px solid #3498db;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: #f8fafd;
-  line-height: 1.4;
+  line-height: 1.5;
   font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Auto-convert all edit inputs to textareas for better text editing */
+.backend-ui input.edit-input {
+  height: auto;
+  min-height: 61px;
 }
 </style>
