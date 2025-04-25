@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
   - Added support for editing metadata like alt text and captions
   - Created MediaSeeder to import existing images from the public directory
   - Added route and navigation link in admin sidebar
+- Created FixesInvalidDates trait to handle datetime validation across all models
 - Enhanced Section Editor with JSON visualization and editing:
   - Added tree view for JSON structure visualization with inline editing capabilities
   - Implemented ability to edit both keys and values by clicking on them
@@ -58,6 +59,13 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - Removed duplicate API routes for admin authentication (these are now handled by web routes)
+
+### Fixed
+- Improved media folder filtering in MediaController to properly handle different folder scenarios
+- Fixed file uploads to properly store files in the correct directory structure
+- Prevented duplicate "public" folder creation when creating new folders
+- Fixed datetime issue in models where future dates caused database errors
+- Added automatic date correction for all models with timestamps to ensure dates are valid
 
 ## [0.1.0] - 2023-05-16
 
@@ -641,3 +649,8 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - Removed duplicate API routes for admin authentication (these are now handled by web routes) 
+
+### Fixed
+- Improved media folder filtering in MediaController to properly handle different folder scenarios
+- Fixed file uploads to properly store files in the correct directory structure
+- Prevented duplicate "public" folder creation when creating new folders 
