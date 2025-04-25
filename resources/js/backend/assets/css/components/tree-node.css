@@ -1,13 +1,24 @@
 .backend-ui .tree-node {
   list-style-type: none;
-  margin: 2px 0;
+  margin: 8px 0;
   padding: 2px 0;
   width: 100%;
   box-sizing: border-box;
   font-size: 14px;
   line-height: 1.5;
-  margin-left: 20px;
+  margin-left: 0;
   font-family: 'Outfit', sans-serif;
+}
+
+/* Apply 25px top/bottom margin only to first-level parent nodes */
+.backend-ui .tree-root > .tree-node {
+  margin: 25px 0;
+  font-size: 15px;
+}
+
+/* Special styling for the node-key in first-level parent nodes */
+.backend-ui .tree-root > .tree-node > .node-header > .node-key-container > .node-key {
+  font-size: 1.2rem;
 }
 
 .backend-ui .node-header {
@@ -61,11 +72,12 @@
 
 .backend-ui .node-key {
   color: #2c3e50;
-  font-weight: 600;
+  font-weight: 800;
   padding: 1px 3px;
   border-radius: 2px;
   cursor: pointer;
   position: relative;
+  font-size: 1rem;
 }
 
 .backend-ui .node-key:hover {
@@ -111,7 +123,13 @@
 }
 
 .backend-ui .node-children {
-  margin-left: 20px;
+  margin-left: 0px;
+  padding-left: 0;
+}
+
+/* Ensure the ul inside node-children also has 0 padding */
+.backend-ui .node-children ul {
+  padding-left: 0;
 }
 
 .backend-ui .edit-input {
@@ -316,4 +334,15 @@
   background-color: #f8fafd;
   line-height: 1.4;
   font-size: 14px;
+}
+
+/* Remove default padding from all ul elements in the tree */
+.backend-ui .tree-root,
+.backend-ui .tree-root ul {
+  padding-left: 0;
+}
+
+/* Add proper indentation based on nesting level */
+.backend-ui .node-children .tree-node {
+  margin-left: 20px;
 } 

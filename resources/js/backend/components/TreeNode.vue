@@ -1,5 +1,5 @@
 <template>
-  <li class="tree-node" :style="{ paddingLeft: `${depth * 20}px` }">
+  <li class="tree-node">
     <div class="node-header">
       <div class="node-toggle" @click="toggleExpand">
         <i :class="[

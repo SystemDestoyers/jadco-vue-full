@@ -279,7 +279,7 @@ export default defineComponent({
           }
         });
         
-        console.log('Media API response:', response.data);
+        // console.log('Media API response:', response.data);
         
         // Ensure media items have proper URL paths
         const items = response.data.data;
@@ -528,7 +528,7 @@ export default defineComponent({
     
     // Image load success
     const handleImageLoad = (event, item) => {
-      console.log(`Successfully loaded image: ${item.thumbnail || item.url}`);
+      // console.log(`Successfully loaded image: ${item.thumbnail || item.url}`);
     };
     
     // Initialize

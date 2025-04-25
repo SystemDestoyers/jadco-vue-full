@@ -6,9 +6,12 @@
 :root {
   /* Colors */
   --primary-color: #d01c51;
+  --primary-hover: #c01749;
   --dark-color: #294359;
   --light-color: #ffffff;
   --gray-color: #63809a;
+  --gray-light: #f1f5f9;
+  --gray-medium: #e2e8f0;
   
   /* Font weights */
   --font-weight-light: 200;
@@ -19,7 +22,13 @@
   
   /* Animation */
   --transition-speed: 0.3s;
-  --transition-timing: ease;
+  --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-primary: 0 4px 6px rgba(208, 28, 81, 0.25);
+  --shadow-primary-hover: 0 6px 8px rgba(208, 28, 81, 0.3);
 }
 
 /* Global backend styles */

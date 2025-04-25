@@ -90,6 +90,7 @@
                 :class="{ active: displayView === 'grid' }"
                 title="Grid View"
               >
+                <i class="fas fa-th-large"></i>
                 <span>Grid</span>
               </button>
               <button 
@@ -97,6 +98,7 @@
                 :class="{ active: displayView === 'list' }"
                 title="List View"
               >
+                <i class="fas fa-list"></i>
                 <span>List</span>
               </button>
             </div>

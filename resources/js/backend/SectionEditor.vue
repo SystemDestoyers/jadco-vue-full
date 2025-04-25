@@ -646,31 +646,50 @@ export default defineComponent({
 
 .view-toggle {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .toggle-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #f8f9fa;
-  color: #7f8c8d;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--gray-light);
+  color: var(--gray-color);
   font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-speed) var(--transition-timing);
+  box-shadow: var(--shadow-sm);
 }
 
 .toggle-btn:hover {
-  background-color: #e9ecef;
+  background-color: var(--gray-medium);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .toggle-btn.active {
-  background-color: #3498db;
-  color: white;
-  border-color: #3498db;
+  background-color: var(--primary-color);
+  color: var(--light-color);
+  box-shadow: var(--shadow-primary);
+}
+
+.toggle-btn.active:hover {
+  background-color: var(--primary-hover);
+  box-shadow: var(--shadow-primary-hover);
+}
+
+.toggle-btn i {
+  font-size: 1rem;
+  transition: transform var(--transition-speed) ease;
+}
+
+.toggle-btn:hover i {
+  transform: scale(1.1);
 }
 
 .editor-panels {
