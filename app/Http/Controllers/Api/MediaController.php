@@ -335,15 +335,24 @@ class MediaController extends Controller
             'folder' => 'required|string|max:255',
         ]);
         
-        $folder = trim($request->folder, '/');
-        $path = 'public/images/' . $folder;
-        
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0755, true);
-            return response()->json(['message' => 'Folder created successfully'], 201);
+        try {
+            $folder = trim($request->folder, '/');
+            
+            // Create path directly in the images folder without 'public/' prefix
+            $path = public_path('images/' . $folder);
+            
+            \Log::info('Creating folder: ' . $path);
+            
+            if (!file_exists($path)) {
+                mkdir($path, 0755, true);
+                return response()->json(['message' => 'Folder created successfully'], 201);
+            }
+            
+            return response()->json(['message' => 'Folder already exists'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error creating folder: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create folder: ' . $e->getMessage()], 500);
         }
-        
-        return response()->json(['message' => 'Folder already exists'], 200);
     }
     
     /**
@@ -357,8 +366,8 @@ class MediaController extends Controller
             $basePath = public_path('images');
             
             // First make sure the base directory exists
-            if (!File::exists($basePath)) {
-                File::makeDirectory($basePath, 0755, true);
+            if (!file_exists($basePath)) {
+                mkdir($basePath, 0755, true);
             }
             
             // Get all folders
@@ -369,13 +378,47 @@ class MediaController extends Controller
                 'name' => 'Root',
                 'path' => '',
                 'full_path' => 'images',
+                'file_count' => $this->countImagesInDirectory($basePath),
                 'children' => []
             ]);
             
             return response()->json($allFolders);
         } catch (\Exception $e) {
+            \Log::error('Failed to list folders: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to list folders: ' . $e->getMessage()], 500);
         }
+    }
+    
+    /**
+     * Count images in a directory.
+     *
+     * @param string $directory
+     * @return int
+     */
+    private function countImagesInDirectory($directory)
+    {
+        if (!file_exists($directory)) {
+            return 0;
+        }
+        
+        $files = scandir($directory);
+        $count = 0;
+        
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            
+            $path = $directory . '/' . $file;
+            
+            if (is_file($path) && 
+                !str_starts_with($file, '.') && 
+                preg_match('/\.(jpg|jpeg|png|gif|webp|svg)$/i', $file)) {
+                $count++;
+            }
+        }
+        
+        return $count;
     }
     
     /**
@@ -389,35 +432,39 @@ class MediaController extends Controller
     {
         $result = [];
         
-        if (!File::exists($path)) {
+        if (!file_exists($path)) {
             return $result;
         }
         
-        $directories = File::directories($path);
+        $items = scandir($path);
         
-        foreach ($directories as $directory) {
-            $name = basename($directory);
-            $relPath = $relativePath ? "{$relativePath}/{$name}" : $name;
-            
-            // Skip hidden folders
-            if (str_starts_with($name, '.')) {
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
                 continue;
             }
             
-            // Get file count in this directory
-            $fileCount = count(array_filter(
-                File::files($directory),
-                fn($file) => !str_starts_with(basename($file), '.') && 
-                              str_starts_with(File::mimeType($file), 'image/')
-            ));
+            $fullPath = $path . '/' . $item;
             
-            $result[] = [
-                'name' => $name,
-                'path' => $relPath,
-                'full_path' => 'images/' . $relPath,
-                'file_count' => $fileCount,
-                'children' => $this->scanFoldersRecursively($directory, $relPath)
-            ];
+            if (is_dir($fullPath)) {
+                $name = $item;
+                $relPath = $relativePath ? "{$relativePath}/{$name}" : $name;
+                
+                // Skip hidden folders
+                if (str_starts_with($name, '.')) {
+                    continue;
+                }
+                
+                // Count image files in this directory
+                $fileCount = $this->countImagesInDirectory($fullPath);
+                
+                $result[] = [
+                    'name' => $name,
+                    'path' => $relPath,
+                    'full_path' => 'images/' . $relPath,
+                    'file_count' => $fileCount,
+                    'children' => $this->scanFoldersRecursively($fullPath, $relPath)
+                ];
+            }
         }
         
         return $result;
