@@ -192,6 +192,7 @@ class SectionSeeder extends Seeder
             'page_id' => 1, // Home page
             'name' => 'statistics',
             'order' => 5,
+            'is_active' => 0,
             'content' => [
                 'show_statistics' => true,
                 'stats' => [

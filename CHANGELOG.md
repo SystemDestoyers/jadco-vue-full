@@ -100,6 +100,10 @@ All notable changes to this project will be documented in this file.
   - Added support for custom navigation items and logo
   - Implemented HTML rendering for navigation text
   - Added fallback for sites without navbar content
+- Added conditional rendering of sections based on is_active flag:
+  - Updated home.blade.php to check if sections have is_active set to true before rendering
+  - Implemented checks for about, services, educational_services, and statistics sections 
+  - Sections with is_active set to false will be hidden from the frontend
 
 ### Changed
 - Updated Vue router to use new web routes for authentication

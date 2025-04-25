@@ -8,18 +8,17 @@
     dd($sections);
     @endphp --}}
     <!-- About Section -->
+    @php
+        $aboutSection = $sections->where('name', 'about')->first();
+        $aboutContent = $aboutSection ? $aboutSection->content : [];
+    @endphp
+    @if($aboutSection && $aboutSection->is_active)
     <section id="about" class="about-section py-5 section" style="transform: translateZ(0);"> 
         <div class="container">
-            @php
-                $aboutSection = $sections->where('name', 'about')->first();
-                $aboutContent = $aboutSection ? $aboutSection->content : [];
-            @endphp
-            <div class="about-heading">
-                @if(isset($aboutContent['title']))
-                    <h2 class="section-title">{!! $aboutContent['title'] !!}</h2>
-                @endif
-                <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
-            </div>
+            @if(isset($aboutContent['title']))
+                <h2 class="section-title">{!! $aboutContent['title'] !!}</h2>
+            @endif
+            <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
             <div class="about-text-container">
                 <p class="about-text">
                     @if(isset($aboutContent['main_text']))
@@ -54,14 +53,16 @@
             </div>
         </div>
     </section>
+    @endif
 
     <!-- Services Section -->
+    @php
+        $servicesSection = $sections->where('name', 'services')->first();
+        $servicesContent = $servicesSection ? $servicesSection->content : [];
+        $services = $servicesContent['services'] ?? [];
+    @endphp
+    @if($servicesSection && $servicesSection->is_active)
     <section id="services" class="services-section py-5 section">
-        @php
-            $servicesSection = $sections->where('name', 'services')->first();
-            $servicesContent = $servicesSection ? $servicesSection->content : [];
-            $services = $servicesContent['services'] ?? [];
-        @endphp
         <div class="services-layer-container">
             <!-- First Service -->
             <div class="service-stack-item" data-service="1">
@@ -255,14 +256,16 @@
             </div>
         </div>
     </section>
+    @endif
 
     <!-- Educational Services Section -->
+    @php
+        $educationalSection = $sections->where('name', 'educational_services')->first();
+        $educationalContent = $educationalSection ? $educationalSection->content : [];
+        $eduServices = $educationalContent['services'] ?? [];
+    @endphp
+    @if($educationalSection && $educationalSection->is_active)
     <section id="educational-section" class="educational-services py-5 section">
-        @php
-            $educationalSection = $sections->where('name', 'educational_services')->first();
-            $educationalContent = $educationalSection ? $educationalSection->content : [];
-            $eduServices = $educationalContent['services'] ?? [];
-        @endphp
         <div class="container">
             <div class="row">
                 <div class="educational-services mt-5">
@@ -358,6 +361,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     <!-- Statistics Section -->
     @php
@@ -367,7 +371,7 @@
         $stats = $statsContent['stats'] ?? [];
     @endphp
     
-    @if($showStats)
+    @if($statsSection && $statsSection->is_active && $showStats)
     <section id="statistics" class="statistics-section py-5 section">
         <div class="container">
             <div class="row">
