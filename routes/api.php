@@ -34,6 +34,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Contact form submission route
+Route::post('/contact/submit', [App\Http\Controllers\ContactController::class, 'apiSubmit']);
+
 // Admin Authentication Routes
 // These routes are now handled by web.php, so they're commented out here
 /*

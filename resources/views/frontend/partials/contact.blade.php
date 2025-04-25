@@ -117,7 +117,7 @@
                         </div>
                     @endif
                     
-                    <form action="{{ route('contact.submit') }}" method="POST">
+                    <form id="contactForm">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -174,6 +174,70 @@
                             </button>
                         </div>
                     </form>
+
+                    <div id="formSuccess" class="alert alert-success alert-dismissible fade" role="alert" style="display: none;">
+                        Thank you for your message! We will get back to you soon.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div id="formError" class="alert alert-danger alert-dismissible fade" role="alert" style="display: none;">
+                        Sorry, there was a problem submitting your message. Please try again later.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('contactForm');
+                            const successAlert = document.getElementById('formSuccess');
+                            const errorAlert = document.getElementById('formError');
+                            
+                            form.addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                
+                                const formData = new FormData(form);
+                                const data = {
+                                    first_name: formData.get('first_name'),
+                                    last_name: formData.get('last_name'),
+                                    email: formData.get('email'),
+                                    phone: formData.get('phone'),
+                                    message: formData.get('message')
+                                };
+                                
+                                fetch('/api/contact/submit', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify(data)
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Show success message
+                                        successAlert.style.display = 'block';
+                                        successAlert.classList.add('show');
+                                        
+                                        // Reset form
+                                        form.reset();
+                                    } else {
+                                        // Show error message
+                                        errorAlert.style.display = 'block';
+                                        errorAlert.classList.add('show');
+                                        
+                                        if (data.errors) {
+                                            console.error('Validation errors:', data.errors);
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    errorAlert.style.display = 'block';
+                                    errorAlert.classList.add('show');
+                                });
+                            });
+                        });
+                    </script>
                 </div>
             </div>
 

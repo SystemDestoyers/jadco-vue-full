@@ -98,4 +98,54 @@ class ContactController extends Controller
             ]);
         }
     }
+
+    /**
+     * Handle contact form submission from API (Vue frontend)
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function apiSubmit(Request $request)
+    {
+        // Validate the form data
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'message' => 'required|string',
+        ]);
+        
+        try {
+            // Save message to database
+            $message = $this->messageService->createMessage($validated);
+            
+            // Send email notification if configured
+            $this->sendEmailNotification($message);
+            
+            // Log the successful message submission
+            Log::info('Contact form submitted via API', [
+                'id' => $message->id,
+                'email' => $message->email,
+                'name' => "{$message->first_name} {$message->last_name}"
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you for your message! We will get back to you soon.'
+            ]);
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error submitting contact form via API', [
+                'error' => $e->getMessage(),
+                'data' => $validated
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, there was a problem submitting your message. Please try again later.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 } 

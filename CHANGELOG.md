@@ -170,6 +170,17 @@ All notable changes to this project will be documented in this file.
   - Fixed image switching when navigating between pages
 - Fixed "Maximum recursive updates exceeded" error in AdminLayout component by conditionally rendering the NotificationManager based on route metadata
 - Fixed Vue Router warning by adding a redirect from root path to about page
+- Message handling system improvements:
+  - Fixed message retrieval in MessagesPage.vue by replacing fetch API with axios
+  - Added toast notifications for message operations (create, read, update, delete)
+  - Created API endpoint for contact form submissions
+  - Improved error handling in contact form submission
+  - Enhanced user feedback during message operations with toast notifications
+  - Fixed Contact.vue form to properly reset after successful submission
+  - Resolved contact form submission redirect issue by unifying API endpoints
+  - Converted traditional form submission to AJAX in contact.blade.php
+  - Fixed routing conflict between web and API routes for contact submission
+  - Temporarily disabled auth middleware in admin message controller for testing
 
 ## [0.1.0] - 2023-05-16
 

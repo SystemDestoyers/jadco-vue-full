@@ -34,18 +34,18 @@
                     <h2 class="let-talk">{{ content.heading || 'LET\'S TALK.' }}</h2>
 
                     <div class="contact-form">
-                        <form @submit.prevent="submitForm">
+                        <form @submit.prevent="handleSubmit">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" id="firstName" v-model="form.first_name"
+                                        <input type="text" class="form-control" id="firstName" v-model="firstName"
                                             placeholder=" " required>
                                         <label for="firstName" class="form-label">{{ content.form?.labels?.firstName || 'First Name' }}</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" id="lastName" v-model="form.last_name"
+                                        <input type="text" class="form-control" id="lastName" v-model="lastName"
                                             placeholder=" " required>
                                         <label for="lastName" class="form-label">{{ content.form?.labels?.lastName || 'Last Name' }}</label>
                                     </div>
@@ -54,21 +54,21 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="email" class="form-control" id="email" v-model="form.email"
+                                        <input type="email" class="form-control" id="email" v-model="email"
                                             placeholder=" " required>
                                         <label for="email" class="form-label">{{ content.form?.labels?.email || 'Email' }}</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="tel" class="form-control" id="phone" v-model="form.phone"
+                                        <input type="tel" class="form-control" id="phone" v-model="phone"
                                             placeholder=" ">
                                         <label for="phone" class="form-label">{{ content.form?.labels?.phone || 'Phone Number' }}</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <textarea class="form-control" id="message" v-model="form.message" rows="4" placeholder=" " required></textarea>
+                                <textarea class="form-control" id="message" v-model="message" rows="4" placeholder=" " required></textarea>
                                 <label for="message" class="form-label">{{ content.form?.labels?.message || 'Message' }}</label>
                             </div>
                             <div class="text-start">
@@ -107,18 +107,18 @@
 
 <script>
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 export default {
     data() {
         return {
             loading: true,
-            form: {
-                first_name: '',
-                last_name: '',
-                email: '',
-                phone: '',
-                message: ''
-            },
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            message: '',
             currentYear: new Date().getFullYear(),
             content: {
                 logo: '/images/logo.png',
@@ -195,32 +195,61 @@ export default {
                 this.loading = false;
             }
         },
-        submitForm() {
-            // Add CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        async handleSubmit() {
+            this.isSubmitting = true;
+            this.errors = [];
             
-            axios.post('/api/contact/submit', this.form, {
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => {
-                // Clear the form
-                this.form = {
-                    first_name: '',
-                    last_name: '',
-                    email: '',
-                    phone: '',
-                    message: ''
+            try {
+                const formData = {
+                    first_name: this.firstName,
+                    last_name: this.lastName,
+                    email: this.email,
+                    phone: this.phone,
+                    message: this.message
                 };
                 
-                // Show success message
-                alert(this.content.form?.successMessage || 'Thank you for your message. We will get back to you soon!');
-            })
-            .catch(error => {
-                console.error('Error submitting the form:', error);
-                alert('There was an error submitting your message. Please try again later.');
-            });
+                const response = await axios.post('/api/contact/submit', formData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                if (response.data.success) {
+                    // Show success message
+                    toast.success('Thank you for your message! We will get back to you soon.');
+                    
+                    // Reset form
+                    this.resetForm();
+                } else {
+                    // Handle error
+                    this.errors = response.data.errors || ['Failed to submit form. Please try again.'];
+                    toast.error('Failed to submit your message. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting contact form:', error);
+                
+                if (error.response && error.response.data && error.response.data.errors) {
+                    // Laravel validation errors
+                    const errorMessages = Object.values(error.response.data.errors).flat();
+                    this.errors = errorMessages;
+                    toast.error(errorMessages[0] || 'Form validation failed');
+                } else {
+                    this.errors = ['An error occurred. Please try again later.'];
+                    toast.error('Failed to submit your message. Please try again later.');
+                }
+            } finally {
+                this.isSubmitting = false;
+            }
+        },
+        
+        resetForm() {
+            this.firstName = '';
+            this.lastName = '';
+            this.email = '';
+            this.phone = '';
+            this.message = '';
+            this.errors = [];
         }
     },
     async created() {

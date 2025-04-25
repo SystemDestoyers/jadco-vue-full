@@ -14,7 +14,7 @@ Route::prefix('admin-auth')->group(function () {
 });
 
 // API Routes
-Route::post('/api/contact/submit', [ContactController::class, 'submit'])->name('contact.submit');
+Route::post('/api/contact/submit', [ContactController::class, 'apiSubmit'])->name('contact.submit');
 
 // Home page route
 Route::get('/', [HomeController::class, 'index'])->name('home');

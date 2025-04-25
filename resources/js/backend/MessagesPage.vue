@@ -195,6 +195,9 @@
 
 <script>
 import { Modal } from 'bootstrap';
+import axios from 'axios';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 export default {
   name: 'MessagesPage',
@@ -253,8 +256,8 @@ export default {
     async fetchMessages() {
       this.loading = true;
       try {
-        const response = await fetch('/api/admin/messages');
-        const data = await response.json();
+        const response = await axios.get('/api/admin/messages');
+        const data = response.data;
         
         if (data.success) {
           this.messages = data.data.data || data.data;
@@ -265,10 +268,11 @@ export default {
           // Update the sidebar unread count if it exists
           this.updateSidebarUnreadCount(this.unreadCount);
         } else {
-          alert('Error fetching messages');
+          toast.error('Error fetching messages');
         }
       } catch (error) {
         console.error('Error fetching messages:', error);
+        toast.error('Failed to retrieve messages. Please try again.');
       } finally {
         this.loading = false;
       }
@@ -313,15 +317,13 @@ export default {
     
     async markMessageAsRead(id) {
       try {
-        const response = await fetch(`/api/admin/messages/${id}/mark-as-read`, {
-          method: 'PUT',
+        const response = await axios.put(`/api/admin/messages/${id}/mark-as-read`, {}, {
           headers: {
-            'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
           }
         });
         
-        const data = await response.json();
+        const data = response.data;
         
         if (data.success) {
           // Update local data
@@ -343,20 +345,19 @@ export default {
         }
       } catch (error) {
         console.error('Error marking message as read:', error);
+        toast.error('Failed to mark message as read');
       }
     },
     
     async markMessageAsUnread(id) {
       try {
-        const response = await fetch(`/api/admin/messages/${id}/mark-as-unread`, {
-          method: 'PUT',
+        const response = await axios.put(`/api/admin/messages/${id}/mark-as-unread`, {}, {
           headers: {
-            'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
           }
         });
         
-        const data = await response.json();
+        const data = response.data;
         
         if (data.success) {
           // Update local data
@@ -378,6 +379,7 @@ export default {
         }
       } catch (error) {
         console.error('Error marking message as unread:', error);
+        toast.error('Failed to mark message as unread');
       }
     },
     
@@ -428,6 +430,7 @@ export default {
         : [...this.selectedIds];
       
       let unreadDeleted = 0;
+      let successCount = 0;
       
       for (const id of idsToDelete) {
         try {
@@ -435,17 +438,16 @@ export default {
           const message = this.messages.find(m => m.id === id);
           const isUnread = message && !message.read;
           
-          const response = await fetch(`/api/admin/messages/${id}`, {
-            method: 'DELETE',
+          const response = await axios.delete(`/api/admin/messages/${id}`, {
             headers: {
-              'Content-Type': 'application/json',
               'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
           });
           
-          const data = await response.json();
+          const data = response.data;
           
           if (data.success) {
+            successCount++;
             // Update local data
             this.messages = this.messages.filter(m => m.id !== id);
             this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
@@ -464,6 +466,7 @@ export default {
           }
         } catch (error) {
           console.error('Error deleting message:', error);
+          toast.error(`Failed to delete message ID: ${id}`);
         }
       }
       
@@ -473,6 +476,11 @@ export default {
       if (unreadDeleted > 0) {
         this.unreadCount = Math.max(0, this.unreadCount - unreadDeleted);
         this.updateSidebarUnreadCount(this.unreadCount);
+      }
+      
+      // Show success message
+      if (successCount > 0) {
+        toast.success(`Successfully deleted ${successCount} message(s)`);
       }
       
       // Adjust current page if needed
