@@ -58,6 +58,13 @@ All notable changes to this project will be documented in this file.
 - Added new prefix for admin authentication routes (`admin-auth`)
 - Created web routes for admin authentication (login, logout, user, check-auth)
 - Added mock data for admin dashboard for development and testing
+- Enhanced TreeNode component in JSON editor:
+  - Increased node value container width for better readability of longer content
+  - Improved layout with flex-grow and proper spacing
+  - Added automatic conversion to textarea for long string values
+  - Implemented word-break for better text wrapping of long content
+  - Added scrollable containers for large text content
+  - Enhanced editing experience with multiline support for HTML and long text
 
 ### Changed
 - Updated Vue router to use new web routes for authentication

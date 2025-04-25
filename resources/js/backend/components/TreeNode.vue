@@ -276,11 +276,45 @@ export default defineComponent({
         editableValue.value = props.value.toString();
       } else if (typeof props.value === 'string') {
         editableValue.value = props.value;
+        
+        // Replace input with textarea for long strings
+        if (props.value.length > 100 || props.value.includes('\n')) {
+          nextTick(() => {
+            const input = valueInput.value;
+            if (input && input.type === 'text') {
+              // Create and configure textarea
+              const textarea = document.createElement('textarea');
+              textarea.className = input.className + ' multiline-edit';
+              textarea.value = editableValue.value;
+              textarea.style.minHeight = '60px';
+              textarea.style.height = Math.min(props.value.split('\n').length * 20, 200) + 'px';
+              
+              // Replace input with textarea
+              input.parentNode.replaceChild(textarea, input);
+              
+              // Update valueInput ref
+              valueInput.value = textarea;
+              textarea.focus();
+              
+              // Add event listeners to the new textarea
+              textarea.addEventListener('blur', finishEditValue);
+              textarea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                  finishEditValue();
+                } else if (e.key === 'Escape') {
+                  cancelEditValue();
+                }
+              });
+            }
+          });
+        }
       }
       
       isEditingValue.value = true;
       nextTick(() => {
-        valueInput.value.focus();
+        if (valueInput.value) {
+          valueInput.value.focus();
+        }
       });
     };
     
@@ -505,13 +539,18 @@ export default defineComponent({
   list-style-type: none;
   margin: 0;
   padding: 2px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .node-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 4px 8px;
   border-radius: 4px;
+  flex-wrap: wrap;
+  min-width: 0;
+  width: 100%;
 }
 
 .node-header:hover {
@@ -521,6 +560,7 @@ export default defineComponent({
 .node-toggle {
   cursor: pointer;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .node-toggle i {
@@ -542,6 +582,17 @@ i.leaf {
   position: relative;
 }
 
+.node-key-container {
+  margin-right: 8px;
+}
+
+.node-value-container {
+  flex-grow: 1;
+  max-width: 70%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
 .node-key {
   font-weight: 600;
   margin-right: 8px;
@@ -560,6 +611,9 @@ i.leaf {
   cursor: pointer;
   padding: 2px 4px;
   border-radius: 2px;
+  display: inline-block;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .node-value:hover {
@@ -574,6 +628,9 @@ i.leaf {
 
 .node-value.string {
   color: #27ae60;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
 }
 
 .node-value.number {
@@ -600,6 +657,9 @@ i.leaf {
   font-size: 14px;
   font-family: monospace;
   min-width: 100px;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
 }
 
 .node-actions {
@@ -772,5 +832,25 @@ i.leaf {
   padding: 1rem;
   overflow-y: auto;
   flex: 1;
+}
+
+/* Add additional styles to improve the value display for the edit state */
+.node-value-container .edit-input {
+  min-height: 24px;
+  resize: vertical;
+}
+
+/* Style for multiline text editing */
+.multiline-edit {
+  font-family: monospace;
+  min-height: 60px;
+  max-height: 300px;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #3498db;
+  border-radius: 3px;
+  background-color: #f8fafd;
+  line-height: 1.4;
+  font-size: 14px;
 }
 </style> 
