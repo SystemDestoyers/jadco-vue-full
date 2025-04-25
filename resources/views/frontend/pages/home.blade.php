@@ -15,7 +15,9 @@
                 $aboutContent = $aboutSection ? $aboutSection->content : [];
             @endphp
             <div class="about-heading">
-                <h2 class="section-title">{{ $aboutContent['title'] ?? 'ABOUT' }}</h2>
+                @if(isset($aboutContent['title']))
+                    <h2 class="section-title">{!! $aboutContent['title'] !!}</h2>
+                @endif
                 <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
             </div>
             <div class="about-text-container">
@@ -76,12 +78,16 @@
                             <div class="col-lg-6 col-sm-6">
                                 <div class="service-content">
                                     <div class="title">
-                                        <h2 class="section-title">{{ $servicesContent['title'] ?? 'SERVICES' }}</h2>
+                                        @if(isset($servicesContent['title']))
+                                            <h2 class="section-title">{!! $servicesContent['title'] !!}</h2>
+                                        @endif
                                         <h3 class="service-number">01</h3>
                                     </div>
 
                                     <div class="main-content">
-                                        <h3 class="service-title">{{ $services[0]['title'] ?? 'Education and Training' }}</h3>
+                                        @if(isset($services[0]['title']))
+                                            <h3 class="service-title">{!! $services[0]['title'] !!}</h3>
+                                        @endif
                                         <p class="service-description">
                                             @if(isset($services[0]['description']))
                                                 {!! $services[0]['description'] !!}
@@ -90,9 +96,17 @@
                                         <div class="service-buttons">
                                             @if(isset($services[0]['buttons']) && is_array($services[0]['buttons']) && count($services[0]['buttons']) >= 2)
                                                 <a href="{{ $services[0]['buttons'][0]['link'] ?? '/services/education-and-scholarship' }}"
-                                                    class="btn btn-service {{ $services[0]['buttons'][0]['class'] ?? 'btn-education' }}">{{ $services[0]['buttons'][0]['text'] ?? 'Education' }}</a>
+                                                    class="btn btn-service {{ $services[0]['buttons'][0]['class'] ?? 'btn-education' }}">
+                                                    @if(isset($services[0]['buttons'][0]['text']))
+                                                        {!! $services[0]['buttons'][0]['text'] !!}
+                                                    @endif
+                                                </a>
                                                 <a href="{{ $services[0]['buttons'][1]['link'] ?? '/services/training-and-professional-development' }}"
-                                                    class="btn btn-service {{ $services[0]['buttons'][1]['class'] ?? '' }}">{{ $services[0]['buttons'][1]['text'] ?? 'Training' }}</a>
+                                                    class="btn btn-service {{ $services[0]['buttons'][1]['class'] ?? '' }}">
+                                                    @if(isset($services[0]['buttons'][1]['text']))
+                                                        {!! $services[0]['buttons'][1]['text'] !!}
+                                                    @endif
+                                                </a>
                                             @endif
                                         </div>
                                     </div>
@@ -118,12 +132,16 @@
                             <div class="col-lg-6 col-sm-6">
                                 <div class="service-content">
                                     <div class="title">
-                                        <h2 class="section-title">{{ $servicesContent['title'] ?? 'SERVICES' }}</h2>
+                                        @if(isset($servicesContent['title']))
+                                            <h2 class="section-title">{!! $servicesContent['title'] !!}</h2>
+                                        @endif
                                         <h3 class="service-number">02</h3>
                                     </div>
 
                                     <div class="main-content">
-                                        <h3 class="service-title">{{ $services[1]['title'] ?? 'AI and Advanced Technologies' }}</h3>
+                                        @if(isset($services[1]['title']))
+                                            <h3 class="service-title">{!! $services[1]['title'] !!}</h3>
+                                        @endif
                                         <p class="service-description">
                                             @if(isset($services[1]['description']))
                                                 {!! $services[1]['description'] !!}
@@ -132,8 +150,12 @@
                                         <div class="service-buttons">
                                             @if(isset($services[1]['buttons']) && is_array($services[1]['buttons']) && count($services[1]['buttons']) > 0)
                                                 <a href="{{ $services[1]['buttons'][0]['link'] ?? '/services/ai-and-advanced-technologies' }}"
-                                                    class="learn-more {{ $services[1]['buttons'][0]['class'] ?? '' }}">{{ $services[1]['buttons'][0]['text'] ?? 'LEARN MORE' }} <i
-                                                    class="fas fa-arrow-right-long"></i></a>
+                                                    class="learn-more {{ $services[1]['buttons'][0]['class'] ?? '' }}">
+                                                    @if(isset($services[1]['buttons'][0]['text']))
+                                                        {!! $services[1]['buttons'][0]['text'] !!}
+                                                    @endif
+                                                    <i class="fas fa-arrow-right-long"></i>
+                                                </a>
                                             @endif
                                         </div>
                                     </div>
@@ -158,12 +180,16 @@
                             <div class="col-lg-6 col-sm-6">
                                 <div class="service-content">
                                     <div class="title">
-                                        <h2 class="section-title">{{ $servicesContent['title'] ?? 'SERVICES' }}</h2>
+                                        @if(isset($servicesContent['title']))
+                                            <h2 class="section-title">{!! $servicesContent['title'] !!}</h2>
+                                        @endif
                                         <h3 class="service-number">03</h3>
                                     </div>
 
                                     <div class="main-content">
-                                        <h3 class="service-title">{{ $services[2]['title'] ?? 'eGaming and eSport' }}</h3>
+                                        @if(isset($services[2]['title']))
+                                            <h3 class="service-title">{!! $services[2]['title'] !!}</h3>
+                                        @endif
                                         <p class="service-description">
                                             @if(isset($services[2]['description']))
                                                 {!! $services[2]['description'] !!}
@@ -198,12 +224,16 @@
                             <div class="col-lg-6 col-sm-6">
                                 <div class="service-content">
                                     <div class="title">
-                                        <h2 class="section-title">{{ $servicesContent['title'] ?? 'SERVICES' }}</h2>
+                                        @if(isset($servicesContent['title']))
+                                            <h2 class="section-title">{!! $servicesContent['title'] !!}</h2>
+                                        @endif
                                         <h3 class="service-number">04</h3>
                                     </div>
 
                                     <div class="main-content">
-                                        <h3 class="service-title">{{ $services[3]['title'] ?? 'Arts and Entertainment' }}</h3>
+                                        @if(isset($services[3]['title']))
+                                            <h3 class="service-title">{!! $services[3]['title'] !!}</h3>
+                                        @endif
                                         <p class="service-description">
                                             @if(isset($services[3]['description']))
                                                 {!! $services[3]['description'] !!}
@@ -236,7 +266,10 @@
         <div class="container">
             <div class="row">
                 <div class="educational-services mt-5">
-                    <h3 class="edu-services-title section-title">{{ $educationalContent['title'] ?? 'Educational Services' }}</h3>
+
+                    @if(isset($educationalContent['title']))
+                        <h3 class="edu-services-title section-title">{!! $educationalContent['title'] !!}</h3>
+                    @endif
 
                     <div class="service-item mt-4">
                         <div class="row">
@@ -245,14 +278,17 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="service-content-wrapper">
-                                    <h4 class="service-name">{{ $eduServices[0]['title'] ?? 'Scholarship Programs Management' }}</h4>
+                                    @if(isset($eduServices[0]['title']))
+                                        <h4 class="service-name">{!! $eduServices[0]['title'] !!}</h4>
+                                    @endif
                                     <p class="service-desc">
                                         @if(isset($eduServices[0]['description']))
                                             {!! $eduServices[0]['description'] !!}
                                         @endif
                                     </p>
-                                    <a href="{{ $eduServices[0]['link'] ?? '/services/education-and-scholarship' }}"
-                                        class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                    @if(isset($eduServices[0]['link']))
+                                        <a href="{{ $eduServices[0]['link'] }}" class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
@@ -270,14 +306,17 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="service-content-wrapper">
-                                    <h4 class="service-name">{{ $eduServices[1]['title'] ?? 'STEM Education and Innovation Centers' }}</h4>
+                                    @if(isset($eduServices[1]['title']))
+                                        <h4 class="service-name">{!! $eduServices[1]['title'] !!}</h4>
+                                    @endif
                                     <p class="service-desc">
                                         @if(isset($eduServices[1]['description']))
                                             {!! $eduServices[1]['description'] !!}
                                         @endif
                                     </p>
-                                    <a href="{{ $eduServices[1]['link'] ?? '/services/education-and-scholarship' }}" class="learn-more">LEARN MORE <i
-                                            class="fas fa-arrow-right-long"></i></a>
+                                    @if(isset($eduServices[1]['link']))
+                                        <a href="{{ $eduServices[1]['link'] }}" class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
@@ -295,14 +334,17 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="service-content-wrapper">
-                                    <h4 class="service-name">{{ $eduServices[2]['title'] ?? 'K-12 International Schools' }}</h4>
+                                    @if(isset($eduServices[2]['title']))
+                                        <h4 class="service-name">{!! $eduServices[2]['title'] !!}</h4>
+                                    @endif
                                     <p class="service-desc">
                                         @if(isset($eduServices[2]['description']))
                                             {!! $eduServices[2]['description'] !!}
                                         @endif
                                     </p>
-                                    <a href="{{ $eduServices[2]['link'] ?? '/services/education-and-scholarship' }}" class="learn-more">LEARN MORE <i
-                                            class="fas fa-arrow-right-long"></i></a>
+                                    @if(isset($eduServices[2]['link']))
+                                        <a href="{{ $eduServices[2]['link'] }}" class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
@@ -334,8 +376,12 @@
                         @foreach($stats as $stat)
                         <div class="col-md-4">
                             <div class="stat-item">
-                                <h3 class="stat-number">{{ $stat['number'] }}</h3>
-                                <p class="stat-text">{{ $stat['text'] }}</p>
+                                @if(isset($stat['number']))
+                                    <h3 class="stat-number">{!! $stat['number'] !!}</h3>
+                                @endif
+                                @if(isset($stat['text']))
+                                    <p class="stat-text">{!! $stat['text'] !!}</p>
+                                @endif
                             </div>
                         </div>
                         @endforeach
