@@ -22,8 +22,6 @@
                 <p class="about-text">
                     @if(isset($aboutContent['main_text']))
                         {!! $aboutContent['main_text'] !!}
-                    @else
-                        After more than 20 years of experience in the Saudi Arabia's Human Capital Development market, JAD Consulting (JADCO) was established to continue supporting the industry with a new inspired vision by the great Saudi Vision 2030.
                     @endif
                 </p>
             </div>
@@ -87,8 +85,6 @@
                                         <p class="service-description">
                                             @if(isset($services[0]['description']))
                                                 {!! $services[0]['description'] !!}
-                                            @else
-                                                With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor's vision and targets.
                                             @endif
                                         </p>
                                         <div class="service-buttons">
@@ -97,11 +93,6 @@
                                                     class="btn btn-service {{ $services[0]['buttons'][0]['class'] ?? 'btn-education' }}">{{ $services[0]['buttons'][0]['text'] ?? 'Education' }}</a>
                                                 <a href="{{ $services[0]['buttons'][1]['link'] ?? '/services/training-and-professional-development' }}"
                                                     class="btn btn-service {{ $services[0]['buttons'][1]['class'] ?? '' }}">{{ $services[0]['buttons'][1]['text'] ?? 'Training' }}</a>
-                                            @else
-                                                <a href="/services/education-and-scholarship"
-                                                    class="btn btn-service btn-education">Education</a>
-                                                <a href="/services/training-and-professional-development"
-                                                    class="btn btn-service">Training</a>
                                             @endif
                                         </div>
                                     </div>
@@ -136,8 +127,6 @@
                                         <p class="service-description">
                                             @if(isset($services[1]['description']))
                                                 {!! $services[1]['description'] !!}
-                                            @else
-                                                AI represents a transformative technology with the potential to revolutionize organizations services and operations. By leveraging AI, organizations can enhance efficiency, improve decision-making and deliver superior to public.
                                             @endif
                                         </p>
                                         <div class="service-buttons">
@@ -176,8 +165,6 @@
                                         <p class="service-description">
                                             @if(isset($services[2]['description']))
                                                 {!! $services[2]['description'] !!}
-                                            @else
-                                                JADCO and international partners in gaming and eSport, USA highly ranked universities in gaming and simulation development and integrated e-Arts programs and a Consortium firm supported by the U.S department of ...
                                             @endif
                                         </p>
                                         <div class="service-buttons">
@@ -215,8 +202,6 @@
                                         <p class="service-description">
                                             @if(isset($services[3]['description']))
                                                 {!! $services[3]['description'] !!}
-                                            @else
-                                                Bringing the fine Arts, culture and entertainment from the globe to enrich the local diversity and enhance the picture of the Arabian culture overseas by adding value to the industry.
                                             @endif
                                         </p>
                                         <div class="service-buttons">
@@ -255,7 +240,9 @@
                                 <div class="service-content-wrapper">
                                     <h4 class="service-name">{{ $eduServices[0]['title'] ?? 'Scholarship Programs Management' }}</h4>
                                     <p class="service-desc">
-                                        {{ $eduServices[0]['description'] ?? 'With more than 20 years in managing scholarship programs with several Saudi governmental sponsors, we are experts of providing full and comprehensive plans and services to meet the sponsor\'s vision and targets.' }}
+                                        @if(isset($eduServices[0]['description']))
+                                            {!! $eduServices[0]['description'] !!}
+                                        @endif
                                     </p>
                                     <a href="{{ $eduServices[0]['link'] ?? '/services/education-and-scholarship' }}"
                                         class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
@@ -278,7 +265,9 @@
                                 <div class="service-content-wrapper">
                                     <h4 class="service-name">{{ $eduServices[1]['title'] ?? 'STEM Education and Innovation Centers' }}</h4>
                                     <p class="service-desc">
-                                        {{ $eduServices[1]['description'] ?? 'Providing innovative STEM education approaches and establishing cutting-edge innovation centers to foster creativity and practical skills.' }}
+                                        @if(isset($eduServices[1]['description']))
+                                            {!! $eduServices[1]['description'] !!}
+                                        @endif
                                     </p>
                                     <a href="{{ $eduServices[1]['link'] ?? '/services/education-and-scholarship' }}" class="learn-more">LEARN MORE <i
                                             class="fas fa-arrow-right-long"></i></a>
@@ -301,7 +290,9 @@
                                 <div class="service-content-wrapper">
                                     <h4 class="service-name">{{ $eduServices[2]['title'] ?? 'K-12 International Schools' }}</h4>
                                     <p class="service-desc">
-                                        {{ $eduServices[2]['description'] ?? 'Development and management of international standard K-12 schools with globally recognized curricula and excellent teaching staff.' }}
+                                        @if(isset($eduServices[2]['description']))
+                                            {!! $eduServices[2]['description'] !!}
+                                        @endif
                                     </p>
                                     <a href="{{ $eduServices[2]['link'] ?? '/services/education-and-scholarship' }}" class="learn-more">LEARN MORE <i
                                             class="fas fa-arrow-right-long"></i></a>

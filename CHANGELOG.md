@@ -83,6 +83,7 @@ All notable changes to this project will be documented in this file.
   - Implemented fallback text for all content sections when database content is unavailable
   - Enabled HTML formatting in service descriptions and about section content
   - Improved conditional logic for better content handling and fallbacks
+  - Removed fallback text in conditional blocks for cleaner template structure
 
 ### Changed
 - Updated Vue router to use new web routes for authentication
