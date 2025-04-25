@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import routes from './routes';
 import axios from 'axios';
+import Vue3Toastify, { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 // Configure axios
 axios.defaults.withCredentials = true;
@@ -47,6 +49,13 @@ router.beforeEach(async (to, from, next) => {
 
 // Create and mount the Vue app
 const app = createApp(App);
+
+// Configure Vue3Toastify
+app.use(Vue3Toastify, {
+    autoClose: 3000,
+    position: "top-right",
+    closeButton: true,
+});
 
 // Register global mixins
 app.mixin({

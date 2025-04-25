@@ -1,14 +1,7 @@
 <template>
   <AdminLayout>
     <div class="section-editor">
-      <!-- Notification Component -->
-      <Notification 
-        v-if="notification.show" 
-        :message="notification.message" 
-        :type="notification.type" 
-        :duration="notification.duration"
-        @close="closeNotification"
-      />
+      <!-- Removed Notification Component -->
       
       <header class="page-header">
         <div class="header-left">
@@ -151,17 +144,16 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
 import AdminLayout from './AdminLayout.vue';
 import JsonEditor from './components/JsonEditor.vue';
 import JsonTreeView from './components/JsonTreeView.vue';
-import Notification from './components/Notification.vue';
 
 export default defineComponent({
   components: {
     AdminLayout,
     JsonEditor,
     JsonTreeView,
-    Notification
   },
   
   setup() {
@@ -178,13 +170,6 @@ export default defineComponent({
     const hasChanges = ref(false);
     const activeView = ref('form'); // 'form', 'tree', or 'split'
 
-    const notification = ref({
-      show: false,
-      message: '',
-      type: '',
-      duration: 3000
-    });
-
     const fetchSection = async () => {
       isLoading.value = true;
       error.value = null;
@@ -196,8 +181,7 @@ export default defineComponent({
         // Initialize the content with current content
         contentData.value = { ...section.value.content };
         
-        // Show success notification for loading
-        showNotification('success', `Section "${section.value.name}" loaded successfully`, 2000);
+        // Removed success notification for loading
       } catch (err) {
         const errorMessage = err.response?.data?.message || 'Failed to load section. Please try again.';
         error.value = errorMessage;
@@ -208,12 +192,23 @@ export default defineComponent({
     };
 
     const showNotification = (type, message, duration = 3000) => {
-      notification.value = {
-        show: true,
-        type,
-        message,
-        duration
-      };
+      // Use vue3-toastify
+      switch(type) {
+        case 'success':
+          toast.success(message, { autoClose: duration });
+          break;
+        case 'error':
+          toast.error(message, { autoClose: duration });
+          break;
+        case 'warning':
+          toast.warning(message, { autoClose: duration });
+          break;
+        case 'info':
+          toast.info(message, { autoClose: duration });
+          break;
+        default:
+          toast(message, { autoClose: duration });
+      }
     };
 
     const saveContent = async () => {
@@ -414,13 +409,13 @@ export default defineComponent({
     const handleTreeUpdate = (updatedJson) => {
       contentData.value = updatedJson;
       hasChanges.value = true;
-      showNotification('info', 'JSON structure updated', 1500);
+      // Removed notification for JSON structure updates
     };
 
-    // Add notification for view mode changes
+    // Handle view mode changes
     const handleViewChange = (view) => {
       activeView.value = view;
-      showNotification('info', `Switched to ${view} view`, 1500);
+      // Removed notification for view changes
     };
 
     // Handle page leave with unsaved changes
@@ -435,31 +430,25 @@ export default defineComponent({
       });
     });
 
-    const closeNotification = () => {
-      notification.value.show = false;
-    };
-
     return {
       section,
       contentData,
       isLoading,
       isSaving,
       error,
-      jsonEditor,
+      hasChanges,
       activeView,
-      currentSchema,
       fetchSection,
       saveContent,
       resetContent,
-      handleEditorInput,
       formatSectionType,
       formatDate,
       getSchemaFields,
+      handleEditorInput,
+      currentSchema,
+      handleViewChange,
       handleTreeUpdate,
-      notification,
-      closeNotification,
-      showNotification,
-      handleViewChange
+      showNotification
     };
   }
 });

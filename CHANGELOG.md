@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Integrated vue3-toastify for notifications:
+  - Replaced custom notification system with vue3-toastify
+  - Configured toast notifications to maintain the same API (success, error, warning, info)
+  - Added global access to toast functionality through window.$notifications
+  - Improved notification styling with built-in themes
 - Media Library Management:
   - Created media database table with migration for storing media metadata
   - Implemented Media model with file handling and URL generation

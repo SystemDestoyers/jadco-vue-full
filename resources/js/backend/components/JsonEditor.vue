@@ -1,12 +1,6 @@
 <template>
   <div class="json-editor">
-    <!-- Notification alert -->
-    <div v-if="notification.show" :class="['notification-alert', `notification-${notification.type}`]">
-      <div class="notification-content">
-        <span>{{ notification.message }}</span>
-        <button @click="closeNotification" class="notification-close">&times;</button>
-      </div>
-    </div>
+    <!-- Removed notification component (using vue3-toastify instead) -->
 
     <div v-for="(field, key) in schema.properties" :key="key" class="form-group">
       <label :for="key">{{ field.title || key }}</label>
@@ -151,12 +145,6 @@ export default defineComponent({
   
   setup(props, { emit }) {
     const internalValue = ref({ ...props.modelValue });
-    const notification = ref({
-      show: false,
-      type: 'success',
-      message: '',
-      timeout: null
-    });
     
     // Watch for changes in the modelValue prop
     watch(() => props.modelValue, (newValue) => {
@@ -219,53 +207,38 @@ export default defineComponent({
     
     const reset = () => {
       internalValue.value = { ...props.modelValue };
-      showNotification('warning', 'Changes reset to original values');
+      // Use vue3-toastify for notification
+      if (window.$notifications) {
+        window.$notifications.warning('Changes reset to original values');
+      }
     };
 
-    const showNotification = (type, message, duration = 3000) => {
-      // Clear any existing timeout
-      if (notification.value.timeout) {
-        clearTimeout(notification.value.timeout);
-      }
-      
-      // Set notification properties
-      notification.value.show = true;
-      notification.value.type = type;
-      notification.value.message = message;
-      
-      // Auto-hide notification after duration
-      notification.value.timeout = setTimeout(() => {
-        notification.value.show = false;
-      }, duration);
-    };
-    
-    const closeNotification = () => {
-      notification.value.show = false;
-      if (notification.value.timeout) {
-        clearTimeout(notification.value.timeout);
-      }
-    };
-    
     return {
       internalValue,
-      notification,
       initArray,
       addArrayItem,
       removeArrayItem,
-      reset,
-      showNotification,
-      closeNotification
+      reset
     };
   },
   methods: {
     notifySuccess(message = 'Content saved successfully!') {
-      this.showNotification('success', message);
+      // Use vue3-toastify
+      if (window.$notifications) {
+        window.$notifications.success(message);
+      }
     },
     notifyError(message = 'Failed to save content.') {
-      this.showNotification('error', message);
+      // Use vue3-toastify
+      if (window.$notifications) {
+        window.$notifications.error(message);
+      }
     },
     notifyInfo(message) {
-      this.showNotification('info', message);
+      // Use vue3-toastify
+      if (window.$notifications) {
+        window.$notifications.info(message);
+      }
     }
   }
 });
@@ -275,75 +248,6 @@ export default defineComponent({
 .json-editor {
   padding: 1rem;
   position: relative;
-}
-
-/* Notification styles */
-.notification-alert {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  min-width: 300px;
-  max-width: 450px;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: slide-in 0.3s ease-out;
-}
-
-.notification-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-}
-
-.notification-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.notification-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.notification-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-}
-
-.notification-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
-}
-
-.notification-close {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 1.2rem;
-  cursor: pointer;
-  margin-left: 8px;
-  opacity: 0.7;
-}
-
-.notification-close:hover {
-  opacity: 1;
-}
-
-@keyframes slide-in {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
 }
 
 .form-group {

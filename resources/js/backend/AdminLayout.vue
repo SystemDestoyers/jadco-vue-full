@@ -55,23 +55,30 @@
       </main>
     </div>
     
-    <!-- Global Notification Manager - only show when needed -->
-    <NotificationManager v-if="shouldShowNotificationManager" />
+    <!-- Vue3-Toastify will handle notifications globally -->
   </div>
 </template>
 
 <script setup>
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import NotificationManager from './components/NotificationManager.vue';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 import './assets/css/backend-global.css';
 
 const router = useRouter();
 const route = useRoute();
 
-// Determine if we should show the NotificationManager in AdminLayout
-// This prevents duplicate notification systems in components that use their own
-const shouldShowNotificationManager = !route.meta.hasLocalNotification;
+// Expose toast to the global window for components that can't use Vue composition API
+if (typeof window !== 'undefined') {
+  window.$notifications = {
+    success: (message, options = {}) => toast.success(message, options),
+    error: (message, options = {}) => toast.error(message, options),
+    warning: (message, options = {}) => toast.warning(message, options),
+    info: (message, options = {}) => toast.info(message, options),
+    remove: (id) => toast.dismiss(id)
+  };
+}
 
 const logout = async () => {
   try {

@@ -24,6 +24,7 @@
         "sortablejs": "^1.15.6",
         "vue": "^3.5.13",
         "vue-router": "^4.5.0",
+        "vue3-toastify": "^0.2.2",
         "vuex": "^4.0.2"
     }
 }
