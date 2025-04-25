@@ -41,6 +41,7 @@
           v-model="editableValue"
           @blur="handleBlur"
           @keyup.enter.ctrl="finishEditValue"
+          @keydown.enter.exact.prevent="insertLineBreak"
           @keyup.esc="cancelEditValue"
           :class="textFormatClasses"
         ></textarea>
@@ -806,6 +807,30 @@ export default defineComponent({
       handleBlur(e);
     };
     
+    // Insert a <br> tag at cursor position when Enter is pressed
+    const insertLineBreak = (e) => {
+      e.preventDefault(); // Prevent default enter behavior
+      
+      const textarea = valueInput.value;
+      if (!textarea) return;
+      
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      
+      // Insert <br> tag at cursor position
+      const before = editableValue.value.substring(0, start);
+      const after = editableValue.value.substring(end);
+      editableValue.value = before + '<br>' + after;
+      
+      // Set cursor position after the <br> tag
+      nextTick(() => {
+        if (textarea) {
+          const newPosition = start + 4; // 4 is the length of <br>
+          textarea.setSelectionRange(newPosition, newPosition);
+        }
+      });
+    };
+    
     return {
       isExpanded,
       isEditingKey,
@@ -869,7 +894,8 @@ export default defineComponent({
       clearFormatting,
       fontSize,
       incrementFontSize,
-      decrementFontSize
+      decrementFontSize,
+      insertLineBreak
     };
   }
 });
@@ -1110,5 +1136,12 @@ export default defineComponent({
 .backend-ui input.edit-input {
   height: auto;
   min-height: 61px;
+}
+
+/* Add styling for <br> tags in the node-value display */
+.backend-ui .node-value br {
+  display: block;
+  content: "";
+  margin: 4px 0;
 }
 </style>
