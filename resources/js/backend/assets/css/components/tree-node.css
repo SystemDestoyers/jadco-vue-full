@@ -1,0 +1,318 @@
+.tree-node {
+  list-style-type: none;
+  margin: 0;
+  padding: 2px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.node-header {
+  display: flex;
+  align-items: flex-start;
+  padding: 4px 8px;
+  border-radius: 4px;
+  flex-wrap: wrap;
+  min-width: 0;
+  width: 100%;
+}
+
+.node-header:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.node-toggle {
+  cursor: pointer;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.node-toggle i {
+  width: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+
+i.expandable {
+  color: #3498db;
+}
+
+i.leaf {
+  color: #95a5a6;
+  font-size: 6px;
+}
+
+.node-key-container, .node-value-container {
+  position: relative;
+}
+
+.node-key-container {
+  margin-right: 8px;
+}
+
+.node-value-container {
+  flex-grow: 1;
+  max-width: 70%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.node-key {
+  font-weight: 600;
+  margin-right: 8px;
+  color: #2c3e50;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.node-key:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.node-value {
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  display: inline-block;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.node-value:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.node-type-indicator {
+  color: #95a5a6;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.node-value.string {
+  color: #27ae60;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.node-value.number {
+  color: #e67e22;
+}
+
+.node-value.boolean {
+  color: #8e44ad;
+}
+
+.node-value.null {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.node-children {
+  padding-left: 0;
+}
+
+.edit-input {
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  padding: 1px 3px;
+  font-size: 14px;
+  font-family: monospace;
+  min-width: 100px;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+.node-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.node-header:hover .node-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 12px;
+  border-radius: 2px;
+  color: #95a5a6;
+}
+
+.action-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.add-btn:hover {
+  color: #27ae60;
+}
+
+.delete-btn:hover {
+  color: #e74c3c;
+}
+
+.media-btn {
+  color: #3498db;
+  margin-left: 4px;
+}
+
+.media-btn:hover {
+  color: #2980b9;
+}
+
+.add-item-form {
+  margin-left: 20px;
+  margin-top: 4px;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+}
+
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #7f8c8d;
+}
+
+/* Image preview styles */
+.image-preview {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  max-width: 150px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.has-image .node-value {
+  margin-bottom: 4px;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.media-selector-modal {
+  height: 80vh;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Add additional styles to improve the value display for the edit state */
+.node-value-container .edit-input {
+  min-height: 24px;
+  resize: vertical;
+}
+
+/* Style for multiline text editing */
+.multiline-edit {
+  font-family: monospace;
+  min-height: 60px;
+  max-height: 300px;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #3498db;
+  border-radius: 3px;
+  background-color: #f8fafd;
+  line-height: 1.4;
+  font-size: 14px;
+} 

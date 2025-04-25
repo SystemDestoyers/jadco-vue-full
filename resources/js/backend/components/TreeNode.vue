@@ -161,6 +161,7 @@
 <script>
 import { defineComponent, ref, computed, nextTick } from 'vue';
 import MediaSelector from './MediaSelector.vue';
+import '../assets/css/components/tree-node.css';
 
 export default defineComponent({
   name: 'TreeNode',
@@ -534,7 +535,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .tree-node {
   list-style-type: none;
   margin: 0;
@@ -853,4 +854,4 @@ i.leaf {
   line-height: 1.4;
   font-size: 14px;
 }
-</style> 
+</style>  -->
