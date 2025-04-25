@@ -189,6 +189,12 @@ All notable changes to this project will be documented in this file.
   - Converted traditional form submission to AJAX in contact.blade.php
   - Fixed routing conflict between web and API routes for contact submission
   - Temporarily disabled auth middleware in admin message controller for testing
+- Fixed overlapping text in compose message button by adding proper styling and spacing
+- Improved compose message modal layout to prevent form element overlap
+- Added responsive styling to ensure components display correctly at all screen sizes
+- Enhanced button styles to maintain consistent layout
+- Fixed form label positioning in compose message modal to display outside input fields
+- Added proper placeholder text to form inputs for better usability
 
 ## [0.1.0] - 2023-05-16
 

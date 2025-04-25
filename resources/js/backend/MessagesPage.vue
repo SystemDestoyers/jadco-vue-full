@@ -6,7 +6,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <h1><i class="fas fa-envelope me-2"></i> Messages Inbox</h1>
             <div class="d-flex align-items-center">
-              <button class="btn btn-primary me-3" @click="showComposeModal">
+              <button class="btn btn-primary me-3 compose-btn" @click="showComposeModal">
                 <i class="fas fa-paper-plane me-1"></i> Compose
               </button>
               <div class="inbox-search">
@@ -268,30 +268,38 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form @submit.prevent="sendMessage">
+            <form @submit.prevent="sendMessage" class="compose-form">
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label for="firstName" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="firstName" v-model="composeForm.first_name" required>
+                  <div class="form-group">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstName" v-model="composeForm.first_name" placeholder="First Name" required>
+                  </div>
                 </div>
                 <div class="col-md-6">
-                  <label for="lastName" class="form-label">Last Name</label>
-                  <input type="text" class="form-control" id="lastName" v-model="composeForm.last_name" required>
+                  <div class="form-group">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" v-model="composeForm.last_name" placeholder="Last Name" required>
+                  </div>
                 </div>
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label for="email" class="form-label">Email Address</label>
-                  <input type="email" class="form-control" id="email" v-model="composeForm.email" required>
+                  <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" v-model="composeForm.email" placeholder="Email Address" required>
+                  </div>
                 </div>
                 <div class="col-md-6">
-                  <label for="phone" class="form-label">Phone Number (Optional)</label>
-                  <input type="tel" class="form-control" id="phone" v-model="composeForm.phone">
+                  <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number (Optional)</label>
+                    <input type="tel" class="form-control" id="phone" v-model="composeForm.phone" placeholder="Phone Number">
+                  </div>
                 </div>
               </div>
-              <div class="mb-3">
+              <div class="form-group mb-3">
                 <label for="messageContent" class="form-label">Message</label>
-                <textarea class="form-control" id="messageContent" rows="6" v-model="composeForm.message" required></textarea>
+                <textarea class="form-control" id="messageContent" rows="6" v-model="composeForm.message" placeholder="Your message here..." required></textarea>
               </div>
             </form>
           </div>
@@ -1146,6 +1154,18 @@ export default {
   width: 300px;
 }
 
+/* Compose button */
+.compose-btn {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Customize checkboxes */
 .form-check-input:checked {
   background-color: #0d6efd;
@@ -1197,5 +1217,77 @@ export default {
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 6px;
+}
+
+/* Compose form */
+.compose-form .form-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.compose-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+  background: none;
+  transform: none;
+  color: #333;
+  font-size: 0.9rem;
+  top: auto;
+  left: auto;
+}
+
+.compose-form .form-control {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  width: 100%;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  height: auto;
+}
+
+.compose-form .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.compose-form .form-control::placeholder {
+  color: transparent;
+}
+
+/* Make sure modal elements don't overlap */
+#composeModal .modal-body {
+  padding: 1.5rem;
+}
+
+/* Override Bootstrap floating label behavior */
+.form-floating > .form-control-plaintext ~ label::after,
+.form-floating > .form-control:focus ~ label::after, 
+.form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+  display: none !important;
+}
+
+.form-floating > .form-control-plaintext ~ label,
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+  opacity: 1 !important;
+  transform: none !important;
+  color: #212529 !important;
+  background-color: transparent !important;
+}
+
+/* Ensure form controls appear properly */
+#composeModal .form-control {
+  height: calc(3rem + 2px);
+  line-height: 1.5;
+  padding: 0.75rem 0.75rem;
+}
+
+#composeModal textarea.form-control {
+  height: auto;
 }
 </style> 
