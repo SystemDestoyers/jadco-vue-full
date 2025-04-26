@@ -334,6 +334,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced directory deletion to preserve directory structure while removing contents
   - Added better error messages for common directory structure issues
   - Fixed path handling for cross-platform compatibility
+- Fixed CSS specificity issue in admin theme that was affecting frontend navigation links
 
 ## [0.1.0] - 2023-05-16
 
