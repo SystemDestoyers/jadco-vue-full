@@ -1,213 +1,217 @@
 <template>
-  <div class="profile-page">
-    <h1 class="page-title">
-      <i class="fas fa-user-cog"></i> Profile Settings
-    </h1>
-
-    <div class="profile-content">
-      <div class="profile-header">
-        <div class="profile-avatar-container">
-          <img :src="profileImage" alt="Profile Avatar" class="profile-avatar" />
-          <div class="profile-avatar-overlay">
-            <label for="avatar-upload" class="avatar-upload-label">
-              <i class="fas fa-camera"></i>
-            </label>
-            <input 
-              id="avatar-upload" 
-              type="file" 
-              accept="image/*" 
-              @change="handleAvatarUpload" 
-              class="avatar-upload-input" 
-            />
-          </div>
-        </div>
-        <div class="profile-header-info">
-          <h2 class="profile-name">{{ user.name }}</h2>
-          <p class="profile-email">{{ user.email }}</p>
-          <p class="profile-role">Administrator</p>
-        </div>
+  <AdminLayout>
+    <div class="profile-page">
+      <div class="page-header">
+        <h1 class="page-title">
+          <i class="fas fa-user-cog"></i> Profile Settings
+        </h1>
       </div>
 
-      <div class="profile-tabs">
-        <button 
-          class="tab-button" 
-          :class="{ active: activeTab === 'account' }"
-          @click="activeTab = 'account'"
-        >
-          <i class="fas fa-user"></i> Account
-        </button>
-        <button 
-          class="tab-button" 
-          :class="{ active: activeTab === 'security' }"
-          @click="activeTab = 'security'"
-        >
-          <i class="fas fa-shield-alt"></i> Security
-        </button>
-        <button 
-          class="tab-button" 
-          :class="{ active: activeTab === 'preferences' }"
-          @click="activeTab = 'preferences'"
-        >
-          <i class="fas fa-sliders-h"></i> Preferences
-        </button>
-      </div>
-
-      <div class="profile-tab-content">
-        <!-- Account Tab -->
-        <div v-if="activeTab === 'account'" class="tab-pane">
-          <h3 class="tab-title">Account Information</h3>
-          <form @submit.prevent="updateProfile" class="profile-form">
-            <div class="form-group">
-              <label for="name">Full Name</label>
-              <input
-                id="name"
-                v-model="user.name"
-                type="text"
-                class="form-control"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="email">Email Address</label>
-              <input
-                id="email"
-                v-model="user.email"
-                type="email"
-                class="form-control"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="bio">Bio</label>
-              <textarea
-                id="bio"
-                v-model="user.bio"
-                class="form-control"
-                rows="4"
-                placeholder="Tell us about yourself"
-              ></textarea>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn-primary" :disabled="isSaving">
-                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save Changes' }}
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Security Tab -->
-        <div v-if="activeTab === 'security'" class="tab-pane">
-          <h3 class="tab-title">Password & Security</h3>
-          <form @submit.prevent="updatePassword" class="profile-form">
-            <div class="form-group">
-              <label for="current_password">Current Password</label>
-              <input
-                id="current_password"
-                v-model="passwordData.current"
-                type="password"
-                class="form-control"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="new_password">New Password</label>
-              <input
-                id="new_password"
-                v-model="passwordData.new"
-                type="password"
-                class="form-control"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="password_confirmation">Confirm New Password</label>
-              <input
-                id="password_confirmation"
-                v-model="passwordData.confirmation"
-                type="password"
-                class="form-control"
-                required
-              />
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn-primary" :disabled="isSavingPassword">
-                <i class="fas fa-lock"></i> {{ isSavingPassword ? 'Updating...' : 'Update Password' }}
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Preferences Tab -->
-        <div v-if="activeTab === 'preferences'" class="tab-pane">
-          <h3 class="tab-title">Interface Preferences</h3>
-          
-          <div class="preference-group">
-            <h4 class="preference-title">Theme</h4>
-            <div class="preference-options">
-              <div 
-                class="theme-option" 
-                :class="{ active: colorMode === 'light' }"
-                @click="updateColorMode('light')"
-              >
-                <div class="theme-preview light-theme"></div>
-                <span>Light Mode</span>
-              </div>
-              <div 
-                class="theme-option" 
-                :class="{ active: colorMode === 'dark' }"
-                @click="updateColorMode('dark')"
-              >
-                <div class="theme-preview dark-theme"></div>
-                <span>Dark Mode</span>
-              </div>
-              <div 
-                class="theme-option" 
-                :class="{ active: colorMode === 'auto' }"
-                @click="updateColorMode('auto')"
-              >
-                <div class="theme-preview auto-theme"></div>
-                <span>System Default</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="preference-group">
-            <h4 class="preference-title">Text Direction</h4>
-            <div class="toggle-option">
-              <label class="toggle-switch">
-                <input 
-                  type="checkbox" 
-                  :checked="rtlMode"
-                  @change="toggleDirection"
-                />
-                <span class="toggle-slider"></span>
+      <div class="profile-content">
+        <div class="profile-header">
+          <div class="profile-avatar-container">
+            <img :src="profileImage" alt="Profile Avatar" class="profile-avatar" />
+            <div class="profile-avatar-overlay">
+              <label for="avatar-upload" class="avatar-upload-label">
+                <i class="fas fa-camera"></i>
               </label>
-              <span class="toggle-label">Right-to-Left Text (RTL)</span>
+              <input 
+                id="avatar-upload" 
+                type="file" 
+                accept="image/*" 
+                @change="handleAvatarUpload" 
+                class="avatar-upload-input" 
+              />
             </div>
           </div>
+          <div class="profile-header-info">
+            <h2 class="profile-name">{{ user.name }}</h2>
+            <p class="profile-email">{{ user.email }}</p>
+            <p class="profile-role">Administrator</p>
+          </div>
+        </div>
 
-          <div class="preference-group">
-            <h4 class="preference-title">Language</h4>
-            <select 
-              v-model="selectedLanguage" 
-              @change="changeLanguage" 
-              class="language-select"
-            >
-              <option value="en">English</option>
-              <option value="ar">Arabic</option>
-              <option value="fr">French</option>
-            </select>
+        <div class="profile-tabs">
+          <button 
+            class="tab-button" 
+            :class="{ active: activeTab === 'account' }"
+            @click="activeTab = 'account'"
+          >
+            <i class="fas fa-user"></i> Account
+          </button>
+          <button 
+            class="tab-button" 
+            :class="{ active: activeTab === 'security' }"
+            @click="activeTab = 'security'"
+          >
+            <i class="fas fa-shield-alt"></i> Security
+          </button>
+          <button 
+            class="tab-button" 
+            :class="{ active: activeTab === 'preferences' }"
+            @click="activeTab = 'preferences'"
+          >
+            <i class="fas fa-sliders-h"></i> Preferences
+          </button>
+        </div>
+
+        <div class="profile-tab-content">
+          <!-- Account Tab -->
+          <div v-if="activeTab === 'account'" class="tab-pane">
+            <h3 class="tab-title">Account Information</h3>
+            <form @submit.prevent="updateProfile" class="profile-form">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input
+                  id="name"
+                  v-model="user.name"
+                  type="text"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                  id="email"
+                  v-model="user.email"
+                  type="email"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea
+                  id="bio"
+                  v-model="user.bio"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Tell us about yourself"
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" :disabled="isSaving">
+                  <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Security Tab -->
+          <div v-if="activeTab === 'security'" class="tab-pane">
+            <h3 class="tab-title">Password & Security</h3>
+            <form @submit.prevent="updatePassword" class="profile-form">
+              <div class="form-group">
+                <label for="current_password">Current Password</label>
+                <input
+                  id="current_password"
+                  v-model="passwordData.current"
+                  type="password"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="new_password">New Password</label>
+                <input
+                  id="new_password"
+                  v-model="passwordData.new"
+                  type="password"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="password_confirmation">Confirm New Password</label>
+                <input
+                  id="password_confirmation"
+                  v-model="passwordData.confirmation"
+                  type="password"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" :disabled="isSavingPassword">
+                  <i class="fas fa-lock"></i> {{ isSavingPassword ? 'Updating...' : 'Update Password' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Preferences Tab -->
+          <div v-if="activeTab === 'preferences'" class="tab-pane">
+            <h3 class="tab-title">Interface Preferences</h3>
+            
+            <div class="preference-group">
+              <h4 class="preference-title">Theme</h4>
+              <div class="preference-options">
+                <div 
+                  class="theme-option" 
+                  :class="{ active: colorMode === 'light' }"
+                  @click="updateColorMode('light')"
+                >
+                  <div class="theme-preview light-theme"></div>
+                  <span>Light Mode</span>
+                </div>
+                <div 
+                  class="theme-option" 
+                  :class="{ active: colorMode === 'dark' }"
+                  @click="updateColorMode('dark')"
+                >
+                  <div class="theme-preview dark-theme"></div>
+                  <span>Dark Mode</span>
+                </div>
+                <div 
+                  class="theme-option" 
+                  :class="{ active: colorMode === 'auto' }"
+                  @click="updateColorMode('auto')"
+                >
+                  <div class="theme-preview auto-theme"></div>
+                  <span>System Default</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="preference-group">
+              <h4 class="preference-title">Text Direction</h4>
+              <div class="toggle-option">
+                <label class="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    :checked="rtlMode"
+                    @change="toggleDirection"
+                  />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Right-to-Left Text (RTL)</span>
+              </div>
+            </div>
+
+            <div class="preference-group">
+              <h4 class="preference-title">Language</h4>
+              <select 
+                v-model="selectedLanguage" 
+                @change="changeLanguage" 
+                class="language-select"
+              >
+                <option value="en">English</option>
+                <option value="ar">Arabic</option>
+                <option value="fr">French</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -215,6 +219,7 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { getCurrentLanguage, setLanguage, isRTL, setDirection } from '../i18n';
+import AdminLayout from './AdminLayout.vue';
 
 // State
 const user = reactive({
@@ -373,6 +378,9 @@ const updateColorMode = (mode) => {
     document.documentElement.setAttribute('data-color-mode', mode);
   }
   
+  // Dispatch event to notify AdminLayout
+  window.dispatchEvent(new CustomEvent('colorModeChanged', { detail: { mode } }));
+  
   toast.info(`Theme changed to ${mode} mode`);
 };
 
@@ -380,12 +388,29 @@ const updateColorMode = (mode) => {
 const toggleDirection = () => {
   rtlMode.value = !rtlMode.value;
   setDirection(rtlMode.value ? 'rtl' : 'ltr');
+  
+  // Dispatch event to notify AdminLayout
+  window.dispatchEvent(new CustomEvent('languageChanged', { 
+    detail: { 
+      language: selectedLanguage.value,
+      direction: rtlMode.value ? 'rtl' : 'ltr'
+    } 
+  }));
+  
   toast.info(`Text direction changed to ${rtlMode.value ? 'right-to-left' : 'left-to-right'}`);
 };
 
 // Change language
 const changeLanguage = () => {
   setLanguage(selectedLanguage.value);
+  
+  // Dispatch event to notify AdminLayout
+  window.dispatchEvent(new CustomEvent('languageChanged', { 
+    detail: { 
+      language: selectedLanguage.value 
+    } 
+  }));
+  
   toast.info(`Language changed to ${selectedLanguage.value === 'en' ? 'English' : selectedLanguage.value === 'ar' ? 'Arabic' : 'French'}`);
 };
 
@@ -397,16 +422,21 @@ onMounted(() => {
 
 <style scoped>
 .profile-page {
-  padding: 1.5rem;
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
 }
 
 .page-title {
   font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  font-weight: 600;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  margin: 0;
 }
 
 .profile-content {
@@ -414,6 +444,11 @@ onMounted(() => {
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.profile-content:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .profile-header {
@@ -422,6 +457,18 @@ onMounted(() => {
   padding: 2rem;
   background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
   color: white;
+  position: relative;
+}
+
+.profile-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
 }
 
 .profile-avatar-container {
@@ -429,6 +476,9 @@ onMounted(() => {
   width: 120px;
   height: 120px;
   margin-right: 2rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 2;
 }
 
 .profile-avatar {
@@ -437,6 +487,11 @@ onMounted(() => {
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar-container:hover .profile-avatar {
+  transform: scale(1.02);
 }
 
 .profile-avatar-overlay {
@@ -451,7 +506,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease;
 }
 
 .profile-avatar-container:hover .profile-avatar-overlay {
@@ -468,6 +523,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   color: var(--theme-primary);
+  transition: all 0.3s ease;
+}
+
+.avatar-upload-label:hover {
+  transform: scale(1.1);
+  background-color: white;
 }
 
 .avatar-upload-input {
@@ -497,6 +558,7 @@ onMounted(() => {
   border-radius: 50px;
   font-size: 0.875rem;
   margin-top: 0.5rem;
+  backdrop-filter: blur(5px);
 }
 
 .profile-tabs {
@@ -516,6 +578,12 @@ onMounted(() => {
   align-items: center;
   gap: 0.5rem;
   position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  color: var(--theme-primary);
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .tab-button.active {
@@ -531,6 +599,12 @@ onMounted(() => {
   width: 100%;
   height: 3px;
   background-color: var(--theme-primary);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 .profile-tab-content {
@@ -541,6 +615,7 @@ onMounted(() => {
   margin-bottom: 1.5rem;
   font-size: 1.25rem;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .profile-form {
@@ -566,6 +641,7 @@ onMounted(() => {
   background-color: var(--bg-main);
   color: var(--text-primary);
   font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
 .form-control:focus {
@@ -592,26 +668,43 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(62, 104, 255, 0.2);
 }
 
 .btn-primary:hover {
   background-color: var(--theme-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(62, 104, 255, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(62, 104, 255, 0.2);
 }
 
 .btn-primary:disabled {
   background-color: var(--theme-secondary);
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .preference-group {
   margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .preference-title {
   font-size: 1rem;
   margin-bottom: 1rem;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .preference-options {
@@ -625,6 +718,11 @@ onMounted(() => {
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.theme-option:hover {
+  transform: translateY(-3px);
 }
 
 .theme-preview {
@@ -632,26 +730,61 @@ onMounted(() => {
   height: 60px;
   border-radius: var(--border-radius-sm);
   border: 2px solid transparent;
-  transition: border 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .theme-option.active .theme-preview {
   border-color: var(--theme-primary);
+  box-shadow: 0 0 0 3px rgba(62, 104, 255, 0.1);
 }
 
 .light-theme {
   background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.light-theme::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 10px;
+  background-color: #f8f9fa;
+  border-radius: 2px;
 }
 
 .dark-theme {
   background-color: #1a202c;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.dark-theme::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 10px;
+  background-color: #2d3748;
+  border-radius: 2px;
 }
 
 .auto-theme {
   background: linear-gradient(to right, #ffffff 50%, #1a202c 50%);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.auto-theme::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 10px;
+  background: linear-gradient(to right, #f8f9fa 50%, #2d3748 50%);
+  border-radius: 2px;
 }
 
 .toggle-option {
@@ -695,6 +828,7 @@ onMounted(() => {
   background-color: white;
   transition: .4s;
   border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 input:checked + .toggle-slider {
@@ -718,6 +852,14 @@ input:checked + .toggle-slider:before {
   color: var(--text-primary);
   width: 200px;
   font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.language-select:focus {
+  border-color: var(--theme-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(62, 104, 255, 0.1);
 }
 
 @media (max-width: 768px) {
