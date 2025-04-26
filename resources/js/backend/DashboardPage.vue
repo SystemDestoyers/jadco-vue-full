@@ -4,66 +4,232 @@
       <div class="dashboard-header">
         <h1 class="page-title">Dashboard</h1>
         <div class="dashboard-actions">
-          <button class="btn btn-primary" @click="refreshDashboard">
-            <i class="fas fa-sync-alt mr-2"></i> Refresh
-          </button>
+          <select v-model="timeFilter" class="form-select time-filter">
+            <option value="month">Month</option>
+            <option value="week">Week</option>
+            <option value="day">Day</option>
+          </select>
         </div>
       </div>
       
       <!-- Statistics Cards -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-icon bg-primary">
-            <i class="fas fa-file-alt"></i>
+          <div class="stat-header">
+            <span class="stat-label">PAGES</span>
+            <i class="up-indicator fas fa-arrow-up"></i>
+            <span class="change-indicator">03</span>
           </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ pagesCount }}</div>
-            <div class="stat-label">Pages</div>
-          </div>
-          <div class="stat-footer">
-            <router-link to="/admin/pages">Manage Pages</router-link>
-          </div>
-        </div>
-        
-        <div class="stat-card">
-          <div class="stat-icon bg-success">
-            <i class="fas fa-puzzle-piece"></i>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ sectionsCount }}</div>
-            <div class="stat-label">Sections</div>
-          </div>
-          <div class="stat-footer">
-            <router-link to="/admin/pages">View All</router-link>
+          <div class="stat-value">{{ pagesCount }}</div>
+          <div class="stat-chart">
+            <div class="mini-chart"></div>
           </div>
         </div>
         
         <div class="stat-card">
-          <div class="stat-icon bg-info">
-            <i class="fas fa-envelope"></i>
+          <div class="stat-header">
+            <span class="stat-label">SECTIONS</span>
+            <i class="up-indicator fas fa-arrow-up"></i>
+            <span class="change-indicator">04</span>
           </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ messagesCount }}</div>
-            <div class="stat-label">Messages</div>
-            <div v-if="unreadMessages > 0" class="stat-badge">
-              {{ unreadMessages }} unread
+          <div class="stat-value">{{ sectionsCount }}</div>
+          <div class="stat-chart">
+            <div class="mini-chart"></div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">MESSAGES</span>
+            <i class="up-indicator fas fa-arrow-up"></i>
+            <span class="change-indicator">06</span>
+          </div>
+          <div class="stat-value">{{ messagesCount }}</div>
+          <div class="stat-chart">
+            <div class="mini-chart"></div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">MEDIA</span>
+            <i class="up-indicator fas fa-arrow-up"></i>
+            <span class="change-indicator">02</span>
+          </div>
+          <div class="stat-value">{{ mediaCount }}</div>
+          <div class="stat-chart">
+            <div class="mini-chart"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Main Content Cards -->
+      <div class="dashboard-main">
+        <div class="content-row">
+          <!-- Trend Chart -->
+          <div class="content-card trend-chart">
+            <div class="card-header">
+              <h2>Activity Trend</h2>
+            </div>
+            <div class="card-content">
+              <div class="chart-placeholder">
+                <div class="subscription-trend"></div>
+              </div>
             </div>
           </div>
-          <div class="stat-footer">
-            <router-link to="/admin/messages">View Inbox</router-link>
+          
+          <!-- Recent Activity -->
+          <div class="content-card recent-activity">
+            <div class="card-header">
+              <h2>Recent Activity</h2>
+            </div>
+            <div class="card-content">
+              <div class="activity-item">
+                <i class="fas fa-file-alt activity-icon"></i>
+                <div class="activity-details">
+                  <div class="activity-title">Number of Sessions</div>
+                  <div class="activity-stats">
+                    <span class="today-count">03 Today</span>
+                    <span class="period-count">36 This month</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="activity-item">
+                <i class="fas fa-graduation-cap activity-icon"></i>
+                <div class="activity-details">
+                  <div class="activity-title">Content Completion</div>
+                  <div class="activity-stats">
+                    <span class="today-count">01 Today</span>
+                    <span class="period-count">12 This month</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="activity-item">
+                <i class="fas fa-user activity-icon"></i>
+                <div class="activity-details">
+                  <div class="activity-title">User Enrollments</div>
+                  <div class="activity-stats">
+                    <span class="today-count">03 Today</span>
+                    <span class="period-count">36 This month</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="activity-item">
+                <i class="fas fa-users activity-icon"></i>
+                <div class="activity-details">
+                  <div class="activity-title">Groups Created</div>
+                  <div class="activity-stats">
+                    <span class="today-count">01 Today</span>
+                    <span class="period-count">05 This month</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
-        <div class="stat-card">
-          <div class="stat-icon bg-warning">
-            <i class="fas fa-photo-video"></i>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ mediaCount }}</div>
-            <div class="stat-label">Media Files</div>
-          </div>
-          <div class="stat-footer">
-            <router-link to="/admin/media">Media Library</router-link>
+        <div class="content-row">
+          <!-- Circular Charts -->
+          <div class="circular-charts">
+            <div class="chart-card">
+              <h3>Pages vs Sections</h3>
+              <div class="circular-chart">
+                <div class="chart-circle">
+                  <span class="chart-number">{{ pagesCount }}</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #6c757d;"></span>
+                  <span class="legend-text">Pages</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #28a745;"></span>
+                  <span class="legend-text">Sections</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <h3>Content Types</h3>
+              <div class="circular-chart">
+                <div class="chart-circle">
+                  <span class="chart-number">11</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #007bff;"></span>
+                  <span class="legend-text">Text</span>
+                  <span class="legend-value">03</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #6610f2;"></span>
+                  <span class="legend-text">Images</span>
+                  <span class="legend-value">02</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #6f42c1;"></span>
+                  <span class="legend-text">Videos</span>
+                  <span class="legend-value">01</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <h3>Completion Status</h3>
+              <div class="circular-chart">
+                <div class="chart-circle">
+                  <span class="chart-number">06</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #ffc107;"></span>
+                  <span class="legend-text">Not started</span>
+                  <span class="legend-value">03</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #17a2b8;"></span>
+                  <span class="legend-text">In Progress</span>
+                  <span class="legend-value">02</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #28a745;"></span>
+                  <span class="legend-text">Completed</span>
+                  <span class="legend-value">01</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <h3>Groups</h3>
+              <div class="circular-chart">
+                <div class="chart-circle">
+                  <span class="chart-number">10</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #20c997;"></span>
+                  <span class="legend-text">Group 1</span>
+                  <span class="legend-value">03</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #e83e8c;"></span>
+                  <span class="legend-text">Group 2</span>
+                  <span class="legend-value">02</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color" style="background-color: #fd7e14;"></span>
+                  <span class="legend-text">Group 3</span>
+                  <span class="legend-value">05</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -101,101 +267,6 @@
           </a>
         </div>
       </div>
-      
-      <!-- Content Cards -->
-      <div class="dashboard-content">
-        <!-- Recent Pages -->
-        <div class="content-card recent-pages">
-          <div class="card-header">
-            <h2>Recent Pages</h2>
-            <router-link to="/admin/pages" class="btn btn-sm btn-outline-primary">
-              All Pages
-            </router-link>
-          </div>
-          
-          <div v-if="isLoading" class="loading-spinner">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-          
-          <div v-else-if="error" class="error-message">
-            <i class="fas fa-exclamation-triangle text-danger"></i> {{ error }}
-          </div>
-          
-          <div v-else class="card-content">
-            <div v-if="pages.length === 0" class="empty-state">
-              <i class="fas fa-file-alt fa-3x text-muted"></i>
-              <p>No pages found</p>
-              <router-link to="/admin/pages/create" class="btn btn-sm btn-primary">
-                Create First Page
-              </router-link>
-            </div>
-            
-            <ul v-else class="page-list">
-              <li v-for="page in pages" :key="page.id" class="page-item">
-                <div class="page-info">
-                  <div class="page-title">{{ page.title }}</div>
-                  <div class="page-meta">
-                    <span class="page-slug">{{ page.slug }}</span>
-                    <span class="page-sections">{{ page.sections_count }} sections</span>
-                  </div>
-                </div>
-                <div class="page-actions">
-                  <router-link :to="`/admin/pages/${page.id}/sections`" class="action-btn sections">
-                    <i class="fas fa-puzzle-piece"></i>
-                  </router-link>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <!-- Recent Messages -->
-        <div class="content-card recent-messages">
-          <div class="card-header">
-            <h2>Recent Messages</h2>
-            <router-link to="/admin/messages" class="btn btn-sm btn-outline-primary">
-              All Messages
-            </router-link>
-          </div>
-          
-          <div v-if="isLoadingMessages" class="loading-spinner">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-          
-          <div v-else-if="messageError" class="error-message">
-            <i class="fas fa-exclamation-triangle text-danger"></i> {{ messageError }}
-          </div>
-          
-          <div v-else class="card-content">
-            <div v-if="recentMessages.length === 0" class="empty-state">
-              <i class="fas fa-envelope fa-3x text-muted"></i>
-              <p>No messages found</p>
-            </div>
-            
-            <ul v-else class="message-list">
-              <li v-for="message in recentMessages" :key="message.id" class="message-item" :class="{'unread': !message.read}">
-                <div class="message-info">
-                  <div class="message-sender">
-                    {{ message.first_name }} {{ message.last_name }}
-                    <span v-if="!message.read" class="unread-indicator"></span>
-                  </div>
-                  <div class="message-preview">{{ truncateText(message.message, 60) }}</div>
-                  <div class="message-date">{{ formatDate(message.created_at) }}</div>
-                </div>
-                <div class="message-actions">
-                  <router-link :to="`/admin/messages?view=${message.id}`" class="action-btn view">
-                    <i class="fas fa-envelope-open"></i>
-                  </router-link>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
     </div>
   </AdminLayout>
 </template>
@@ -216,6 +287,7 @@ const messageError = ref(null);
 const unreadMessages = ref(0);
 const mediaCount = ref(0);
 const messagesCount = ref(0);
+const timeFilter = ref('month');
 
 // Computed properties
 const pagesCount = computed(() => pages.value.length);
@@ -230,16 +302,7 @@ const fetchPages = async () => {
   
   try {
     const response = await axios.get('/api/admin/pages');
-    
-    // Transform the data to have the expected structure
-    const transformedPages = response.data.map(page => ({
-      id: page.id,
-      title: page.name || page.title,
-      slug: page.slug || '',
-      sections_count: page.sections_count || 0
-    }));
-    
-    pages.value = transformedPages.slice(0, 5); // Get the 5 most recent pages
+    pages.value = response.data.slice(0, 5); // Get the 5 most recent pages
   } catch (err) {
     console.error('Failed to load pages:', err);
     error.value = 'Failed to load pages. Please try again.';
@@ -333,6 +396,7 @@ onMounted(() => {
 <style scoped>
 .dashboard {
   padding: 1.5rem;
+  background-color: #f8f9fa;
 }
 
 .dashboard-header {
@@ -349,106 +413,275 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.dashboard-actions .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.time-filter {
+  width: auto;
+  min-width: 120px;
 }
 
 /* Statistics Cards */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .stat-card {
   background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+.stat-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  color: white;
-}
-
-.bg-primary {
-  background-color: #3498db;
-}
-
-.bg-success {
-  background-color: #2ecc71;
-}
-
-.bg-info {
-  background-color: #00bcd4;
-}
-
-.bg-warning {
-  background-color: #f39c12;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
-  line-height: 1;
+  margin-bottom: 0.5rem;
 }
 
 .stat-label {
-  color: #7f8c8d;
-  font-size: 0.95rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-grow: 1;
 }
 
-.stat-badge {
-  display: inline-block;
-  background-color: #e74c3c;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 1rem;
+.change-indicator {
+  color: #28a745;
   font-size: 0.75rem;
-  margin-top: 0.5rem;
+  font-weight: 600;
+  margin-left: 0.25rem;
 }
 
-.stat-footer {
-  margin-top: 1rem;
-  font-size: 0.85rem;
+.up-indicator {
+  color: #28a745;
+  font-size: 0.75rem;
 }
 
-.stat-footer a {
-  color: #3498db;
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.5rem;
+}
+
+.stat-chart {
+  height: 24px;
+  margin-top: auto;
+}
+
+.mini-chart {
+  height: 100%;
+  background-image: linear-gradient(90deg, #e9ecef 0%, #e9ecef 20%, #dee2e6 20%, #dee2e6 40%, #ced4da 40%, #ced4da 60%, #adb5bd 60%, #adb5bd 80%, #6c757d 80%, #6c757d 100%);
+  opacity: 0.5;
+}
+
+/* Content Layout */
+.dashboard-main {
+  margin-bottom: 2rem;
+}
+
+.content-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.content-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trend-chart {
+  flex: 3;
+}
+
+.recent-activity {
+  flex: 2;
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.card-content {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+/* Activity Items */
+.activity-item {
   display: flex;
   align-items: center;
-  text-decoration: none;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #f1f1f1;
 }
 
-.stat-footer a:hover {
-  text-decoration: underline;
+.activity-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+}
+
+.activity-details {
+  flex: 1;
+}
+
+.activity-title {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: #343a40;
+}
+
+.activity-stats {
+  display: flex;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.today-count {
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.period-count {
+  color: #adb5bd;
+}
+
+/* Trend Chart Placeholder */
+.chart-placeholder {
+  height: 200px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subscription-trend {
+  width: 100%;
+  height: 100%;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50"><polyline points="0,40 10,35 20,30 30,38 40,32 50,20 60,25 70,30 80,25 90,28 100,22" fill="none" stroke="%236c757d" stroke-width="2"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+/* Circular Charts */
+.circular-charts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.chart-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.chart-card h3 {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.circular-chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chart-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 10px solid #f1f1f1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-circle::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 10px solid #28a745;
+  border-color: #28a745 transparent transparent transparent;
+  transform: rotate(45deg);
+}
+
+.chart-number {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.chart-legend {
+  text-align: left;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 0.5rem;
+}
+
+.legend-text {
+  color: #6c757d;
+  flex-grow: 1;
+}
+
+.legend-value {
+  color: #343a40;
+  font-weight: 500;
 }
 
 /* Quick Actions */
@@ -458,7 +691,7 @@ onMounted(() => {
 
 .section-title {
   margin-bottom: 1rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
   color: #2c3e50;
   font-weight: 600;
 }
@@ -473,228 +706,70 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem;
+  padding: 1.25rem;
   background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
   text-decoration: none;
   color: #2c3e50;
 }
 
 .action-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .action-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #f5f8fa;
+  background-color: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  color: #3498db;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: #6c757d;
 }
 
 .action-text {
   font-weight: 500;
   text-align: center;
+  font-size: 0.875rem;
 }
 
-/* Content Cards */
-.dashboard-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 992px) {
-  .dashboard-content {
-    grid-template-columns: 3fr 2fr;
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .circular-charts {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.content-card {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+@media (max-width: 992px) {
+  .content-row {
+    flex-direction: column;
+  }
+  
+  .trend-chart,
+  .recent-activity {
+    width: 100%;
+  }
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #ecf0f1;
+@media (max-width: 768px) {
+  .circular-charts {
+    grid-template-columns: 1fr;
+  }
 }
 
-.card-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-.card-content {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-  max-height: 400px;
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.error-message {
-  padding: 1rem;
-  color: #e74c3c;
-  text-align: center;
-}
-
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  color: #7f8c8d;
-  text-align: center;
-}
-
-.empty-state i {
-  margin-bottom: 1rem;
-}
-
-.empty-state p {
-  margin-bottom: 1rem;
-}
-
-/* Page List */
-.page-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.page-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid #ecf0f1;
-}
-
-.page-item:last-child {
-  border-bottom: none;
-}
-
-.page-title {
-  font-weight: 500;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
-}
-
-.page-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  color: #7f8c8d;
-}
-
-.page-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  color: #2c3e50;
-  background-color: #f5f8fa;
-  text-decoration: none;
-  transition: background-color 0.2s;
-}
-
-.action-btn:hover {
-  background-color: #e9ecef;
-}
-
-.action-btn.sections:hover {
-  color: #2ecc71;
-}
-
-.action-btn.view:hover {
-  color: #f39c12;
-}
-
-/* Message List */
-.message-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.message-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  padding: 1rem 0;
-  border-bottom: 1px solid #ecf0f1;
-  position: relative;
-}
-
-.message-item:last-child {
-  border-bottom: none;
-}
-
-.message-item.unread {
-  background-color: #f5faff;
-}
-
-.message-sender {
-  font-weight: 500;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
-  display: flex;
-  align-items: center;
-}
-
-.unread-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #3498db;
-  margin-left: 0.5rem;
-}
-
-.message-preview {
-  font-size: 0.9rem;
-  color: #34495e;
-  margin-bottom: 0.25rem;
-}
-
-.message-date {
-  font-size: 0.8rem;
-  color: #7f8c8d;
-}
-
-.message-actions {
-  display: flex;
-  gap: 0.5rem;
+@media (max-width: 576px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style> 
