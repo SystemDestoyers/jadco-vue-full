@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\SectionController as AdminSectionController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Admin\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,11 @@ Route::prefix('admin')->group(function () {
     Route::put('/pages/{id}', [AdminPageController::class, 'update']);
     Route::delete('/pages/{id}', [AdminPageController::class, 'destroy']);
 
+    // User profile routes
+    Route::put('/profile', [ProfileController::class, 'update'])->middleware('auth:sanctum');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('auth:sanctum');
+    Route::post('/profile/image', [ProfileController::class, 'updateProfileImage'])->middleware('auth:sanctum');
+    
     // Sections management
     Route::get('/pages/{pageId}/sections', [AdminSectionController::class, 'index']);
     Route::post('/pages/{pageId}/sections', [AdminSectionController::class, 'store']);

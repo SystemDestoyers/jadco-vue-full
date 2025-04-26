@@ -265,6 +265,11 @@ const updateProfile = async () => {
       name: user.name,
       email: user.email,
       bio: user.bio
+    }, {
+      withCredentials: true,
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      }
     });
     
     toast.success('Profile updated successfully');
@@ -298,6 +303,11 @@ const updatePassword = async () => {
       current_password: passwordData.current,
       password: passwordData.new,
       password_confirmation: passwordData.confirmation
+    }, {
+      withCredentials: true,
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      }
     });
     
     toast.success('Password updated successfully');
@@ -342,8 +352,10 @@ const handleAvatarUpload = async (event) => {
   try {
     const response = await axios.post('/api/admin/profile/image', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      },
+      withCredentials: true
     });
     
     if (response.data && response.data.image_path) {
