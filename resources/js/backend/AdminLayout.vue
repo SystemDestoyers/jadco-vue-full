@@ -131,6 +131,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import './assets/css/backend-global.css';
+import './assets/css/admin-theme.css';
 import { getCurrentLanguage, isRTL, t } from '../i18n';
 
 const router = useRouter();

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
 
 ### Added
@@ -161,8 +164,25 @@ All notable changes to this project will be documented in this file.
   - Updated SimpleContactForm with test functionality
   - Added comprehensive troubleshooting guide for email configuration
   - Improved error messages with specific mailer information
+- Database-backed settings management in Admin panel:
+  - Added database settings integration to SettingsPage.vue with grouped settings by category
+  - Created expandable/collapsible sections for each setting group
+  - Implemented dynamic form controls based on setting type (string, boolean, integer, json)
+  - Added API endpoints to retrieve and update database settings
+  - Created JsonEditor component for validating and formatting JSON in settings
+  - Added live validation for JSON fields with error feedback
+  - Implemented proper validation for JSON-typed settings
+  - Added error handling and loading states for better user experience
+  - Enhanced SettingsPage styling to support new database settings section
+- JsonEditor component for handling JSON settings in the admin panel
+- New admin dashboard theme with CSS variables for easy customization
+- Dark mode support through CSS variables in the admin theme
+- Animated micro-interactions in the admin dashboard UI
+- Responsive design improvements for all screen sizes
+- Configured Laravel queue worker to run via scheduler for cPanel environments (every 5 minutes)
 
 ### Changed
+- Updated DatabaseSeeder to include SettingsSeeder class for consistent application settings
 - Updated Vue router to use new web routes for authentication
 - Modified LoginPage.vue to use new web routes instead of API routes
 - Updated authentication route middleware
@@ -179,6 +199,14 @@ All notable changes to this project will be documented in this file.
 - Updated AdminLayout to handle direction attribute dynamically
 - Changed page-title font size to 1rem in DashboardPage.vue
 - Enhanced dark mode styling with darker backgrounds and better text contrast
+- Refactored admin dashboard styling to use CSS variables for colors, typography, and spacing
+- Enhanced stat cards with gradient borders and interactive hover effects
+- Improved sidebar design with animated gradient background
+- Updated typography scale for better readability across the application
+- Optimized CSS with proper nesting and organization of selectors
+- Enhanced queue worker configuration to use --tries=3 and --max-time=3600 settings
+- Reduced server load by running queue worker every 5 minutes instead of every minute
+- Updated email templates to use absolute URLs for logo images (https://jadco.co/images/logo.png)
 
 ### Removed
 - Removed test components and routes after successfully integrating email functionality:
@@ -232,6 +260,13 @@ All notable changes to this project will be documented in this file.
 - Added proper placeholder text to form inputs for better usability
 - Fixed Vue warnings about undefined currentDirection property in AdminLayout.vue
 - Fixed dark theme not properly applying background colors by adding body class and important flag
+- Error handling in settings pages
+- JSON validation in settings forms 
+- Various CSS inconsistencies in the admin interface
+- Responsive layout issues on mobile devices
+- Background queue processing for email notifications and other queued jobs
+- Email logo display issues in notifications by using absolute URLs and ensuring logo always shows
+- Fixed email background and header logo images by using hardcoded domain URLs instead of relative paths
 
 ## [0.1.0] - 2023-05-16
 

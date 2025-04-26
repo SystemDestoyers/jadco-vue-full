@@ -308,7 +308,7 @@
                                                 // Reset form
                                                 form.reset();
                                                 
-                                                // Keep showing the loading overlay for 2 seconds
+                                                // Keep showing the loading overlay for 1 second (reduced from 2 seconds)
                                                 setTimeout(function() {
                                                     // Hide loading overlay
                                                     if (loadingOverlay) {
@@ -338,7 +338,7 @@
                                                     if (firstInput) {
                                                         firstInput.focus();
                                                     }
-                                                }, 2000);
+                                                }, 1000);
                                             } else {
                                                 // Hide loading overlay immediately
                                                 if (loadingOverlay) {
@@ -506,7 +506,7 @@
                                         <div class="spinner-border text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
-                                        <p class="mt-3">Sending your message...</p>
+                                        <p class="mt-3">Submitting your message...</p>
                                     </div>
                                 `;
                                 form.parentNode.insertBefore(loadingOverlay, form.nextSibling);
@@ -533,6 +533,14 @@
                                 /* Ensure contact form is visible by default */
                                 #contactForm {
                                     display: block !important;
+                                }
+                                /* Add some animation to the success message */
+                                .alert-success {
+                                    animation: fadeIn 0.5s;
+                                }
+                                @keyframes fadeIn {
+                                    from { opacity: 0; }
+                                    to { opacity: 1; }
                                 }
                             `;
                             document.head.appendChild(style);

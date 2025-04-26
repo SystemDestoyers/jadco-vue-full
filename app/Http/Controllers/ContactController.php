@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendContactForm;
+use Illuminate\Support\Facades\Cache;
 
 class ContactController extends Controller
 {
@@ -128,13 +129,19 @@ class ContactController extends Controller
             ]);
             
             if ($request->expectsJson()) {
+                $templates = Cache::get('email_templates', []);
+                $successMessage = $templates['success_message'] ?? 'Thank you for your message! We will get back to you soon.';
+                
                 return response()->json([
                     'success' => true,
-                    'message' => 'Thank you for your message! We will get back to you soon.'
+                    'message' => $successMessage
                 ]);
             }
             
-            return redirect()->back()->with('success', 'Thank you for your message! We will get back to you soon.');
+            $templates = Cache::get('email_templates', []);
+            $successMessage = $templates['success_message'] ?? 'Thank you for your message! We will get back to you soon.';
+            
+            return redirect()->back()->with('success', $successMessage);
         } catch (\Exception $e) {
             // Log detailed error information
             Log::error('Error sending contact form email', [

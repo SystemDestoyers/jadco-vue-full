@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Contact form submission route
 Route::post('/contact/submit', [App\Http\Controllers\ContactController::class, 'apiSubmit']);
+Route::post('/contact/email', [App\Http\Controllers\ContactController::class, 'sendEmail']);
 
 // Admin Authentication Routes
 // These routes are now handled by web.php, so they're commented out here
@@ -107,4 +108,13 @@ Route::prefix('admin')->group(function () {
     Route::put('messages/{id}/archive', [\App\Http\Controllers\Admin\MessageController::class, 'archive']);
     Route::put('messages/{id}/unarchive', [\App\Http\Controllers\Admin\MessageController::class, 'unarchive']);
     Route::post('messages/send', [\App\Http\Controllers\Admin\MessageController::class, 'sendMessage']);
+
+    // Settings management
+    Route::post('/settings/email', [App\Http\Controllers\Api\SettingsController::class, 'updateEmailSettings']);
+    Route::post('/settings/email/test', [App\Http\Controllers\Api\SettingsController::class, 'testEmailConnection']);
+    Route::get('/settings', [App\Http\Controllers\Api\SettingsController::class, 'getSettings']);
+    
+    // Database settings management (new)
+    Route::get('/database-settings', [App\Http\Controllers\Api\SettingsController::class, 'getDatabaseSettings']);
+    Route::post('/database-settings', [App\Http\Controllers\Api\SettingsController::class, 'updateDatabaseSettings']);
 });
