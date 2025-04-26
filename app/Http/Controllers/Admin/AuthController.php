@@ -23,13 +23,35 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+            $user = Auth::user();
             
-            Log::info('Admin login successful', ['user' => Auth::user()->email]);
+            // First delete any existing tokens for this user to prevent duplicates
+            $user->tokens()->delete();
+            
+            // Create a new token with more details for debugging
+            $token = $user->createToken('admin-token');
+            $plainTextToken = $token->plainTextToken;
+            
+            // Log token creation for debugging
+            Log::info('Admin token created', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'token_id' => $token->accessToken->id,
+                'token_name' => $token->accessToken->name,
+                'token_length' => strlen($plainTextToken),
+                'token_preview' => substr($plainTextToken, 0, 10) . '...',
+            ]);
+            
+            Log::info('Admin login successful', ['user' => $user->email]);
             
             return response()->json([
                 'success' => true,
-                'user' => Auth::user()
+                'user' => $user,
+                'token' => $plainTextToken,
+                'debug_info' => [
+                    'token_id' => $token->accessToken->id,
+                    'token_preview' => substr($plainTextToken, 0, 10) . '...'
+                ]
             ]);
         }
 
@@ -45,17 +67,45 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $user = Auth::user();
-        Auth::logout();
-        
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
-        Log::info('Admin logout', ['user' => $user ? $user->email : 'unknown']);
-        
-        return response()->json([
-            'success' => true
-        ]);
+        try {
+            $user = $request->user();
+            
+            // Check if user is authenticated
+            if ($user) {
+                // Delete the current access token if it's not a TransientToken
+                try {
+                    $token = $request->user()->currentAccessToken();
+                    if ($token && !($token instanceof \Laravel\Sanctum\TransientToken)) {
+                        $token->delete();
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error deleting token', [
+                        'error' => $e->getMessage(),
+                        'user_id' => $user->id ?? 'unknown'
+                    ]);
+                    // Continue with logout even if token deletion fails
+                }
+                
+                Log::info('Admin logout', ['user' => $user->email]);
+            } else {
+                Log::warning('Logout attempt with no authenticated user');
+            }
+            
+            // Always return success to client
+            return response()->json([
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Exception during logout', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Return success anyway to ensure client can complete logout flow
+            return response()->json([
+                'success' => true
+            ]);
+        }
     }
 
     /**
@@ -63,9 +113,9 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        if (Auth::check()) {
+        if ($request->user()) {
             return response()->json([
-                'user' => Auth::user()
+                'user' => $request->user()
             ]);
         }
         
@@ -80,7 +130,7 @@ class AuthController extends Controller
     public function checkAuth(Request $request)
     {
         return response()->json([
-            'authenticated' => Auth::check()
+            'authenticated' => !is_null($request->user())
         ]);
     }
 } 

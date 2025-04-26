@@ -6,12 +6,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AuthController;
 
 // Admin Authentication Routes
-Route::prefix('admin-auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth']);
-    Route::get('/user', [AuthController::class, 'user']);
-    Route::get('/check-auth', [AuthController::class, 'checkAuth']);
-});
+// Route::prefix('admin-auth')->group(function () {
+//     Route::post('/login', [AuthController::class, 'login']);
+//     Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth']);
+//     Route::get('/user', [AuthController::class, 'user']);
+//     Route::get('/check-auth', [AuthController::class, 'checkAuth']);
+// });
 
 // API Routes
 Route::post('/api/contact/submit', [ContactController::class, 'apiSubmit'])->name('contact.submit');

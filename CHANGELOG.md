@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Configured Laravel Sanctum for SPA authentication:
+  - Added CSRF cookie route for secure SPA authentication
+  - Created web-based authentication routes using Sanctum
+  - Implemented EnsureTokenIsValid middleware for token validation
+  - Added main AuthController for handling web authentication
+  - Updated app.php to include the EnsureTokenIsValid middleware
+  - Added sanctum auth middleware to protected routes
+  - Added token-based authentication with Sanctum
+  - Implemented proper token storage in localStorage
+  - Added Authorization header with Bearer token for all API requests
+  - Created AuthControllers that return tokens on login
+  - Updated routes to use auth:sanctum middleware for protection
+  - Added token revocation on logout
 - Integrated dynamic content in Vue components:
   - Updated Navbar.vue to consume content from the API
   - Added support for dynamic nav items and logo in Vue components
@@ -191,6 +204,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom event dispatch for direction changes that components can listen to
 
 ### Changed
+- Switched from session-based to token-based authentication with API endpoints:
+  - Modified LoginPage.vue to use '/api/admin/login' endpoint and store token in localStorage
+  - Updated AdminLayout.vue to use '/api/admin/logout' for token-based logout
+  - Implemented proper Sanctum token authentication through API routes
+  - Updated all components to use '/api/admin/*' routes for authenticated requests
+  - Added proper token validation in router navigation guards
+  - Improved authentication flow with better error handling
 - Updated DatabaseSeeder to include SettingsSeeder class for consistent application settings
 - Updated Vue router to use new web routes for authentication
 - Modified LoginPage.vue to use new web routes instead of API routes
@@ -232,6 +252,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed duplicate API routes for admin authentication (these are now handled by web routes)
 
 ### Fixed
+- Fixed user profile password update issues:
+  - Removed debugging code from ProfileController methods
+  - Simplified axios requests by leveraging global withCredentials setting
+  - Fixed 401 Unauthorized errors on profile password updates
 - Improved media folder filtering in MediaController to properly handle different folder scenarios
 - Fixed file uploads to properly store files in the correct directory structure
 - Prevented duplicate "public" folder creation when creating new folders

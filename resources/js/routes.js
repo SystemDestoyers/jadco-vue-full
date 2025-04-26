@@ -59,7 +59,15 @@ const routes = [
     {
         path: '/admin/login',
         name: 'admin.login',
-        component: LoginPage
+        component: LoginPage,
+        beforeEnter: (to, from, next) => {
+            // If already logged in, redirect to dashboard
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                return next('/admin');
+            }
+            next();
+        }
     },
     {
         path: '/admin',

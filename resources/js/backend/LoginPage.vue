@@ -93,18 +93,34 @@ const login = async () => {
     errorMessage.value = ''
     isLoading.value = true
     
-    // Get CSRF token from cookie first
-    await axios.get('/sanctum/csrf-cookie');
-    
-    // Attempt login
-    const response = await axios.post('/admin-auth/login', { 
+    // Attempt login with admin API
+    const response = await axios.post('/api/admin/login', { 
       email: email.value, 
       password: password.value 
     });
     
-    // If successful, redirect to dashboard
-    const redirectPath = route.query.redirect || '/admin'
-    router.push(redirectPath)
+    console.log('Login response:', response.data);
+    
+    // Store the token in localStorage
+    if (response.data && response.data.token) {
+      const token = response.data.token;
+      localStorage.setItem('auth_token', token);
+      
+      // Set the default Authorization header for all future requests
+      const bearerToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+      axios.defaults.headers.common['Authorization'] = bearerToken;
+      
+      console.log('Token stored. Debug info:', response.data.debug_info || {});
+      
+      // If successful, redirect to dashboard - use window.location for more direct approach
+      const redirectPath = route.query.redirect || '/admin';
+      console.log('Login successful. Redirecting to:', redirectPath);
+      
+      // Use hard redirect which is more reliable than router.push
+      window.location.href = redirectPath;
+    } else {
+      errorMessage.value = 'Login successful but no token was received.';
+    }
     
   } catch (error) {
     console.error('Login error:', error);

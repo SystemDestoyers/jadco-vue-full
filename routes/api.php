@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SectionController as AdminSectionController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Api\AuthCheckController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,14 +42,15 @@ Route::post('/contact/email', [App\Http\Controllers\ContactController::class, 's
 
 // Admin Authentication Routes
 // These routes are now handled by web.php, so they're commented out here
-/*
+
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('/user', [AdminAuthController::class, 'user'])->middleware('auth:sanctum');
     Route::get('/check-auth', [AdminAuthController::class, 'checkAuth']);
+    Route::get('/debug-auth', [AuthCheckController::class, 'checkAuth']);
 });
-*/
+
 
 // Page routes
 Route::get('/home/sections', [PageController::class, 'getHomeSections']);

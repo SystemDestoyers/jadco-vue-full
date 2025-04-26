@@ -197,10 +197,28 @@ if (typeof window !== 'undefined') {
 
 const logout = async () => {
   try {
-    await axios.post('/admin-auth/logout');
+    // Ensure token is in the Authorization header
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+    
+    await axios.post('/api/admin/logout');
+    
+    // Remove token from localStorage and Authorization header
+    localStorage.removeItem('auth_token');
+    delete axios.defaults.headers.common['Authorization'];
+    
     router.push('/admin/login');
   } catch (error) {
     // Silent fail
+    console.error('Logout error:', error);
+    
+    // Still clear token and redirect on error
+    localStorage.removeItem('auth_token');
+    delete axios.defaults.headers.common['Authorization'];
+    
+    router.push('/admin/login');
   }
 };
 
@@ -326,7 +344,7 @@ const handleClickOutside = (event) => {
 // Fetch user information
 const fetchUserInfo = async () => {
   try {
-    const response = await axios.get('/admin-auth/user');
+    const response = await axios.get('/api/admin/user');
     if (response.data && response.data.user) {
       userInfo.value = response.data.user;
     }

@@ -16,7 +16,6 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        dd($request->all());
         $user = Auth::user();
         
         $validated = $request->validate([
@@ -41,7 +40,6 @@ class ProfileController extends Controller
      */
     public function updatePassword(Request $request)
     {
-        dd($request->all());
         $user = Auth::user();
         
         $validated = $request->validate([
