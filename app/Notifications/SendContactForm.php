@@ -45,7 +45,7 @@ class SendContactForm extends Notification
             ->line($this->data['message'])
             ->action('View All Messages', url('/admin/messages'))
             ->line('Thank you for using our application JADCOO!')
-            ->salutation('Regards,JADCO DEVELOPERS');
+            ->salutation('Regards,jadco developers');
     }
 
     /**
