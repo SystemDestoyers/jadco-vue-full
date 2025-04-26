@@ -230,7 +230,16 @@ const fetchPages = async () => {
   
   try {
     const response = await axios.get('/api/admin/pages');
-    pages.value = response.data.slice(0, 5); // Get the 5 most recent pages
+    
+    // Transform the data to have the expected structure
+    const transformedPages = response.data.map(page => ({
+      id: page.id,
+      title: page.name || page.title,
+      slug: page.slug || '',
+      sections_count: page.sections_count || 0
+    }));
+    
+    pages.value = transformedPages.slice(0, 5); // Get the 5 most recent pages
   } catch (err) {
     console.error('Failed to load pages:', err);
     error.value = 'Failed to load pages. Please try again.';
@@ -336,7 +345,7 @@ onMounted(() => {
 .page-title {
   margin: 0;
   color: #2c3e50;
-  font-size: 1.75rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
