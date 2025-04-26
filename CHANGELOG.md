@@ -242,6 +242,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactored user dropdown in AdminLayout.vue to use dynamic user data
 - Updated dropdown styling and icon classes for better visual consistency
 - Improved component reactivity in AdminLayout.vue
+- Fixed logout functionality to properly handle TransientToken
+- Removed unused middleware (DebugSanctumMiddleware and EnsureTokenIsValid)
 
 ### Removed
 - Removed test components and routes after successfully integrating email functionality:
