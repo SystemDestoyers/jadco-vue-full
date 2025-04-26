@@ -29,17 +29,25 @@ router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         try {
             // Check if user is authenticated
-            const response = await axios.get('/admin-auth/user');
-            if (response.data) {
-                // User is authenticated
+            const response = await axios.get('/admin-auth/check-auth');
+            
+            if (response.data && response.data.authenticated) {
+                // User is authenticated, proceed
                 next();
             } else {
-                // Redirect to login page
-                next({ path: '/admin/login', query: { redirect: to.fullPath } });
+                // User is not authenticated, redirect to login
+                next({ 
+                    path: '/admin/login', 
+                    query: { redirect: to.fullPath } 
+                });
             }
         } catch (error) {
-            // Error or unauthorized, redirect to login
-            next({ path: '/admin/login', query: { redirect: to.fullPath } });
+            console.error('Auth check error:', error);
+            // Error checking authentication, redirect to login
+            next({ 
+                path: '/admin/login', 
+                query: { redirect: to.fullPath } 
+            });
         }
     } else {
         // Route is not protected

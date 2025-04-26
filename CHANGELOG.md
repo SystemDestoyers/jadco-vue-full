@@ -180,6 +180,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Animated micro-interactions in the admin dashboard UI
 - Responsive design improvements for all screen sizes
 - Configured Laravel queue worker to run via scheduler for cPanel environments (every 5 minutes)
+- Added detailed logging for authentication operations in admin dashboard
+- Redesigned admin login page with dark theme and globe background image
 
 ### Changed
 - Updated DatabaseSeeder to include SettingsSeeder class for consistent application settings
@@ -207,6 +209,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced queue worker configuration to use --tries=3 and --max-time=3600 settings
 - Reduced server load by running queue worker every 5 minutes instead of every minute
 - Updated email templates to use absolute URLs for logo images (https://jadco.co/images/logo.png)
+- Improved admin login page error handling with more specific error messages
+- Enhanced authentication check in router navigation guards for better security
+- Updated admin login UI with dark theme and modern layout inspired by Coinwave design
 
 ### Removed
 - Removed test components and routes after successfully integrating email functionality:
@@ -267,6 +272,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Background queue processing for email notifications and other queued jobs
 - Email logo display issues in notifications by using absolute URLs and ensuring logo always shows
 - Fixed email background and header logo images by using hardcoded domain URLs instead of relative paths
+- Improved authentication flow in admin dashboard with better error handling and user feedback
 
 ## [0.1.0] - 2023-05-16
 
