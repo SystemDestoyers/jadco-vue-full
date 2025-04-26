@@ -102,11 +102,12 @@ img {
 .header {
     padding: 25px 0;
     text-align: center;
-    background-color: #e0285a; /* JADCO primary color */
+    background-color: #ffffff; /* Changed to white */
+    border-bottom: 1px solid #e8e5ef;
 }
 
 .header a {
-    color: #ffffff;
+    color: #e0285a; /* Changed to JADCO primary color */
     font-size: 19px;
     font-weight: bold;
     text-decoration: none;
@@ -201,8 +202,21 @@ img {
 }
 
 .footer a {
-    color: #b0adc5;
+    color: #e0285a; /* JADCO primary color */
     text-decoration: underline;
+}
+
+.footer-content {
+    padding: 16px 0;
+    text-align: center;
+}
+
+.footer-company {
+    font-size: 11px;
+    color: #718096;
+    text-align: center;
+    padding-bottom: 16px;
+    font-style: italic;
 }
 
 /* Tables */
@@ -315,4 +329,14 @@ img {
 
 .break-all {
     word-break: break-all;
+}
+
+/* Custom Signature */
+.company-signature {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 80%;
+    display: inline-block;
+    color: #e0285a; /* JADCO primary color */
+    margin-top: 4px;
 } 

@@ -29,11 +29,13 @@ class SendContactForm extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $ownerName = env('OWNERNAME', 'Mohamed Al-Qahtani');
+        
         return (new MailMessage)
             ->theme('jadco')
             ->from(config('mail.from.address', env('MAIL_FROM_ADDRESS')), config('mail.from.name', env('MAIL_FROM_NAME')))
-            ->subject('New Enquiry from ' . $this->data['name'])
-            ->greeting('Hello!')
+            ->subject('New Message from ' . $this->data['name'])
+            ->greeting('Hello Mr: ' . $ownerName)
             ->line('You have received a new enquiry from the JADCO website contact form.')
             ->line('Please find the details below:')
             ->line('**Name:** ' . $this->data['name'])
@@ -42,7 +44,8 @@ class SendContactForm extends Notification
             ->line('**Message:**')
             ->line($this->data['message'])
             ->action('View All Messages', url('/admin/messages'))
-            ->line('Thank you for using our application!');
+            ->line('Thank you for using our application JADCOO!')
+            ->salutation('Regards,JADCO DEVELOPERS');
     }
 
     /**

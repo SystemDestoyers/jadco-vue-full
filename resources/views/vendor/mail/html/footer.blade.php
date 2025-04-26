@@ -1,9 +1,15 @@
+@props(['url'])
 <tr>
-<td>
-<table class="footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+<td class="footer">
+<table class="content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
 <tr>
-<td class="content-cell" align="center">
+<td class="footer-content">
 {{ Illuminate\Mail\Markdown::parse($slot) }}
+</td>
+</tr>
+<tr>
+<td class="footer-company">
+JADCO | King Abdullah Financial District (KAFD) | Riyadh 13519, Saudi Arabia
 </td>
 </tr>
 </table>

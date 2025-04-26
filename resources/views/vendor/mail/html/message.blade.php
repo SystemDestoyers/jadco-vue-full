@@ -22,7 +22,7 @@
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+© {{ date('Y') }} JADCO. All rights reserved.
 @endcomponent
 @endslot
 @endcomponent

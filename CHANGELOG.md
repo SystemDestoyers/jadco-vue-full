@@ -145,10 +145,13 @@ All notable changes to this project will be documented in this file.
   - Combined email notification and database storage in a single flow
   - Enhanced form submission handling with better error tracking
   - Created custom branded email templates with JADCO styling
-  - Added JADCO logo to email header
+  - Added JADCO logo to email header with refined white background design
   - Implemented background image watermark for brand recognition
   - Styled email with company colors for consistent branding
   - Improved message formatting with Markdown enhancements
+  - Personalized email greeting with owner name from configuration
+  - Updated email signature to show JADCO developers brand
+  - Enhanced footer with company address information
 - Enhanced email system with improved error handling and fallback options:
   - Added support for multiple mail drivers (SMTP, log, array)
   - Implemented fallback from Notification to Mail facade when primary method fails
