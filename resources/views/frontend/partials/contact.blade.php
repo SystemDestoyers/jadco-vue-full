@@ -262,9 +262,18 @@
                                 // Get form data
                                 const formData = new FormData(form);
                                 
+                                // Format data like in Contact.vue
+                                const data = {
+                                    name: `${formData.get('first_name')} ${formData.get('last_name')}`,
+                                    email: formData.get('email'),
+                                    phone: formData.get('phone') || 'Not provided',
+                                    message: formData.get('message'),
+                                    saveToDatabase: true // Explicitly tell controller to save to database
+                                };
+                                
                                 // Create XMLHttpRequest
                                 const xhr = new XMLHttpRequest();
-                                xhr.open('POST', '{{ route("contact.submit") }}', true);
+                                xhr.open('POST', '{{ route("contact.email") }}', true);
                                 
                                 // Get CSRF token safely
                                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
@@ -387,13 +396,6 @@
                                     errorAlert.classList.add('show');
                                     console.error('Request failed');
                                 };
-                                
-                                // Convert FormData to standard form data format
-                                const data = {};
-                                formData.forEach((value, key) => {
-                                    data[key] = value;
-                                    console.log('Form data:', key, value);
-                                });
                                 
                                 // Send the request
                                 console.log('Sending form data', data);
