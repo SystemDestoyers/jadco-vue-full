@@ -287,7 +287,7 @@ h1 {
 }
 
 .login-button {
-  background-color: var(--primary);
+  background-color: #475B6D;
   color: white;
   border: none;
   border-radius: 4px;
@@ -327,10 +327,12 @@ h1 {
   border-radius: 6px;
   font-size: 0.875rem;
   color: var(--light);
+
 }
 
 .credentials-hint p {
   margin: 0.25rem 0;
+  visibility: hidden;
 }
 
 .login-footer {
