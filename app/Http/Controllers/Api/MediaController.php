@@ -556,4 +556,27 @@ class MediaController extends Controller
             return response()->json(['error' => 'Failed to delete folder: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Get the count of media files.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count()
+    {
+        try {
+            $count = Media::count();
+            return response()->json([
+                'success' => true,
+                'count' => $count
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error getting media count: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error getting media count',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

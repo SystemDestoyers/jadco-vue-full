@@ -90,6 +90,7 @@ Route::prefix('admin')->group(function () {
     // Media Library management
     Route::get('/media', [MediaController::class, 'index']);
     Route::post('/media', [MediaController::class, 'store']);
+    Route::get('/media/count', [MediaController::class, 'count']);
     Route::get('/media/{id}', [MediaController::class, 'show']);
     Route::put('/media/{id}', [MediaController::class, 'update']);
     Route::delete('/media/{id}', [MediaController::class, 'destroy']);
