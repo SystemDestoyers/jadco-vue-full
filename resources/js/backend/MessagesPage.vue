@@ -477,14 +477,32 @@ export default {
       if (messageModalEl) {
         this.messageModal = new Modal(messageModalEl);
         messageModalEl.addEventListener('hidden.bs.modal', this.onMessageModalHidden);
+        messageModalEl.addEventListener('hide.bs.modal', () => {
+          // Remove focus from any active element before modal is hidden
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+          }
+        });
       }
       
       if (deleteModalEl) {
         this.deleteModal = new Modal(deleteModalEl);
+        deleteModalEl.addEventListener('hide.bs.modal', () => {
+          // Remove focus from any active element before modal is hidden
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+          }
+        });
       }
       
       if (composeModalEl) {
         this.composeModal = new Modal(composeModalEl);
+        composeModalEl.addEventListener('hide.bs.modal', () => {
+          // Remove focus from any active element before modal is hidden
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+          }
+        });
       }
     },
     
@@ -560,7 +578,7 @@ export default {
       // Safely hide any open modals
       if (this.messageModal) {
         try {
-          this.messageModal.hide();
+          this.hideModal(this.messageModal);
         } catch (e) {
           console.error('Error hiding message modal:', e);
         }
@@ -597,6 +615,19 @@ export default {
       // Clean up current message when modal is closed
       this.currentMessage = null;
     },
+
+    // This method handles moving focus away before the modal hides to avoid aria-hidden accessibility issues
+    hideModal(modalInstance) {
+      // Make sure any focused element loses focus before the modal is hidden
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    },
+
     async fetchMessages() {
       this.loading = true;
       try {
@@ -887,7 +918,7 @@ export default {
     },
     
     async confirmDelete() {
-      this.deleteModal.hide();
+      this.hideModal(this.deleteModal);
       
       const idsToDelete = this.deleteType === 'single' 
         ? [this.deleteId] 
@@ -919,7 +950,7 @@ export default {
             
             // Check if current message is being deleted
             if (this.currentMessage && this.currentMessage.id === id) {
-              this.messageModal.hide();
+              this.hideModal(this.messageModal);
               this.currentMessage = null;
             }
             
@@ -1155,7 +1186,7 @@ export default {
               
               // Close modal if current message is archived
               if (this.currentMessage && this.currentMessage.id === id) {
-                this.messageModal.hide();
+                this.hideModal(this.messageModal);
               }
             }
             
@@ -1201,7 +1232,7 @@ export default {
               // If viewing the message details, update it there too
               if (this.currentMessage && this.currentMessage.id === id) {
                 this.currentMessage.archived = false;
-                this.messageModal.hide();
+                this.hideModal(this.messageModal);
               }
             } else {
               // Add back to main messages array
@@ -1295,7 +1326,7 @@ export default {
     
     replyToMessage() {
       // Close the message view modal
-      this.messageModal.hide();
+      this.hideModal(this.messageModal);
       
       // Wait a bit for the modal to close to avoid Bootstrap modal issues
       setTimeout(() => {
