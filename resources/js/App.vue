@@ -86,7 +86,11 @@ export default {
         // Watch for route changes to load services scripts when needed
         this.$watch(
             () => this.$route.name,
-            (newRouteName) => {
+            (newRouteName, oldRouteName) => {
+                // Clean up modal backdrops when route changes to prevent UI issues
+                this.cleanupModals();
+                
+                // Then handle service assets
                 this.handleServicesAssets(newRouteName);
             }
         );
@@ -95,6 +99,26 @@ export default {
         window.removeEventListener('scroll', this.updateScrollIndicator);
     },
     methods: {
+        cleanupModals() {
+            // Remove any bootstrap modal backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.parentNode.removeChild(backdrop);
+            });
+            
+            // Reset body styles that might have been set by bootstrap modals
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Find and hide any open modals
+            document.querySelectorAll('.modal.show').forEach(modal => {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.removeAttribute('aria-modal');
+                modal.removeAttribute('role');
+            });
+        },
         updateScrollIndicator() {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;

@@ -341,6 +341,7 @@ export default {
       itemsPerPage: 20,
       messageModal: null,
       deleteModal: null,
+      composeModal: null,
       deleteType: 'single', // 'single' or 'multiple'
       deleteId: null,
       totalMessages: 0,
@@ -390,11 +391,212 @@ export default {
       return this.startIndex + this.filteredMessages.length;
     }
   },
+  created() {
+    // Clean up any orphaned modal backdrops
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.parentNode.removeChild(backdrop);
+    });
+    
+    // Reset body styles in case they were set by previous modals
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    
+    // Remove MediaLibrary CSS if present
+    const mediaLibraryCSS = document.querySelector('link[href="/backend/css/media-library.css"]');
+    if (mediaLibraryCSS) {
+      mediaLibraryCSS.disabled = true;
+      mediaLibraryCSS.remove();
+    }
+    
+    // Give it a moment to execute other scripts, then clear backdrops again
+    setTimeout(() => {
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.parentNode.removeChild(backdrop);
+      });
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }, 100);
+  },
   mounted() {
     this.fetchMessages();
-    this.initModals();
+    // Ensure DOM is fully loaded before initializing modals
+    this.$nextTick(() => {
+      this.initModals();
+    });
+  },
+  beforeUnmount() {
+    this.destroyModals();
+    
+    // Final cleanup of any stray modal backdrops
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.parentNode.removeChild(backdrop);
+    });
+    
+    // Remove modal-related body styles
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
   },
   methods: {
+    initModals() {
+      // If modals are already initialized, destroy them first
+      this.destroyModals();
+      
+      const messageModalEl = document.getElementById('messageModal');
+      const deleteModalEl = document.getElementById('deleteModal');
+      const composeModalEl = document.getElementById('composeModal');
+      
+      // First make sure any existing Bootstrap modal data is cleaned up
+      if (messageModalEl) {
+        messageModalEl.classList.remove('show');
+        messageModalEl.style.display = 'none';
+        messageModalEl.setAttribute('aria-hidden', 'true');
+        messageModalEl.removeAttribute('aria-modal');
+        messageModalEl.removeAttribute('role');
+      }
+      
+      if (deleteModalEl) {
+        deleteModalEl.classList.remove('show');
+        deleteModalEl.style.display = 'none';
+        deleteModalEl.setAttribute('aria-hidden', 'true');
+        deleteModalEl.removeAttribute('aria-modal');
+        deleteModalEl.removeAttribute('role');
+      }
+      
+      if (composeModalEl) {
+        composeModalEl.classList.remove('show');
+        composeModalEl.style.display = 'none';
+        composeModalEl.setAttribute('aria-hidden', 'true');
+        composeModalEl.removeAttribute('aria-modal');
+        composeModalEl.removeAttribute('role');
+      }
+      
+      // Initialize modals
+      if (messageModalEl) {
+        this.messageModal = new Modal(messageModalEl);
+        messageModalEl.addEventListener('hidden.bs.modal', this.onMessageModalHidden);
+      }
+      
+      if (deleteModalEl) {
+        this.deleteModal = new Modal(deleteModalEl);
+      }
+      
+      if (composeModalEl) {
+        this.composeModal = new Modal(composeModalEl);
+      }
+    },
+    
+    destroyModals() {
+      const messageModalEl = document.getElementById('messageModal');
+      const deleteModalEl = document.getElementById('deleteModal');
+      const composeModalEl = document.getElementById('composeModal');
+      
+      // Remove event listeners
+      if (messageModalEl) {
+        messageModalEl.removeEventListener('hidden.bs.modal', this.onMessageModalHidden);
+      }
+      
+      // Properly dispose of Bootstrap modal instances
+      if (this.messageModal) {
+        try {
+          this.messageModal.hide();
+          this.messageModal.dispose();
+        } catch (e) {
+          console.error('Error disposing message modal:', e);
+        }
+      }
+      
+      if (this.deleteModal) {
+        try {
+          this.deleteModal.hide();
+          this.deleteModal.dispose();
+        } catch (e) {
+          console.error('Error disposing delete modal:', e);
+        }
+      }
+      
+      if (this.composeModal) {
+        try {
+          this.composeModal.hide();
+          this.composeModal.dispose();
+        } catch (e) {
+          console.error('Error disposing compose modal:', e);
+        }
+      }
+      
+      // Clean up modal DOM elements
+      if (messageModalEl) {
+        messageModalEl.classList.remove('show');
+        messageModalEl.style.display = 'none';
+        messageModalEl.setAttribute('aria-hidden', 'true');
+        messageModalEl.removeAttribute('aria-modal');
+        messageModalEl.removeAttribute('role');
+      }
+      
+      if (deleteModalEl) {
+        deleteModalEl.classList.remove('show');
+        deleteModalEl.style.display = 'none';
+        deleteModalEl.setAttribute('aria-hidden', 'true');
+        deleteModalEl.removeAttribute('aria-modal');
+        deleteModalEl.removeAttribute('role');
+      }
+      
+      if (composeModalEl) {
+        composeModalEl.classList.remove('show');
+        composeModalEl.style.display = 'none';
+        composeModalEl.setAttribute('aria-hidden', 'true');
+        composeModalEl.removeAttribute('aria-modal');
+        composeModalEl.removeAttribute('role');
+      }
+      
+      this.messageModal = null;
+      this.deleteModal = null;
+      this.composeModal = null;
+    },
+
+    hideAllModals() {
+      // Safely hide any open modals
+      if (this.messageModal) {
+        try {
+          this.messageModal.hide();
+        } catch (e) {
+          console.error('Error hiding message modal:', e);
+        }
+      }
+      
+      if (this.deleteModal) {
+        try {
+          this.deleteModal.hide();
+        } catch (e) {
+          console.error('Error hiding delete modal:', e);
+        }
+      }
+      
+      if (this.composeModal) {
+        try {
+          this.composeModal.hide();
+        } catch (e) {
+          console.error('Error hiding compose modal:', e);
+        }
+      }
+      
+      // Clean up lingering backdrops
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.parentNode.removeChild(backdrop);
+      });
+      
+      // Reset body styles
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    },
+    
+    onMessageModalHidden() {
+      // Clean up current message when modal is closed
+      this.currentMessage = null;
+    },
     async fetchMessages() {
       this.loading = true;
       try {
@@ -522,18 +724,23 @@ export default {
       }
     },
     
-    initModals() {
-      this.messageModal = new Modal(document.getElementById('messageModal'));
-      this.deleteModal = new Modal(document.getElementById('deleteModal'));
-      this.composeModal = new Modal(document.getElementById('composeModal'));
-    },
-    
     viewMessage(message) {
       this.currentMessage = { ...message };
       
       // Mark as read if it's unread
       if (!message.read) {
         this.markMessageAsRead(message.id);
+      }
+      
+      // Check if the messageModal is null and init if needed
+      if (!this.messageModal) {
+        const messageModalEl = document.getElementById('messageModal');
+        if (messageModalEl) {
+          this.messageModal = new Modal(messageModalEl);
+        } else {
+          console.error('Message modal element not found');
+          return;
+        }
       }
       
       this.messageModal.show();
@@ -657,6 +864,18 @@ export default {
     deleteMessage(id) {
       this.deleteType = 'single';
       this.deleteId = id;
+      
+      // Check if the deleteModal is null and init if needed
+      if (!this.deleteModal) {
+        const deleteModalEl = document.getElementById('deleteModal');
+        if (deleteModalEl) {
+          this.deleteModal = new Modal(deleteModalEl);
+        } else {
+          console.error('Delete modal element not found');
+          return;
+        }
+      }
+      
       this.deleteModal.show();
     },
     
@@ -1000,6 +1219,17 @@ export default {
     },
     
     showComposeModal() {
+      // Check if the composeModal is null and init if needed
+      if (!this.composeModal) {
+        const composeModalEl = document.getElementById('composeModal');
+        if (composeModalEl) {
+          this.composeModal = new Modal(composeModalEl);
+        } else {
+          console.error('Compose modal element not found');
+          return;
+        }
+      }
+      
       // Pre-populate the form if replying to a message
       if (this.currentMessage) {
         this.composeForm.email = this.currentMessage.email;
@@ -1109,58 +1339,59 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+/* Use more specific selectors to avoid conflicts when navigating between pages */
 .messages-page {
   padding: 20px 0;
 }
 
-.messages-container {
+.messages-page .messages-container {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
-.messages-list {
+.messages-page .messages-list {
   max-height: calc(100vh - 240px);
   overflow-y: auto;
 }
 
-.message-item {
+.messages-page .message-item {
   cursor: pointer;
   transition: background-color 0.15s;
 }
 
-.message-item:hover {
+.messages-page .message-item:hover {
   background-color: #f8f9fa;
 }
 
-.message-item.unread {
+.messages-page .message-item.unread {
   background-color: #f0f7ff;
   font-weight: 500;
 }
 
-.message-item.selected {
+.messages-page .message-item.selected {
   background-color: #e9ecef;
 }
 
-.message-indicator {
+.messages-page .message-indicator {
   width: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.message-indicator i {
+.messages-page .message-indicator i {
   font-size: 8px;
 }
 
-.inbox-search {
+.messages-page .inbox-search {
   width: 300px;
 }
 
 /* Compose button */
-.compose-btn {
+.messages-page .compose-btn {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1172,50 +1403,51 @@ export default {
 }
 
 /* Customize checkboxes */
-.form-check-input:checked {
+.messages-page .form-check-input:checked {
   background-color: #0d6efd;
   border-color: #0d6efd;
 }
 
 /* Message content */
-.message-content {
+.messages-page .message-content {
   min-height: 150px;
 }
 
 /* Copy buttons */
-.sender button, .phone button {
+.messages-page .sender button, 
+.messages-page .phone button {
   padding: 0.125rem 0.375rem;
   font-size: 0.75rem;
 }
 
 /* Archive button */
-.btn-archive {
+.messages-page .btn-archive {
   background-color: #6c757d;
   color: white;
 }
 
 /* Make toolbar responsive */
 @media (max-width: 768px) {
-  .messages-toolbar {
+  .messages-page .messages-toolbar {
     flex-wrap: wrap;
   }
   
-  .messages-toolbar .btn-group {
+  .messages-page .messages-toolbar .btn-group {
     margin-bottom: 8px;
   }
   
-  .inbox-search {
+  .messages-page .inbox-search {
     width: 100%;
     margin-bottom: 8px;
   }
 }
 
 /* Add a highlight for archived view */
-.messages-container.archived-view {
+.messages-page .messages-container.archived-view {
   border: 2px solid #6c757d;
 }
 
-.archived-badge {
+.messages-page .archived-badge {
   background-color: #6c757d;
   color: white;
   font-size: 0.75rem;
@@ -1225,12 +1457,12 @@ export default {
 }
 
 /* Compose form */
-.compose-form .form-group {
+.messages-page .compose-form .form-group {
   margin-bottom: 1rem;
   position: relative;
 }
 
-.compose-form label {
+.messages-page .compose-form label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -1244,7 +1476,7 @@ export default {
   left: auto;
 }
 
-.compose-form .form-control {
+.messages-page .compose-form .form-control {
   padding: 0.5rem 0.75rem;
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
@@ -1254,31 +1486,31 @@ export default {
   height: auto;
 }
 
-.compose-form .form-control:focus {
+.messages-page .compose-form .form-control:focus {
   border-color: #0d6efd;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-.compose-form .form-control::placeholder {
+.messages-page .compose-form .form-control::placeholder {
   color: transparent;
 }
 
 /* Make sure modal elements don't overlap */
-#composeModal .modal-body {
+.messages-page #composeModal .modal-body {
   padding: 1.5rem;
 }
 
 /* Override Bootstrap floating label behavior */
-.form-floating > .form-control-plaintext ~ label::after,
-.form-floating > .form-control:focus ~ label::after, 
-.form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+.messages-page .form-floating > .form-control-plaintext ~ label::after,
+.messages-page .form-floating > .form-control:focus ~ label::after, 
+.messages-page .form-floating > .form-control:not(:placeholder-shown) ~ label::after {
   display: none !important;
 }
 
-.form-floating > .form-control-plaintext ~ label,
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label,
-.form-floating > .form-select ~ label {
+.messages-page .form-floating > .form-control-plaintext ~ label,
+.messages-page .form-floating > .form-control:focus ~ label,
+.messages-page .form-floating > .form-control:not(:placeholder-shown) ~ label,
+.messages-page .form-floating > .form-select ~ label {
   opacity: 1 !important;
   transform: none !important;
   color: #212529 !important;
@@ -1286,13 +1518,13 @@ export default {
 }
 
 /* Ensure form controls appear properly */
-#composeModal .form-control {
+.messages-page #composeModal .form-control {
   height: calc(3rem + 2px);
   line-height: 1.5;
   padding: 0.75rem 0.75rem;
 }
 
-#composeModal textarea.form-control {
+.messages-page #composeModal textarea.form-control {
   height: auto;
 }
 </style> 
