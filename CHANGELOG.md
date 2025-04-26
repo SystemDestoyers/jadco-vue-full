@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Enhanced full backup system with image reset functionality:
+  - Renamed "Run Database Reset" button to "Full Backup" for better clarity
+  - Added new image reset feature to restore original images from backup
+  - Created dedicated endpoints for resetting images in SettingsController
+  - Implemented file system operations to copy from backup directory to active directory
+  - Added confirmation dialogs with clear warnings about data replacement
+  - Created informative UI section explaining the backup folder structure
+  - Added multilingual support for image reset functionality
+  - Added visual feedback during the reset process
 - Database backup system for resetting the database to its initial state:
   - Added direct execution of database reset commands from SettingsController
   - Removed the need for a separate backup.php script
@@ -213,6 +222,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom event dispatch for direction changes that components can listen to
 
 ### Changed
+- Made all collapsible sections in the Settings page collapsed by default for a cleaner interface
 - Switched from session-based to token-based authentication with API endpoints:
   - Modified LoginPage.vue to use '/api/admin/login' endpoint and store token in localStorage
   - Updated AdminLayout.vue to use '/api/admin/logout' for token-based logout
@@ -318,6 +328,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Email logo display issues in notifications by using absolute URLs and ensuring logo always shows
 - Fixed email background and header logo images by using hardcoded domain URLs instead of relative paths
 - Improved authentication flow in admin dashboard with better error handling and user feedback
+- Improved image reset functionality:
+  - Added automatic creation of backup directories if they don't exist
+  - Improved handling when backup directory is missing by creating and populating it
+  - Enhanced directory deletion to preserve directory structure while removing contents
+  - Added better error messages for common directory structure issues
+  - Fixed path handling for cross-platform compatibility
 
 ## [0.1.0] - 2023-05-16
 

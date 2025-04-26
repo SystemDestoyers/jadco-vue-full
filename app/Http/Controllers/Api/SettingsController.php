@@ -356,4 +356,143 @@ class SettingsController extends Controller
             ], 500);
         }
     }
+    
+    /**
+     * Reset images by copying from backup folder to images folder
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function resetImages()
+    {
+        try {
+            // Check if user is logged in
+            if (!auth()->check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access to image reset function'
+                ], 403);
+            }
+            
+            $backupPath = public_path('backup/images');
+            $imagesPath = public_path('images');
+            
+            // Ensure backup directory exists, create it if it doesn't
+            if (!file_exists($backupPath)) {
+                mkdir($backupPath, 0755, true);
+                
+                // If we just created the backup directory, copy files from images to backup
+                // This ensures we have files to restore from in the future
+                if (file_exists($imagesPath) && is_dir($imagesPath)) {
+                    $this->copyDirectory($imagesPath, $backupPath);
+                    
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Backup directory created and populated with current images. Please run the reset operation again if needed.'
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Both backup and images directories do not exist. Please ensure at least one contains images.'
+                    ], 404);
+                }
+            }
+            
+            // Make sure images directory exists
+            if (!file_exists($imagesPath)) {
+                mkdir($imagesPath, 0755, true);
+            }
+            
+            // Delete all files in the images directory
+            $this->deleteDirectory($imagesPath);
+            
+            // Ensure the images directory exists after deletion
+            if (!file_exists($imagesPath)) {
+                mkdir($imagesPath, 0755, true);
+            }
+            
+            // Copy all files from backup to images directory
+            $this->copyDirectory($backupPath, $imagesPath);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'All images have been successfully reset from backup.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to reset images', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reset images: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Helper method to delete a directory and all its contents
+     * 
+     * @param string $dirPath
+     * @return bool
+     */
+    private function deleteDirectory($dirPath) 
+    {
+        if (!is_dir($dirPath)) {
+            return false;
+        }
+        
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dirPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        
+        foreach ($files as $file) {
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+        
+        // Don't delete the main directory itself, just empty it
+        return true;
+    }
+    
+    /**
+     * Helper method to copy a directory and all its contents
+     * 
+     * @param string $source
+     * @param string $destination
+     * @return bool
+     */
+    private function copyDirectory($source, $destination) 
+    {
+        if (!is_dir($source)) {
+            return false;
+        }
+        
+        if (!is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+        
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        
+        foreach ($files as $file) {
+            $targetPath = $destination . '/' . $files->getSubPathName();
+            
+            if ($file->isDir()) {
+                if (!is_dir($targetPath)) {
+                    mkdir($targetPath, 0755, true);
+                }
+            } else {
+                copy($file->getRealPath(), $targetPath);
+            }
+        }
+        
+        return true;
+    }
 } 

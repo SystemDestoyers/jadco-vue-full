@@ -128,4 +128,7 @@ Route::prefix('admin')->group(function () {
     
     // Database backup route
     Route::post('/database-backup', [App\Http\Controllers\Api\SettingsController::class, 'runDatabaseBackup']);
+    
+    // Image reset route
+    Route::post('/reset-images', [App\Http\Controllers\Api\SettingsController::class, 'resetImages']);
 });

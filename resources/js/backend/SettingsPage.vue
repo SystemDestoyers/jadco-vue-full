@@ -423,6 +423,17 @@
                 {{ t('databaseBackupDescription') }}
               </p>
               
+              <div class="backup-info-section">
+                <h3>Image Backup System</h3>
+                <p>
+                  The system maintains two image directories:
+                </p>
+                <ul>
+                  <li><strong>/public/backup/images</strong> - Backup folder (contains the original images)</li>
+                  <li><strong>/public/images</strong> - Active folder (used by the app)</li>
+                </ul>
+              </div>
+              
               <div class="alert alert-warning">
                 <i class="fas fa-exclamation-triangle"></i>
                 {{ t('databaseBackupWarning') }}
@@ -433,6 +444,26 @@
                   <i class="fas" :class="isBackupRunning ? 'fa-spinner fa-spin' : 'fa-database'"></i>
                   {{ isBackupRunning ? t('runningBackup') : t('runBackup') }}
                 </button>
+              </div>
+              
+              <hr class="settings-divider">
+              
+              <div class="settings-section">
+                <p class="section-description">
+                  {{ t('imageResetDescription') }}
+                </p>
+                
+                <div class="alert alert-warning">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  {{ t('imageResetWarning') }}
+                </div>
+                
+                <div class="backup-actions">
+                  <button @click="resetImages" class="btn btn-warning" :disabled="isImageResetRunning">
+                    <i class="fas" :class="isImageResetRunning ? 'fa-spinner fa-spin' : 'fa-images'"></i>
+                    {{ isImageResetRunning ? t('runningImageReset') : t('runImageReset') }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -596,11 +627,7 @@ const loadDatabaseSettings = async () => {
         }
       });
       
-      // Expand the first group by default
-      const firstGroup = Object.keys(expandedGroups.value)[0];
-      if (firstGroup) {
-        expandedGroups.value[firstGroup] = true;
-      }
+      // All groups start collapsed by default
       
       // Map settings to key-value pairs for easier editing
       const values = {};
@@ -1031,6 +1058,10 @@ watch(currentLanguage, (newLang) => {
 const isBackupRunning = ref(false);
 const backupError = ref(null);
 
+// Image reset
+const isImageResetRunning = ref(false);
+const imageResetError = ref(null);
+
 const runDatabaseBackup = async () => {
   if (isBackupRunning.value) return;
   
@@ -1085,6 +1116,36 @@ const runDatabaseBackup = async () => {
     alert(t('backupFailed') + ': ' + (error.response?.data?.message || error.message));
   } finally {
     isBackupRunning.value = false;
+  }
+};
+
+const resetImages = async () => {
+  if (isImageResetRunning.value) return;
+  
+  // Ask for confirmation
+  if (!confirm(t('confirmImageReset'))) {
+    return;
+  }
+  
+  isImageResetRunning.value = true;
+  imageResetError.value = null;
+  
+  try {
+    const response = await axios.post('/api/admin/reset-images');
+    
+    if (response.data.success) {
+      // Show success message
+      alert(t('imageResetSuccess'));
+    } else {
+      imageResetError.value = response.data.message;
+      alert(t('imageResetFailed') + ': ' + response.data.message);
+    }
+  } catch (error) {
+    console.error('Image reset error:', error);
+    imageResetError.value = error.response?.data?.message || error.message;
+    alert(t('imageResetFailed') + ': ' + (error.response?.data?.message || error.message));
+  } finally {
+    isImageResetRunning.value = false;
   }
 };
 
@@ -1148,6 +1209,31 @@ onMounted(() => {
 
 .settings-section {
   margin-bottom: 1.5rem;
+}
+
+.backup-info-section {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #0d6efd;
+}
+
+.backup-info-section h3 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #0d6efd;
+}
+
+.backup-info-section ul {
+  margin-bottom: 0;
+  padding-left: 1.5rem;
+}
+
+.backup-info-section li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 }
 
 .section-description {
