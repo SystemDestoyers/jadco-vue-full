@@ -14,6 +14,7 @@ import SectionsPage from './backend/SectionsPage.vue';
 import SectionEditor from './backend/SectionEditor.vue';
 import MediaLibrary from './backend/MediaLibrary.vue';
 import MessagesPage from './backend/MessagesPage.vue';
+import SettingsPage from './backend/SettingsPage.vue';
 
 const routes = [
     // Redirect root to about page since home is handled by Laravel
@@ -96,6 +97,12 @@ const routes = [
         path: '/admin/messages',
         name: 'admin.messages',
         component: MessagesPage,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin/settings',
+        name: 'admin.settings',
+        component: SettingsPage,
         meta: { requiresAuth: true }
     }
 ];

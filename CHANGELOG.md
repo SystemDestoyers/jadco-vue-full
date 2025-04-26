@@ -176,6 +176,9 @@ All notable changes to this project will be documented in this file.
   - Added path extraction from URLs in MediaSelector
   - Added proper URL handling for image display
   - Improved image preview to handle both paths and URLs
+- Updated AdminLayout to handle direction attribute dynamically
+- Changed page-title font size to 1rem in DashboardPage.vue
+- Enhanced dark mode styling with darker backgrounds and better text contrast
 
 ### Removed
 - Removed test components and routes after successfully integrating email functionality:
@@ -227,6 +230,8 @@ All notable changes to this project will be documented in this file.
 - Enhanced button styles to maintain consistent layout
 - Fixed form label positioning in compose message modal to display outside input fields
 - Added proper placeholder text to form inputs for better usability
+- Fixed Vue warnings about undefined currentDirection property in AdminLayout.vue
+- Fixed dark theme not properly applying background colors by adding body class and important flag
 
 ## [0.1.0] - 2023-05-16
 
