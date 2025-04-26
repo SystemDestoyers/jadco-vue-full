@@ -114,6 +114,8 @@ export default {
     data() {
         return {
             loading: true,
+            isSubmitting: false,
+            errors: [],
             firstName: '',
             lastName: '',
             email: '',
@@ -200,15 +202,17 @@ export default {
             this.errors = [];
             
             try {
+                // Format data for the new email endpoint
                 const formData = {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    name: `${this.firstName} ${this.lastName}`,
                     email: this.email,
-                    phone: this.phone,
-                    message: this.message
+                    phone: this.phone || 'Not provided',
+                    message: this.message,
+                    saveToDatabase: true // Explicitly tell controller to save to database
                 };
                 
-                const response = await axios.post('/api/contact/submit', formData, {
+                // Use our new email notification endpoint
+                const response = await axios.post('/api/contact/email', formData, {
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
