@@ -128,6 +128,6 @@ return [
     */
 
     'enabled' => env('MAIL_NOTIFICATIONS_ENABLED', false),
-    'admin_email' => env('MAIL_ADMIN_EMAIL', 'admin@example.com'),
+    'admin_email' => env('MAIL_ADMIN_EMAIL', 'jad@jadco.co'),
 
 ];

@@ -226,7 +226,7 @@
                     <div class="setting-label">Admin Email</div>
                     <div class="setting-description">Email address where contact form submissions will be sent</div>
                     <div class="setting-control">
-                      <input type="email" class="form-control" v-model="adminEmail" placeholder="admin@example.com">
+                      <input type="email" class="form-control" v-model="adminEmail" placeholder="jad@jadco.co">
                     </div>
                   </div>
                   

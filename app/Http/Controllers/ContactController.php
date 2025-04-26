@@ -80,7 +80,7 @@ class ContactController extends Controller
         ]);
 
         try {
-            $adminEmail = config('mail.admin_email', env('MAIL_ADMIN_EMAIL', 'admin@example.com'));
+            $adminEmail = config('mail.admin_email', env('MAIL_ADMIN_EMAIL', 'jad@jadco.co'));
             $mailDriver = config('mail.default');
             
             // Log mail configuration for debugging
@@ -185,7 +185,7 @@ class ContactController extends Controller
         }
         
         try {
-            $adminEmail = config('mail.admin_email', 'admin@example.com');
+            $adminEmail = config('mail.admin_email', 'jad@jadco.co');
             
             // Format data for notification
             $data = [

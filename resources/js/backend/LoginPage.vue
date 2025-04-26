@@ -57,8 +57,8 @@
             
             <div class="credentials-hint">
               <p>Default credentials:</p>
-              <p>Email: admin@admin.com</p>
-              <p>Password: admin123</p>
+              <p>Email: admin@jadco.co</p>
+              <p>Password: 111</p>
             </div>
           </div>
           

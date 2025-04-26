@@ -15,13 +15,46 @@
         <div class="notifications">
           <i class="fas fa-bell"></i>
         </div>
-        <div class="user-profile">
-          <img src="/images/user.jpg" alt="User" class="user-avatar" />
+        <div 
+          class="user-profile" 
+          @click.stop="toggleDropdown"
+          ref="userProfileRef"
+        >
+          <img 
+            class="user-avatar" 
+            :src="userInfo.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userInfo.name || 'User')" 
+            alt="User avatar"
+          />
           <div class="user-info">
-            <span class="user-name">David Bauer</span>
-            <span class="user-role">Admin</span>
+            <div class="user-name">{{ userInfo.name || 'Loading...' }}</div>
+            <div class="user-role">{{ userInfo.role || 'Admin' }}</div>
           </div>
-          <i class="fas fa-chevron-down dropdown-icon"></i>
+          <i class="las la-angle-down dropdown-icon" :class="{ 'dropdown-open': isDropdownOpen }"></i>
+          
+          <!-- User Dropdown Menu -->
+          <div v-if="isDropdownOpen" class="user-dropdown">
+            <div class="dropdown-header">
+              <strong>{{ userInfo.name || 'User' }}</strong>
+              <div>{{ userInfo.email || 'loading@example.com' }}</div>
+            </div>
+            
+            <router-link class="dropdown-item" to="/admin/profile">
+              <i class="las la-user-circle"></i>
+              <span>Profile Settings</span>
+            </router-link>
+            
+            <router-link class="dropdown-item" to="/admin/notifications">
+              <i class="las la-bell"></i>
+              <span>Notifications</span>
+            </router-link>
+            
+            <div class="dropdown-divider"></div>
+            
+            <a href="#" class="dropdown-item" @click.prevent="logout">
+              <i class="las la-sign-out-alt"></i>
+              <span>Logout</span>
+            </a>
+          </div>
         </div>
       </div>
     </header>
@@ -126,7 +159,7 @@
 
 <script setup>
 import axios from 'axios';
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch, computed, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -142,6 +175,9 @@ const rtlMode = ref(isRTL());
 const colorMode = ref('light');
 const isDarkMode = computed(() => colorMode.value === 'dark');
 const currentDirection = computed(() => rtlMode.value ? 'rtl' : 'ltr');
+const userInfo = ref({});
+const isDropdownOpen = ref(false);
+const userProfileRef = ref(null);
 
 // Expose toast to the global window for components that can't use Vue composition API
 if (typeof window !== 'undefined') {
@@ -250,6 +286,10 @@ window.addEventListener('colorModeChanged', (e) => {
   }
 });
 
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
+
 onMounted(() => {
   fetchUnreadCount();
   // Refresh unread count every minute
@@ -264,7 +304,36 @@ onMounted(() => {
   // Initialize color mode
   loadColorMode();
   listenForColorSchemeChanges();
+  
+  // Get user information
+  fetchUserInfo();
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', handleClickOutside);
 });
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
+// Close dropdown when clicking outside
+const handleClickOutside = (event) => {
+  if (userProfileRef.value && !userProfileRef.value.contains(event.target)) {
+    isDropdownOpen.value = false;
+  }
+};
+
+// Fetch user information
+const fetchUserInfo = async () => {
+  try {
+    const response = await axios.get('/admin-auth/user');
+    if (response.data && response.data.user) {
+      userInfo.value = response.data.user;
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+  }
+};
 </script>
 
 <style scoped>
@@ -415,12 +484,24 @@ body.dark-mode {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .user-profile:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -431,31 +512,100 @@ body.dark-mode {
 }
 
 .user-name {
-  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--light-text);
-}
-
-.dark-mode .user-name {
-  color: var(--dark-text);
+  font-size: 0.95rem;
+  color: var(--text-primary);
 }
 
 .user-role {
-  font-size: 0.75rem;
-  color: var(--light-text-secondary);
-}
-
-.dark-mode .user-role {
-  color: var(--dark-text-secondary);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 .dropdown-icon {
-  color: var(--light-text-secondary);
-  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
 }
 
-.dark-mode .dropdown-icon {
-  color: var(--dark-text-secondary);
+.dropdown-icon.dropdown-open {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  background-color: var(--bg-card);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeInDown 0.2s ease-out;
+}
+
+.dropdown-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.dropdown-header strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.dropdown-header div {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item i {
+  color: var(--text-secondary);
+  width: 1rem;
+  text-align: center;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Content layout */

@@ -187,9 +187,27 @@ export function isRTL() {
   return currentLanguage === 'ar';
 }
 
+/**
+ * Set text direction manually
+ * @param {string} direction - The direction ('rtl' or 'ltr')
+ */
+export function setDirection(direction) {
+  if (direction === 'rtl' || direction === 'ltr') {
+    document.documentElement.dir = direction;
+    
+    // Trigger a custom event that components can listen to
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('directionChanged', { detail: { direction } }));
+    }
+  } else {
+    console.warn(`Direction "${direction}" is not valid. Use 'rtl' or 'ltr'.`);
+  }
+}
+
 export default {
   t,
   setLanguage,
   getCurrentLanguage,
-  isRTL
+  isRTL,
+  setDirection
 }; 

@@ -182,6 +182,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configured Laravel queue worker to run via scheduler for cPanel environments (every 5 minutes)
 - Added detailed logging for authentication operations in admin dashboard
 - Redesigned admin login page with dark theme and globe background image
+- Variable-driven admin theme CSS file for easy customization, including dark mode support
+- Enhanced user dropdown menu with avatar, profile information, and dropdown animations
+- Line icons integration for improved UI elements
+- Fallback avatar generation using UI Avatars API
+- Variable-driven admin theme CSS for easy customization of the admin interface
+- `setDirection` function to i18n.js to enable manual setting of text direction (RTL/LTR)
+- Custom event dispatch for direction changes that components can listen to
 
 ### Changed
 - Updated DatabaseSeeder to include SettingsSeeder class for consistent application settings
@@ -212,6 +219,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved admin login page error handling with more specific error messages
 - Enhanced authentication check in router navigation guards for better security
 - Updated admin login UI with dark theme and modern layout inspired by Coinwave design
+- Refactored user dropdown in AdminLayout.vue to use dynamic user data
+- Updated dropdown styling and icon classes for better visual consistency
+- Improved component reactivity in AdminLayout.vue
 
 ### Removed
 - Removed test components and routes after successfully integrating email functionality:

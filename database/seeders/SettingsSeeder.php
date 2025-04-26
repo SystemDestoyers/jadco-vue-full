@@ -259,7 +259,7 @@ class SettingsSeeder extends Seeder
                 'name' => 'Admin Email',
                 'description' => 'Email to receive notifications',
                 'type' => 'string',
-                'value' => env('MAIL_ADMIN_EMAIL', 'admin@example.com'),
+                'value' => env('MAIL_ADMIN_EMAIL', 'jad@jadco.co'),
                 'order' => 90,
             ],
             [
