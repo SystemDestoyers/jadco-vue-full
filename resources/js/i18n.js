@@ -45,6 +45,17 @@ const translations = {
     rtl: 'Right to Left',
     ltr: 'Left to Right',
     
+    // Database Backup
+    databaseBackup: 'Database Backup',
+    databaseBackupDescription: 'Reset the database to its initial state with fresh migrations and seeders.',
+    databaseBackupWarning: 'WARNING: This will DELETE ALL DATA and reset the database to its initial state!',
+    runBackup: 'Run Database Reset',
+    runningBackup: 'Running Reset...',
+    confirmDatabaseBackup: 'WARNING: This will permanently delete all data in the database and reset it to the initial state. This action cannot be undone. Continue?',
+    backupFailed: 'Database reset failed',
+    backupSuccess: 'Database has been successfully reset and seeded with initial data.',
+    backupPopupBlocked: 'Popup was blocked. Please allow popups or click here: {url}',
+    
     // Success messages
     settingsSaved: 'Settings saved successfully',
     
@@ -89,6 +100,17 @@ const translations = {
     textDirection: 'اتجاه النص',
     rtl: 'من اليمين إلى اليسار',
     ltr: 'من اليسار إلى اليمين',
+    
+    // Database Backup
+    databaseBackup: 'نسخ احتياطي لقاعدة البيانات',
+    databaseBackupDescription: 'إعادة تعيين قاعدة البيانات إلى حالتها الأولية مع الترحيلات والبذور الجديدة.',
+    databaseBackupWarning: 'تحذير: سيؤدي هذا إلى حذف جميع البيانات وإعادة تعيين قاعدة البيانات إلى حالتها الأولية!',
+    runBackup: 'تشغيل إعادة تعيين قاعدة البيانات',
+    runningBackup: 'جارٍ إعادة التعيين...',
+    confirmDatabaseBackup: 'تحذير: سيؤدي هذا إلى حذف جميع البيانات في قاعدة البيانات بشكل دائم وإعادة تعيينها إلى الحالة الأولية. لا يمكن التراجع عن هذا الإجراء. هل تريد المتابعة؟',
+    backupFailed: 'فشلت عملية إعادة تعيين قاعدة البيانات',
+    backupSuccess: 'تم إعادة تعيين قاعدة البيانات بنجاح وإضافة بيانات البدء الأولي',
+    backupPopupBlocked: 'تم حظر النافذة المنبثقة. الرجاء السماح بالنوافذ المنبثقة أو النقر هنا: {url}',
     
     // Success messages
     settingsSaved: 'تم حفظ الإعدادات بنجاح',

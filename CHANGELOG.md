@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Database backup system for resetting the database to its initial state:
+  - Added direct execution of database reset commands from SettingsController
+  - Removed the need for a separate backup.php script
+  - Added success message and detailed output of each command
+  - Simplified authentication to require only login instead of admin role
+  - Enhanced SettingsPage with dedicated Database Backup card
+  - Added confirmation dialog before executing database reset
+  - Added multilingual support for backup functionality
+  - Added visual feedback during the backup process
 - Configured Laravel Sanctum for SPA authentication:
   - Added CSRF cookie route for secure SPA authentication
   - Created web-based authentication routes using Sanctum

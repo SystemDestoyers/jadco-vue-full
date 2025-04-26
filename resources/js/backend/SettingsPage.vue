@@ -399,15 +399,41 @@
               <button @click="saveDatabaseSettings" class="btn btn-primary save-btn" :disabled="isSaving">
                 <span v-if="isSaving">
                   <i class="fas fa-spinner fa-spin"></i> 
-                  Saving...
+                  {{ t('saving') }}
                 </span>
                 <span v-else>
-                  Save Changes
+                  {{ t('save') }}
                 </span>
               </button>
               <button @click="resetDatabaseSettings" class="btn btn-secondary cancel-btn">
-                Cancel
+                {{ t('cancel') }}
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Database Backup Card -->
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>{{ t('databaseBackup') }}</h2>
+          </div>
+          <div class="card-content">
+            <div class="settings-section">
+              <p class="section-description">
+                {{ t('databaseBackupDescription') }}
+              </p>
+              
+              <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ t('databaseBackupWarning') }}
+              </div>
+              
+              <div class="backup-actions">
+                <button @click="runDatabaseBackup" class="btn btn-danger" :disabled="isBackupRunning">
+                  <i class="fas" :class="isBackupRunning ? 'fa-spinner fa-spin' : 'fa-database'"></i>
+                  {{ isBackupRunning ? t('runningBackup') : t('runBackup') }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1001,6 +1027,67 @@ watch(currentLanguage, (newLang) => {
   }
 });
 
+// Database backup
+const isBackupRunning = ref(false);
+const backupError = ref(null);
+
+const runDatabaseBackup = async () => {
+  if (isBackupRunning.value) return;
+  
+  // Ask for confirmation
+  if (!confirm(t('confirmDatabaseBackup'))) {
+    return;
+  }
+  
+  isBackupRunning.value = true;
+  backupError.value = null;
+  
+  try {
+    const response = await axios.post('/api/admin/database-backup');
+    
+    if (response.data.success) {
+      // Show success message
+      alert(t('backupSuccess'));
+      
+      // Log details to console for debugging
+      console.log('Backup details:', response.data.details);
+      
+      // Show detailed alert with command output
+      if (response.data.details) {
+        const detailsWindow = window.open('', '_blank', 'width=800,height=600');
+        if (detailsWindow) {
+          detailsWindow.document.write(`
+            <html>
+              <head>
+                <title>Database Reset Details</title>
+                <style>
+                  body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+                  pre { background: #fff; padding: 15px; border: 1px solid #ddd; overflow: auto; }
+                  h2 { color: #333; }
+                </style>
+              </head>
+              <body>
+                <h2>Database Reset Details</h2>
+                <pre>${response.data.details}</pre>
+              </body>
+            </html>
+          `);
+          detailsWindow.document.close();
+        }
+      }
+    } else {
+      backupError.value = response.data.message;
+      alert(t('backupFailed') + ': ' + response.data.message);
+    }
+  } catch (error) {
+    console.error('Backup error:', error);
+    backupError.value = error.response?.data?.message || error.message;
+    alert(t('backupFailed') + ': ' + (error.response?.data?.message || error.message));
+  } finally {
+    isBackupRunning.value = false;
+  }
+};
+
 // Initialize
 onMounted(() => {
   loadSettings();
@@ -1533,5 +1620,25 @@ select.form-select:focus {
 [data-color-mode="dark"] .btn-outline-danger:hover {
   color: #212529;
   background-color: #ea868f;
+}
+
+.backup-actions {
+  margin-top: 1.5rem;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.alert i {
+  margin-right: 0.5rem;
 }
 </style> 

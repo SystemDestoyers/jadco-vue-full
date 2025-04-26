@@ -318,4 +318,42 @@ class SettingsController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Run database backup process
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function runDatabaseBackup()
+    {
+        try {
+            // Check if user is logged in
+            if (!auth()->check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access to backup function'
+                ], 403);
+            }
+            
+            // Run database reset command and capture output
+            \Artisan::call('db:reset');
+            $output = \Artisan::output();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Database has been successfully reset and seeded.',
+                'details' => $output
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to run database backup', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to run database backup: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 } 

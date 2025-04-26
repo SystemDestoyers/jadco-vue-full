@@ -125,4 +125,7 @@ Route::prefix('admin')->group(function () {
     // Database settings management (new)
     Route::get('/database-settings', [App\Http\Controllers\Api\SettingsController::class, 'getDatabaseSettings']);
     Route::post('/database-settings', [App\Http\Controllers\Api\SettingsController::class, 'updateDatabaseSettings']);
+    
+    // Database backup route
+    Route::post('/database-backup', [App\Http\Controllers\Api\SettingsController::class, 'runDatabaseBackup']);
 });
