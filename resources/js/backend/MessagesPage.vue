@@ -4,7 +4,12 @@
       <div class="row mb-4">
         <div class="col-12">
           <div class="d-flex justify-content-between align-items-center">
-            <h1><i class="fas fa-envelope me-2"></i> Messages Inbox</h1>
+            <div class="d-flex align-items-center">
+              <router-link to="/admin" class="btn btn-outline-secondary me-3">
+                <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+              </router-link>
+              <h1><i class="fas fa-envelope me-2"></i> Messages Inbox</h1>
+            </div>
             <div class="d-flex align-items-center">
               <button class="btn btn-primary me-3 compose-btn" @click="showComposeModal">
                 <i class="fas fa-paper-plane me-1"></i> Compose
