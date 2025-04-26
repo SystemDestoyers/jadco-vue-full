@@ -15,10 +15,12 @@
     @if($aboutSection && $aboutSection->is_active)
     <section id="about" class="about-section py-5 section" style="transform: translateZ(0);"> 
         <div class="container">
-            @if(isset($aboutContent['title']))
-                <h2 class="section-title">{!! $aboutContent['title'] !!}</h2>
-            @endif
-            <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
+            <div class="about-heading">
+                @if(isset($aboutContent['title']))
+                    <h2 class="section-title">{!! $aboutContent['title'] !!}</h2>
+                @endif
+                <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
+            </div>
             <div class="about-text-container">
                 <p class="about-text">
                     @if(isset($aboutContent['main_text']))
