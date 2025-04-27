@@ -16,9 +16,7 @@
     <section id="about" class="about-section py-5 section" style="transform: translateZ(0);"> 
         <div class="container">
             <div class="about-heading">
-                @if(isset($aboutContent['title']))
-                    <h2 class="section-title">{!! $aboutContent['title'] !!}</h2>
-                @endif
+                <h2 class="section-title">{{ isset($aboutContent['title']) ? $aboutContent['title'] : 'ABOUT' }}</h2>
                 <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
             </div>
             <div class="about-text-container">
