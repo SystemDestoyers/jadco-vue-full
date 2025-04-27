@@ -188,6 +188,18 @@
     }
 }
 
+
+/* ==========================================
+   LARGE SCREENS (max-width: 1440px)
+   ========================================== */
+
+@media (max-width: 1440px) {
+    .about-section .about-heading img {
+        left: 12rem;
+    }
+}
+
+
 /* ==========================================
    LARGE SCREENS (max-width: 1400px)
    ========================================== */
@@ -198,6 +210,11 @@
     }
     body[data-vue-app="true"] .heading {
         height: 80vh;
+    }
+    
+    /* Footer */
+    .end-footer {
+        margin-bottom: 1rem;
     }
 
     /* Fix for Vue app services-menu positioning */
@@ -405,6 +422,9 @@
     }
     .service-text-content p {
         font-size: 1rem;
+    }
+    .end-footer {
+        margin-bottom: 1rem;
     }
 }
 
@@ -1455,6 +1475,7 @@
         padding: 0;
         height: 0;
     }
+}
     
     /* Keep the heading space minimal */
     .heading .services-menu {
@@ -1469,6 +1490,29 @@
     }
     .main-content .service-description {
         font-size: 0.8rem;
+    }
+}
+
+/* Exception for 1366px width screens - only hide at smaller heights */
+@media (min-width: 1366px) and (max-width: 1366px) and (max-height: 600px) {
+    .heading .services-menu h3,
+    .services-menu h3 {
+        font-size: 0; /* Hide the text */
+        margin: 0;
+        padding: 0;
+        height: 0;
+    }
+}
+
+/* Allow the heading to show at heights between 600px and 680px for 1366px screens */
+@media (min-width: 1366px) and (max-width: 1366px) and (min-height: 600px) and (max-height: 680px) {
+    .heading .services-menu h3,
+    .services-menu h3 {
+        font-size: 1.9rem;
+        font-weight: 400;
+        margin-bottom: 0;
+        padding: inherit;
+        height: auto;
     }
 }
 

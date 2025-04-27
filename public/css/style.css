@@ -401,7 +401,9 @@ a:hover {
 
 .nav-number.active {
     color: var(--primary-color);
+    /* font-size: 1.8rem; */
     opacity: 1;
+    font-weight: 200;
 }
 
 .nav-line {
@@ -425,8 +427,8 @@ a:hover {
 }
 
 .nav-line.active .nav-line-fill {
-    width: 100%;
-    transition: width 5s linear; /* Match carousel interval */
+    /* width: 100%; */
+    transition: width 5.5s linear;
 }
 
 .nav-line.active {
@@ -1346,6 +1348,7 @@ textarea.form-control:focus {
 .social-links {
     display: flex;
     gap: 20px;
+    opacity: 0 !important;
 }
 
 .social-link {

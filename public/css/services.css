@@ -116,7 +116,7 @@
     font-weight: 400;
     color: var(--dark-color);
     line-height: 1.6;
-    margin-bottom: 1rem;
+    margin-bottom: 0rem;
 }
 
 /* Make p and ul have the same styling */
@@ -215,6 +215,12 @@
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
 } */
+
+/* Technical and Vocational Training section styling - only for Training page */
+.training-page .service-hero-section:nth-of-type(2) .service-list li {
+    padding-bottom: 0;
+    margin-top: 0;
+}
 
 section.service-hero-section:nth-of-type(2) .service-list {
     margin-top: 1rem;

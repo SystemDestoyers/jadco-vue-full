@@ -1,5 +1,5 @@
 <template>
-    <div class="sub-page">
+    <div class="sub-page training-page">
         <!-- Loading state -->
         <div v-if="loading" class="loading-container">
             <div class="loading-spinner"></div>

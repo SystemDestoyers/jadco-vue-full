@@ -315,9 +315,12 @@ $(document).ready(function () {
                 headingTextMap[slideIndex] = text;
             });
         }
-        
+        // Destroy any existing carousel instance
+        if (bootstrap.Carousel.getInstance(document.getElementById('headerCarousel'))) {
+            bootstrap.Carousel.getInstance(document.getElementById('headerCarousel')).dispose();
+        }
         var headerCarousel = new bootstrap.Carousel(document.getElementById('headerCarousel'), {
-            interval: 5000,
+            interval: 7000,
             wrap: true,
             touch: true
         });
