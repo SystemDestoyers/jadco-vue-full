@@ -97,7 +97,7 @@
                             <li>
                                 <div class="link-container">
                                     <a href="{{ url($service['link'] ?? '#') }}" class="{{ request()->is(ltrim($service['link'] ?? '', '/')) ? 'active' : '' }}">
-                                        {{ $service['title'] ?? '' }}
+                                        {!! $service['title'] ?? '' !!}
                                         <i class="fas fa-arrow-right-long"></i>
                                     </a>
                                 </div>

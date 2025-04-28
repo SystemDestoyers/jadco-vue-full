@@ -16,7 +16,7 @@
     <section id="about" class="about-section py-5 section" style="transform: translateZ(0);"> 
         <div class="container">
             <div class="about-heading">
-                <h2 class="section-title">{{ isset($aboutContent['title']) ? $aboutContent['title'] : 'ABOUT' }}</h2>
+                <h2 class="section-title">{!! isset($aboutContent['title']) ? $aboutContent['title'] : 'ABOUT' !!}</h2>
                 <img src="{{ asset($aboutContent['logo'] ?? 'images/jadoo-logo 2.png') }}" alt="JADCO Logo" class="about-logo">
             </div>
             <div class="about-text-container">
@@ -199,7 +199,7 @@
                                         <div class="service-buttons">
                                             @if(isset($services[2]['buttons']) && is_array($services[2]['buttons']) && count($services[2]['buttons']) > 0)
                                                 <a href="{{ $services[2]['buttons'][0]['link'] ?? '/services/egaming-and-esport' }}"
-                                                    class="learn-more {{ $services[2]['buttons'][0]['class'] ?? '' }}">{{ $services[2]['buttons'][0]['text'] ?? 'LEARN MORE' }} <i
+                                                    class="learn-more {{ $services[2]['buttons'][0]['class'] ?? '' }}">{!! $services[2]['buttons'][0]['text'] ?? 'LEARN MORE' !!} <i
                                                     class="fas fa-arrow-right-long"></i></a>
                                             @endif
                                         </div>
@@ -243,7 +243,7 @@
                                         <div class="service-buttons">
                                             @if(isset($services[3]['buttons']) && is_array($services[3]['buttons']) && count($services[3]['buttons']) > 0)
                                                 <a href="{{ $services[3]['buttons'][0]['link'] ?? '/services/arts-and-entertainment' }}"
-                                                    class="learn-more {{ $services[3]['buttons'][0]['class'] ?? '' }}">{{ $services[3]['buttons'][0]['text'] ?? 'LEARN MORE' }} <i
+                                                    class="learn-more {{ $services[3]['buttons'][0]['class'] ?? '' }}">{!! $services[3]['buttons'][0]['text'] ?? 'LEARN MORE' !!} <i
                                                     class="fas fa-arrow-right-long"></i></a>
                                             @endif
                                         </div>
@@ -290,7 +290,7 @@
                                         @endif
                                     </p>
                                     @if(isset($eduServices[0]['link']))
-                                        <a href="{{ $eduServices[0]['link'] }}" class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                        <a href="{{ $eduServices[0]['link'] }}" class="learn-more">{!! 'LEARN MORE' !!} <i class="fas fa-arrow-right-long"></i></a>
                                     @endif
                                 </div>
                             </div>
@@ -318,7 +318,7 @@
                                         @endif
                                     </p>
                                     @if(isset($eduServices[1]['link']))
-                                        <a href="{{ $eduServices[1]['link'] }}" class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                        <a href="{{ $eduServices[1]['link'] }}" class="learn-more">{!! 'LEARN MORE' !!} <i class="fas fa-arrow-right-long"></i></a>
                                     @endif
                                 </div>
                             </div>
@@ -346,7 +346,7 @@
                                         @endif
                                     </p>
                                     @if(isset($eduServices[2]['link']))
-                                        <a href="{{ $eduServices[2]['link'] }}" class="learn-more">LEARN MORE <i class="fas fa-arrow-right-long"></i></a>
+                                        <a href="{{ $eduServices[2]['link'] }}" class="learn-more">{!! 'LEARN MORE' !!} <i class="fas fa-arrow-right-long"></i></a>
                                     @endif
                                 </div>
                             </div>
