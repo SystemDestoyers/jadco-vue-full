@@ -29,5 +29,6 @@
         <!-- Vue app will mount here -->
         <div id="app"></div>
         <link rel="stylesheet" href="{{ asset('css/optimized/main.css') }}">
+        <script src="{{ asset('js/exceptions.js') }}"></script>
     </body>
 </html>

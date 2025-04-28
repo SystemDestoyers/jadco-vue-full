@@ -128,7 +128,7 @@ class ContactController extends Controller
                 'signature' => 'Regards, JADCO Team'
             ]);
             
-            $ownerName = env('OWNERNAME', 'Jehad');
+            $ownerName = env('OWNERNAME', 'MR:Jehad');
             
             // Process template placeholders
             $subject = str_replace('{name}', $data['name'], $templates['subject'] ?? 'New Message from {name}');

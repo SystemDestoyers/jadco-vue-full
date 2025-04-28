@@ -22,7 +22,7 @@ $from_name = 'JadcoSupport'; // From name
 
 // Who to send the test email to - using an email on the same domain
 $recipient_email = 'support-jadco@jadco.tech'; // Use the same email for testing
-$ownerName = 'Jehad'; // Your owner name from .env
+$ownerName = 'MR: Jehad'; // Your owner name from .env
 
 echo "=========================================\n";
 echo "cPanel SMTP Test Script\n";
