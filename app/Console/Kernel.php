@@ -18,6 +18,12 @@ class Kernel extends ConsoleKernel
                 ->everyFiveMinutes()
                 ->withoutOverlapping()
                 ->runInBackground();
+                
+        // Process PHPMailer emails every minute
+        $schedule->command('emails:send-phpmailer')
+                ->everyMinute()
+                ->withoutOverlapping()
+                ->runInBackground();
     }
 
     /**
@@ -29,4 +35,4 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
-} 
+}
