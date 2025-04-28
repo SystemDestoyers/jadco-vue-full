@@ -4,6 +4,13 @@
  * Dynamic font size scaling for content edited with the JSON editor.
  * When a font size is set in the backend editor, it will automatically scale
  * proportionally across all screen sizes based on the breakpoints in responsive.css.
+ * 
+ * NOTE FOR VUE APPLICATIONS:
+ * - This script needs to be explicitly imported in the Vue entry point (welcome.blade.php)
+ * - For Vue components, ensure this script runs AFTER Vue has mounted and rendered its components
+ * - Vue components using inline font-size styles will be processed by this script
+ * - Text rendered through v-html with inline font-size will be processed
+ * - For Vue-specific content, consider using the MutationObserver which catches dynamically added content
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -21,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * Process all website content for responsive font sizing
+ * This function scans the document for elements that may have font-size styles
+ * and processes them for responsive sizing.
  */
 function processAllContent() {
     // Process all database-sourced sections
@@ -95,6 +104,9 @@ function processElements(elements) {
 
 /**
  * Process an element and all its children for font-size styles
+ * This is particularly useful for v-html content in Vue components
+ * which may contain nested elements with font-size styles.
+ * 
  * @param {Element} element - The element to process
  */
 function processElementAndChildren(element) {
@@ -110,6 +122,8 @@ function processElementAndChildren(element) {
 
 /**
  * Process a single element for font-size style
+ * This is the core function that handles the dynamic font sizing logic.
+ * 
  * @param {Element} element - The element to process
  */
 function processFontSize(element) {
@@ -145,6 +159,8 @@ function processFontSize(element) {
 
 /**
  * Removes only the font-size property from an element's inline style
+ * This preserves other inline styles that may be important.
+ * 
  * @param {Element} element - The element to process
  */
 function removeInlineFontSize(element) {
@@ -170,6 +186,8 @@ function removeInlineFontSize(element) {
 
 /**
  * Update a specific element's font size based on the viewport width
+ * This applies responsive scaling based on the viewport size.
+ * 
  * @param {Element} element - The element to update
  * @param {number} originalSize - Original font size in pixels
  */
@@ -231,6 +249,7 @@ function updateElementFontSize(element, originalSize) {
 
 /**
  * Update all dynamic font sizes based on current viewport width
+ * Called when the window is resized.
  */
 function updateScaledFontSizes() {
     const dynamicElements = document.querySelectorAll('.dynamic-font-size');
@@ -245,6 +264,9 @@ function updateScaledFontSizes() {
 
 /**
  * Set up MutationObserver to catch dynamically added content
+ * This is crucial for Vue applications where content is dynamically rendered
+ * or updated after initial load. Examples include content loaded via AJAX
+ * or content updated by Vue reactivity.
  */
 function setupFrontendMutationObserver() {
     const observer = new MutationObserver(function(mutations) {
@@ -382,3 +404,11 @@ document.head.insertAdjacentHTML('beforeend', `
     }
 </style>
 `);
+
+// For Vue applications - listen for a custom event that can be dispatched after Vue components mount
+document.addEventListener('vue-content-loaded', function() {
+    // Process all content again after Vue has loaded and rendered content
+    setTimeout(function() {
+        processAllContent();
+    }, 200); // Slight delay to ensure Vue has completed rendering
+});

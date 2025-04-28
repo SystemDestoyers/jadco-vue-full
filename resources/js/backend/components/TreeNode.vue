@@ -92,16 +92,16 @@
           
           <!-- Color controls -->
           <div class="toolbar-group">
-            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#27ae60')" title="Green" style="color: #27ae60">
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('var(--primary-color, #d01c51)')" title="Primary Color" style="color: var(--primary-color, #d01c51)">
               <i class="fas fa-paint-brush"></i>
             </button>
-            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#3498db')" title="Blue" style="color: #3498db">
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('var(--dark-color, #294359)')" title="Dark Color" style="color: var(--dark-color, #294359)">
               <i class="fas fa-paint-brush"></i>
             </button>
-            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#e74c3c')" title="Red" style="color: #e74c3c">
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('var(--gray-color, #63809a)')" title="Gray Color" style="color: var(--gray-color, #63809a)">
               <i class="fas fa-paint-brush"></i>
             </button>
-            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#f39c12')" title="Orange" style="color: #f39c12">
+            <button type="button" class="toolbar-btn color-btn" @click.stop.prevent="applyColor('#000000')" title="Black" style="color: #000000">
               <i class="fas fa-paint-brush"></i>
             </button>
           </div>
@@ -1006,9 +1006,9 @@ export default defineComponent({
   flex-wrap: wrap;
   gap: 8px;
   padding: 8px;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
+  background: var(--light-gray, #f8f9fa);
+  border: 1px solid var(--light-gray-2, #DFE3E6);
+  border-radius: var(--border-radius-sm, 4px);
   margin-top: 5px;
   margin-bottom: 10px;
 }
@@ -1016,7 +1016,7 @@ export default defineComponent({
 .backend-ui .toolbar-group {
   display: flex;
   gap: 2px;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid var(--light-gray-2, #DFE3E6);
   padding-right: 8px;
   margin-right: 0;
 }
@@ -1027,8 +1027,8 @@ export default defineComponent({
 }
 
 .backend-ui .toolbar-btn {
-  background: #fff;
-  border: 1px solid #cbd5e1;
+  background: var(--light-color, #ffffff);
+  border: 1px solid var(--light-gray-2, #DFE3E6);
   border-radius: 3px;
   padding: 5px 10px;
   font-size: 12px;
@@ -1036,21 +1036,21 @@ export default defineComponent({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #334155;
-  transition: all 0.2s ease;
+  color: var(--dark-color, #294359);
+  transition: all var(--transition-speed, 0.3s) var(--transition-timing, ease);
   min-width: 30px;
   height: 30px;
 }
 
 .backend-ui .toolbar-btn:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
+  background: var(--light-gray, #f8f9fa);
+  border-color: var(--gray-color, #63809a);
 }
 
 .backend-ui .toolbar-btn.active {
-  background: #e0f2fe;
-  border-color: #7dd3fc;
-  color: #0284c7;
+  background: var(--light-gray, #f8f9fa);
+  border-color: var(--primary-color, #d01c51);
+  color: var(--primary-color, #d01c51);
 }
 
 .backend-ui .toolbar-btn i {
@@ -1065,25 +1065,25 @@ export default defineComponent({
 }
 
 .backend-ui .control-label {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 500;
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--gray-color, #63809a);
+  font-weight: var(--font-weight-medium, 500);
 }
 
 .backend-ui .number-input {
   display: flex;
   align-items: center;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--light-gray-2, #DFE3E6);
   border-radius: 3px;
   overflow: hidden;
-  background: #fff;
+  background: var(--light-color, #ffffff);
   height: 30px;
 }
 
 .backend-ui .number-input button {
   border: none;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--light-gray, #f8f9fa);
+  color: var(--gray-color, #63809a);
   width: 25px;
   height: 100%;
   cursor: pointer;
@@ -1096,8 +1096,8 @@ export default defineComponent({
 }
 
 .backend-ui .number-input button:hover {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--light-gray, #f8f9fa);
+  color: var(--dark-color, #294359);
 }
 
 .backend-ui .number-input input[type="number"] {
