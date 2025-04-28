@@ -86,7 +86,7 @@ class SendPHPMailerEmails extends Command
                         $subject = $data['subject'];
                         
                         // Create greeting and signature
-                        $ownerName = env('OWNERNAME', 'Jehad');
+                        $ownerName = env('OWNERNAME', 'MR: Jehad');
                         $greeting = "Hello " . $ownerName;
                         $signature = "Regards, JADCO Team";
                         

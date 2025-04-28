@@ -53,6 +53,8 @@
     <script src="{{ asset('js/partial/services-section.js') }}"></script>
     <script src="{{ asset('js/partial/header.js') }}"></script>
     <script src="{{ asset('js/all.js') }}"></script>
+    <!-- Exceptions JS for responsive font handling -->
+    <script src="{{ asset('js/exceptions.js') }}"></script>
     
     <!-- The Flash Effect for "Let's Talk" button is now in static.js -->
     

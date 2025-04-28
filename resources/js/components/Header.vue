@@ -6,35 +6,35 @@
             <div class="left-col col-sm-6 col-lg-6 order-lg-1 order-2">
                 <!-- Dynamic Heading Text -->
                 <h1 class="main-heading">
-                    <span v-if="isHomePage" class="heading-text" :class="{ 'active': currentSlide === 0 }" data-slide="0">{{ content.headings?.[0] || 'From Education and Training to Innovation' }}</span>
-                    <span v-if="isHomePage" class="heading-text" :class="{ 'active': currentSlide === 1 }" data-slide="1">{{ content.headings?.[1] || 'The Latest AI and Technologies' }}</span>
-                    <span v-if="isHomePage" class="heading-text" :class="{ 'active': currentSlide === 2 }" data-slide="2">{{ content.headings?.[2] || 'Innovative Efforts in Revolutionizing the eSport Industry' }}</span>
-                    <span v-if="isHomePage" class="heading-text" :class="{ 'active': currentSlide === 3 }" data-slide="3">{{ content.headings?.[3] || 'Bringing the global Arts and Entertainment Events to town' }}</span>
+                    <span v-if="isHomePage && content.headings?.[0]" class="heading-text" :class="{ 'active': currentSlide === 0 }" data-slide="0" v-html="content.headings[0]"></span>
+                    <span v-if="isHomePage && content.headings?.[1]" class="heading-text" :class="{ 'active': currentSlide === 1 }" data-slide="1" v-html="content.headings[1]"></span>
+                    <span v-if="isHomePage && content.headings?.[2]" class="heading-text" :class="{ 'active': currentSlide === 2 }" data-slide="2" v-html="content.headings[2]"></span>
+                    <span v-if="isHomePage && content.headings?.[3]" class="heading-text" :class="{ 'active': currentSlide === 3 }" data-slide="3" v-html="content.headings[3]"></span>
                     
-                    <span v-if="$route.path.includes('about')" class="heading-text active">{{ content.aboutPageHeading || 'We Listen, design your vision and bring it to life... Let\'s talk' }}</span>
-                    <span v-if="$route.path.includes('services/education-and-scholarship')" class="heading-text active">{{ content.serviceHeadings?.education || 'From Education and Training to Innovation' }}</span>
-                    <span v-if="$route.path.includes('services/ai-and-advanced-technologies')" class="heading-text active">{{ content.serviceHeadings?.ai || 'The Latest AI and Technologies' }}</span>
-                    <span v-if="$route.path.includes('services/egaming-and-esport')" class="heading-text active">{{ content.serviceHeadings?.egaming || 'Innovative Efforts in Revolutionizing the eSport Industry' }}</span>
-                    <span v-if="$route.path.includes('services/arts-and-entertainment')" class="heading-text active">{{ content.serviceHeadings?.arts || 'Bringing the Global Arts and Entertainment Events to town' }}</span>
-                    <span v-if="$route.path.includes('services/training-and-professional-development')" class="heading-text active">{{ content.serviceHeadings?.training || 'From Education and Training to Innovation' }}</span>
-                    <span v-if="!isHomePage && !$route.path.includes('about') && !$route.path.includes('services/')" class="heading-text active">{{ content.errorHeading || 'JADCO Error page' }}</span>
+                    <span v-if="$route.path.includes('about') && content.aboutPageHeading" class="heading-text active" v-html="content.aboutPageHeading"></span>
+                    <span v-if="$route.path.includes('services/education-and-scholarship') && content.serviceHeadings?.education" class="heading-text active" v-html="content.serviceHeadings.education"></span>
+                    <span v-if="$route.path.includes('services/ai-and-advanced-technologies') && content.serviceHeadings?.ai" class="heading-text active" v-html="content.serviceHeadings.ai"></span>
+                    <span v-if="$route.path.includes('services/egaming-and-esport') && content.serviceHeadings?.egaming" class="heading-text active" v-html="content.serviceHeadings.egaming"></span>
+                    <span v-if="$route.path.includes('services/arts-and-entertainment') && content.serviceHeadings?.arts" class="heading-text active" v-html="content.serviceHeadings.arts"></span>
+                    <span v-if="$route.path.includes('services/training-and-professional-development') && content.serviceHeadings?.training" class="heading-text active" v-html="content.serviceHeadings.training"></span>
+                    <span v-if="!isHomePage && !$route.path.includes('about') && !$route.path.includes('services/') && content.errorHeading" class="heading-text active" v-html="content.errorHeading"></span>
                 </h1>
                 
                 <!-- Services Menu -->
                 <div class="services-menu">
-                    <h3>{{ content.servicesMenuTitle }}</h3>
+                    <h3 v-if="content.servicesMenuTitle" v-html="content.servicesMenuTitle"></h3>
                     <ul class="service-list" v-if="servicesMenuLinks.length > 0">
                         <li v-for="(service, index) in servicesMenuLinks" :key="index">
                             <div class="link-container">
                                 <router-link :to="service.link" :class="{ 'active': $route.path.includes(service.link) }">
-                                    {{ service.title }}
+                                    <span v-html="service.title || ''"></span>
                                     <i class="fas fa-arrow-right-long"></i>
                                 </router-link>
                             </div>
                         </li>
                     </ul>
                     <!-- Copy of Let's Talk button for mobile view -->
-                    <a href="#contact" class="btn btn-talk" @click.prevent="handleLetsTalkClick">{{ content.talkButtonText || 'Let\'s Talk' }}</a>
+                    <a href="#contact" class="btn btn-talk" @click.prevent="handleLetsTalkClick" v-html="content.talkButtonText || ''"></a>
                 </div>
             </div>
             

@@ -12,15 +12,15 @@
                     <div class="contact-info">
                         <div class="locations">
                             <div v-for="(location, index) in content.locations" :key="index" class="location-item" :class="{ 'mt-4': index > 0 }">
-                                <h4 class="location-title">{{ location.title }}</h4>
+                                <h4 class="location-title" v-html="location.title"></h4>
                                 <p class="location-address" v-html="location.address"></p>
                                 <div v-if="location.contacts">
                                     <div v-for="(contact, cIndex) in location.contacts" :key="`contact-${cIndex}`">
-                                        <span class="contact-label">{{ contact.label }}:</span>
+                                        <span class="contact-label" v-html="contact.label + ':'"></span>
                                         <span class="contact-value">
-                                            <a v-if="contact.type === 'whatsapp'" :href="`https://wa.me/${contact.value.replace(/\D/g, '')}`" class="whatsapp-link" target="_blank">{{ contact.value }}</a>
-                                            <a v-else-if="contact.type === 'email'" :href="`mailto:${contact.value}`">{{ contact.value }}</a>
-                                            <template v-else>{{ contact.value }}</template>
+                                            <a v-if="contact.type === 'whatsapp'" :href="`https://wa.me/${contact.value.replace(/\D/g, '')}`" class="whatsapp-link" target="_blank" v-html="contact.value"></a>
+                                            <a v-else-if="contact.type === 'email'" :href="`mailto:${contact.value}`" v-html="contact.value"></a>
+                                            <template v-else v-html="contact.value"></template>
                                         </span>
                                     </div>
                                 </div>
@@ -30,8 +30,8 @@
                 </div>
 
                 <div class="col-lg-9 col-sm-9">
-                    <h3 class="contact-tagline">{{ content.tagline || 'We Listen, design your vision and bring it to life...' }}</h3>
-                    <h2 class="let-talk">{{ content.heading || 'LET\'S TALK.' }}</h2>
+                    <h3 class="contact-tagline" v-if="content.tagline" v-html="content.tagline"></h3>
+                    <h2 class="let-talk" v-if="content.heading" v-html="content.heading"></h2>
 
                     <div class="contact-form">
                         <form @submit.prevent="handleSubmit">
@@ -40,14 +40,14 @@
                                     <div class="form-group">
                                         <input type="text" class="form-control" id="firstName" v-model="firstName"
                                             placeholder=" " required>
-                                        <label for="firstName" class="form-label">{{ content.form?.labels?.firstName || 'First Name' }}</label>
+                                        <label for="firstName" class="form-label" v-html="content.form?.labels?.firstName || 'First Name'"></label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <input type="text" class="form-control" id="lastName" v-model="lastName"
                                             placeholder=" " required>
-                                        <label for="lastName" class="form-label">{{ content.form?.labels?.lastName || 'Last Name' }}</label>
+                                        <label for="lastName" class="form-label" v-html="content.form?.labels?.lastName || 'Last Name'"></label>
                                     </div>
                                 </div>
                             </div>
@@ -56,24 +56,23 @@
                                     <div class="form-group">
                                         <input type="email" class="form-control" id="email" v-model="email"
                                             placeholder=" " required>
-                                        <label for="email" class="form-label">{{ content.form?.labels?.email || 'Email' }}</label>
+                                        <label for="email" class="form-label" v-html="content.form?.labels?.email || 'Email'"></label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <input type="tel" class="form-control" id="phone" v-model="phone"
                                             placeholder=" ">
-                                        <label for="phone" class="form-label">{{ content.form?.labels?.phone || 'Phone Number' }}</label>
+                                        <label for="phone" class="form-label" v-html="content.form?.labels?.phone || 'Phone Number'"></label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <textarea class="form-control" id="message" v-model="message" rows="4" placeholder=" " required></textarea>
-                                <label for="message" class="form-label">{{ content.form?.labels?.message || 'Message' }}</label>
+                                <label for="message" class="form-label" v-html="content.form?.labels?.message || 'Message'"></label>
                             </div>
                             <div class="text-start">
-                                <button type="submit" class="btn btn-send">{{ content.form?.submitButton || 'SEND A MESSAGE' }} <i
-                                        class="fas fa-arrow-right"></i></button>
+                                <button type="submit" class="btn btn-send" v-html="(content.form?.submitButton || 'SEND A MESSAGE') + ' <i class=\'fas fa-arrow-right\'></i>'"></button>
                             </div>
                         </form>
                     </div>
@@ -88,11 +87,11 @@
                         <div class="social-links">
                             <a v-for="(social, index) in content.socialLinks" :key="index" 
                                :href="social.url" class="social-link" target="_blank">
-                                <i :class="social.icon"></i> {{ social.title }}
+                                <i :class="social.icon"></i> <span v-html="social.title"></span>
                             </a>
                         </div>
                         <div>
-                            <p class="copyright"> {{ currentYear }} <span class="jadco-shine">JADCO</span>. {{ content.copyright || 'All Rights Reserved.' }}</p>
+                            <p class="copyright"> {{ currentYear }} <span class="jadco-shine">JADCO</span>. <span v-html="content.copyright || 'All Rights Reserved.'"></span></p>
                         </div>
                     </div>
                 </div>
