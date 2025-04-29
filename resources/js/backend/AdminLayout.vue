@@ -1,5 +1,8 @@
 <template>
-  <div class="admin-layout backend-ui" :dir="currentDirection" :class="{ 'dark-mode': isDarkMode }" :data-color-mode="colorMode">
+  <div class="admin-layout backend-ui" :dir="currentDirection" :class="{ 
+      'dark-mode': isDarkMode,
+      'sidebar-overlay-visible': isSidebarOpen
+    }" :data-color-mode="colorMode" @click.self="closeSidebarOnOverlayClick">
     <!-- Top Navigation -->
     <header class="admin-header">
       <div class="logo">
@@ -61,7 +64,7 @@
 
     <div class="admin-content">
       <!-- Sidebar Navigation -->
-      <aside class="admin-sidebar" :class="{ 'rtl-sidebar': rtlMode }">
+      <aside class="admin-sidebar" :class="{ 'rtl-sidebar': rtlMode, 'sidebar-open': isSidebarOpen }" @click.stop>
         <div class="sidebar-header">
           <div class="sidebar-icon dashboard-icon">
             <i class="fas fa-th-large"></i>
@@ -147,6 +150,11 @@
         </nav>
       </aside>
 
+      <!-- Sidebar Toggle Button (for mobile) -->
+      <button class="sidebar-toggle" @click="toggleSidebar">
+        <i class="fas" :class="isSidebarOpen ? 'fa-times' : 'fa-bars'"></i>
+      </button>
+
       <!-- Main Content Area -->
       <main class="admin-main">
         <slot></slot>
@@ -165,6 +173,7 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import './assets/css/backend-global.css';
 import './assets/css/admin-theme.css';
+import '../../css/admin-responsive.css';
 import { getCurrentLanguage, isRTL, t } from '../i18n';
 
 const router = useRouter();
@@ -178,6 +187,19 @@ const currentDirection = computed(() => rtlMode.value ? 'rtl' : 'ltr');
 const userInfo = ref({});
 const isDropdownOpen = ref(false);
 const userProfileRef = ref(null);
+const isSidebarOpen = ref(false);
+
+// Toggle sidebar for responsive view
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+// Close sidebar when route changes on mobile
+watch(route, () => {
+  if (window.innerWidth <= 992) {
+    isSidebarOpen.value = false;
+  }
+});
 
 // Expose toast to the global window for components that can't use Vue composition API
 if (typeof window !== 'undefined') {
@@ -350,6 +372,18 @@ const fetchUserInfo = async () => {
     }
   } catch (error) {
     console.error('Error fetching user info:', error);
+  }
+};
+
+// Close sidebar when clicking on the overlay
+const closeSidebarOnOverlayClick = (event) => {
+  // Only close if clicking directly on the overlay (not the sidebar itself)
+  if (isSidebarOpen.value) {
+    // Check if the click target is the admin-layout itself (the overlay)
+    // and not one of its children like the sidebar
+    if (event.target.classList.contains('admin-layout')) {
+      isSidebarOpen.value = false;
+    }
   }
 };
 </script>
@@ -641,6 +675,7 @@ body.dark-mode {
   z-index: 10;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .dark-mode .admin-sidebar {
@@ -690,11 +725,16 @@ body.dark-mode {
 .sidebar-nav {
   flex: 1;
   padding: 1rem 0;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .nav-group {
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .nav-group-title {
@@ -714,6 +754,7 @@ body.dark-mode {
   list-style: none;
   padding: 0;
   margin: 0;
+  height: auto;
 }
 
 .nav-link {

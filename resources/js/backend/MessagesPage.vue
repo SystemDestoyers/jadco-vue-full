@@ -1369,7 +1369,6 @@ export default {
   }
 };
 </script>
-
 <style>
 /* Use more specific selectors to avoid conflicts when navigating between pages */
 .messages-page {

@@ -1,0 +1,322 @@
+/* Hide sidebar toggle on all screens by default */
+.sidebar-toggle {
+  display: none;
+}
+
+/* Desktop sidebar layout */
+.admin-content {
+  display: flex;
+}
+
+.admin-sidebar {
+  width: 240px;
+  position: relative;
+  height: calc(100vh - 64px);
+}
+
+.admin-main {
+  flex: 1;
+  overflow-x: hidden;
+}
+
+/* Admin Responsive Styles */
+@media (max-width: 992px) {
+  /* Make sure admin-layout can receive click events */
+  .admin-layout {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  /* Show toggle button on small screens */
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.05);
+  }
+
+  /* Sidebar overlay */
+  .admin-layout::before {
+    /* content: ''; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 95; /* Lower than sidebar but higher than content */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
+  }
+
+  .admin-layout.sidebar-overlay-visible::before {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Sidebar positioning and transitions */
+  .admin-sidebar {
+    position: fixed;
+    left: -240px;
+    top: 64px;
+    bottom: 0;
+    width: 240px;
+    transition: all 0.3s ease;
+    z-index: 100; /* Higher than the overlay */
+    -webkit-overflow-scrolling: touch;
+    pointer-events: auto; /* Ensure sidebar links are clickable */
+    height: calc(100vh - 64px);
+  }
+
+  .admin-sidebar.sidebar-open {
+    left: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Adjust main content */
+  .admin-main {
+    width: 100%;
+    margin-left: 0;
+    transition: all 0.3s ease;
+    padding-top: 1rem;
+  }
+
+  /* RTL support */
+  [dir="rtl"] .admin-sidebar {
+    left: auto;
+    right: -240px;
+  }
+
+  [dir="rtl"] .admin-sidebar.sidebar-open {
+    left: auto;
+    right: 0;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  [dir="rtl"] .sidebar-toggle {
+    right: auto;
+    left: 20px;
+  }
+  
+  /* Prevent body scrolling when sidebar is open */
+  .sidebar-overlay-visible {
+    overflow: hidden;
+  }
+}
+
+/* Mobile Layout Adjustments */
+@media (max-width: 768px) {
+  /* Notification icon styling */
+  .notifications {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .notifications i {
+    font-size: 1.1rem;
+  }
+  
+  /* Make page and section titles clear on mobile */
+  .page-title {
+    font-size: 1.25rem;
+    width: 100%;
+  }
+  
+  /* User dropdown adjustments */
+  .user-dropdown {
+    position: fixed;
+    right: 1rem !important;
+    top: 60px !important;
+    width: 200px !important;
+  }
+  
+  [dir="rtl"] .user-dropdown {
+    right: auto !important;
+    left: 1rem !important;
+  }
+  
+  .dropdown-item {
+    padding: 0.6rem 1rem;
+  }
+  
+  /* Header adjustments */
+  .admin-header {
+    flex-wrap: nowrap;
+    padding: 0.5rem 1rem;
+    height: auto;
+    min-height: 64px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Hide search icon on mobile */
+  .search-box {
+    display: none;
+  }
+  
+  /* Keep user menu items in one line */
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  /* Make logo smaller on mobile */
+  .logo h1 {
+    font-size: 1.2rem;
+  }
+  
+  .logo-tagline {
+    display: none;
+  }
+
+  /* Rest of mobile styles */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .content-row {
+    flex-direction: column;
+  }
+
+  .circular-charts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Adjust sidebar top position for smaller header */
+  .admin-sidebar {
+    top: 0;
+    height: 100vh;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Extra small screens header adjustments */
+  .admin-header {
+    padding: 0.5rem;
+  }
+  
+  .logo h1 {
+    font-size: 1rem;
+  }
+  
+  /* Simplify user menu even more */
+  .user-menu {
+    gap: 0.75rem;
+  }
+  
+  .user-avatar {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  /* Rest of small screen styles */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .circular-charts {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-main {
+    padding: 1rem;
+  }
+
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Dark mode support for mobile */
+.dark-mode .sidebar-toggle {
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .admin-sidebar.sidebar-open {
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+[dir="rtl"].dark-mode .admin-sidebar.sidebar-open {
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  /* Larger tap targets for touch devices */
+  .nav-link {
+    padding: 0.85rem 1.5rem;
+  }
+  
+  .dropdown-item {
+    padding: 0.8rem 1rem;
+  }
+  
+  /* Improve scroll performance */
+  .admin-sidebar {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Make buttons easier to tap */
+  .sidebar-toggle {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* Fix z-index issues with dropdown and overlay */
+.user-dropdown {
+  z-index: 110;
+}
+
+/* Ensure overlay works properly on all browsers */
+@media (max-width: 992px) {
+  .sidebar-overlay-visible .admin-main {
+    position: relative;
+    pointer-events: none;
+  }
+  
+  .sidebar-overlay-visible .admin-sidebar {
+    pointer-events: auto;
+  }
+}
